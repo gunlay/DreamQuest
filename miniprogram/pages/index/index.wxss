@@ -5,59 +5,421 @@ page {
   flex-direction: column;
 }
 
-.scrollarea {
-  flex: 1;
-  overflow-y: hidden;
+.container {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 14px;
+  padding-bottom: 160px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.userinfo {
+/* 顶部区域 */
+.header {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
+.logo-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.44);
+  border-radius: 30px;
+  padding: 4px 11px;
+  height: 32px;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+}
+
+.app-name {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.date-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+}
+
+.date, .weekday, .lunar {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-family: PingFang SC;
+  font-weight: 600;
+}
+
+/* 梦境知识区域 */
+.dream-theory {
+  position: relative;
+  margin-top: 36px;
+  margin-bottom: 16px;
+  z-index: 1;
+}
+
+.theory-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 7px;
+}
+
+.theory-icon {
+  font-size: 20px;
+}
+
+.theory-title text:last-child {
+  color: #FFFFFF;
+  font-size: 20px;
+  font-family: PingFang SC;
+  font-weight: 600;
+}
+
+.theory-content {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 21px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 卡片通用样式 */
+.card {
+  background: rgba(255, 255, 255, 0.76);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.fortune-title::before {
+  content: "📅";
+  margin-right: 8px;
+}
+
+.report-title::before {
+  content: "🗒️";
+  margin-right: 8px;
+}
+
+.card-content {
+  font-size: 13px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+.card-content.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+
+/* 梦境周报图片 */
+.report-image {
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  object-fit: cover;
+}
+
+/* 底部固定区域 */
+.input-section {
+  position: fixed;
+  bottom: 5px;
+  left: 14px;
+  right: 14px;
+  z-index: 100;
+  background: transparent;
+}
+
+.chat-bubble {
+  background: #F2F2F7;
+  padding: 12px 16px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  position: relative;
+  width: fit-content;
+  max-width: 80%;
+  font-size: 14px;
+  color: #000000;
+}
+
+.chat-bubble::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background: #F2F2F7;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+
+.input-area {
+  margin-top: 8px;
+  margin: 0 14px;
+}
+
+.dream-input {
+  width: 100%;
+  height: 71rpx;
+  background: linear-gradient(90deg, rgba(151, 31, 207, 1), rgba(207, 20, 191, 1));
+  border-radius: 34rpx;
+  padding: 2rpx;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.dream-input input {
+  width: 100%;
+  height: 100%;
+  background: #FFFFFF;
+  border-radius: 34rpx;
+  padding: 0 16px;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.voice-btn {
+  width: 55px;
+  height: 37px;
+  background: linear-gradient(180deg, rgba(151, 31, 207, 0.15) 0%, rgba(207, 20, 191, 0.15) 100%);
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-btn image {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) saturate(100%) invert(35%) sepia(74%) saturate(3042%) hue-rotate(271deg) brightness(87%) contrast(93%);
+}
+
+/* TabBar */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 49px;
+  background: rgba(253, 253, 253, 0.92);
+  backdrop-filter: blur(48px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.tab-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #aaa;
-  width: 80%;
+  gap: 4px;
 }
 
-.userinfo-avatar {
-  overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
+.tab-icon {
+  width: 24px;
+  height: 24px;
 }
 
-.usermotto {
-  margin-top: 200px;
+.tab-text {
+  font-size: 10px;
+  color: rgba(60, 60, 67, 0.6);
+  text-align: center;
 }
 
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
+/* 今日运势卡片 */
+.fortune-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.76);
   border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
-}
-
-.nickname-wrapper {
-  display: flex;
-  width: 100%;
   padding: 16px;
+  margin-bottom: 16px;
+  width: 100%;
   box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
+  z-index: 1;
 }
 
-.nickname-label {
-  width: 105px;
+.fortune-card .card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 16px;
 }
 
-.nickname-input {
-  flex: 1;
+/* 运势内容 */
+.fortune-content {
+  font-size: 13px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #000000;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  transition: all 0.3s ease;
+}
+
+.fortune-content.expanded {
+  -webkit-line-clamp: unset;
+}
+
+.fortune-item {
+  margin-bottom: 12px;
+}
+
+.item-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.item-content {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #000000;
+}
+
+.fortune-numbers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #000000;
+}
+
+/* 星座选择器 */
+.zodiac-selector {
+  width: 100%;
+}
+
+.picker-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.arrow {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* 梦境周报卡片 */
+.weekly-report {
+  position: relative;
+  background: rgba(255, 255, 255, 0.76);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.weekly-report .card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 16px;
+}
+
+.report-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.report-content {
+  display: none;
+  margin-top: 16px;
+}
+
+.report-content.expanded {
+  display: block;
+}
+
+.report-section {
+  margin-bottom: 12px;
+}
+
+.report-section .section-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.report-section .section-content {
+  font-size: 13px;
+  font-weight: 400;
+  color: #000000;
+  line-height: 1.6;
+  display: block;
+}
+
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 }

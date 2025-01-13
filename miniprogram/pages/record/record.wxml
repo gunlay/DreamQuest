@@ -1,0 +1,153 @@
+<view class="container">
+  <!-- 背景图片 -->
+  <image class="bg-image" src="/assets/images/main_bg.png" mode="aspectFill"></image>
+
+  <!-- 固定在顶部的区域 -->
+  <view class="fixed-header">
+    <!-- Tab 切换 -->
+    <view class="tab-header">
+      <view class="tab-item {{currentTab === 'list' ? 'active' : ''}}" bindtap="switchTab" data-tab="list">
+        <text>列表</text>
+        <view class="tab-line"></view>
+      </view>
+      <view class="tab-item {{currentTab === 'calendar' ? 'active' : ''}}" bindtap="switchTab" data-tab="calendar">
+        <text>日历</text>
+        <view class="tab-line"></view>
+      </view>
+    </view>
+
+    <!-- 搜索区域 -->
+    <view class="search-area">
+      <view class="search-input-wrapper">
+        <image class="search-icon" src="/assets/icons/search.png" mode="aspectFit"></image>
+        <input class="search-input" 
+               placeholder="Search" 
+               placeholder-style="color: rgba(0, 0, 0, 0.3)"
+               value="{{searchKeyword}}"
+               bindinput="onSearchInput"/>
+        <view class="clear-icon" bindtap="clearSearch" wx:if="{{searchKeyword}}">×</view>
+      </view>
+      <view class="search-btn" bindtap="search">搜索</view>
+    </view>
+  </view>
+
+  <!-- 列表内容区域 -->
+  <scroll-view class="content-area" 
+               scroll-y="true" 
+               enable-flex="true"
+               wx:if="{{currentTab === 'list'}}">
+    <block wx:for="{{dreamList}}" wx:key="month">
+      <!-- 月份标题 -->
+      <view class="month-title">{{item.month}} 月</view>
+      
+      <!-- 梦境记录卡片 -->
+      <view class="dream-card" 
+            wx:for="{{item.dreams}}" 
+            wx:key="id" 
+            wx:for-item="dream"
+            bindtap="viewDreamDetail"
+            data-id="{{dream.id}}">
+        <!-- 标题栏 -->
+        <view class="card-header">
+          <text class="card-title">{{dream.title}}</text>
+          <text class="card-date">{{dream.date}} {{dream.weekday}}</text>
+        </view>
+        
+        <!-- 梦境图片 -->
+        <image class="dream-image" 
+               src="{{dream.image}}" 
+               mode="aspectFill"></image>
+        
+        <!-- 梦境内容 -->
+        <text class="dream-content">{{dream.content}}</text>
+        
+        <!-- 标签区域 -->
+        <view class="tag-list">
+          <view class="tag" wx:for="{{dream.tags}}" wx:key="*this">
+            {{item}}
+          </view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 日历视图区域 -->
+  <view class="calendar-view" wx:if="{{currentTab === 'calendar'}}">
+    <!-- 年月选择器 -->
+    <view class="calendar-header">
+      <view class="month-selector">
+        <view class="arrow" bindtap="prevMonth">
+          <text class="iconfont">←</text>
+        </view>
+        <picker
+          mode="date"
+          fields="month"
+          value="{{currentYear}}-{{currentMonth}}"
+          bindchange="onDatePickerChange"
+          class="current-month">
+          <view class="picker-text">
+            <text>{{currentYear}}年{{currentMonth}}月</text>
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+        <view class="arrow" bindtap="nextMonth">
+          <text class="iconfont">→</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 星期表头 -->
+    <view class="weekday-header">
+      <view class="weekday" wx:for="{{weekdays}}" wx:key="*this">{{item}}</view>
+    </view>
+
+    <!-- 日历主体 -->
+    <view class="calendar-body">
+      <view class="calendar-row" wx:for="{{calendarDays}}" wx:for-item="row" wx:key="index">
+        <view class="calendar-cell {{item.isToday ? 'today' : ''}} {{item.hasPositiveDream ? 'positive' : ''}} {{item.hasNegativeDream ? 'negative' : ''}} {{item.isSelected ? 'selected' : ''}}"
+              wx:for="{{row}}" 
+              wx:key="date"
+              data-date="{{item.date}}"
+              bindtap="selectDate">
+          <text>{{item.day}}</text>
+          <view class="dream-indicator" wx:if="{{item.hasPositiveDream || item.hasNegativeDream}}"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 选中日期的梦境记录 -->
+    <view class="selected-date-dreams">
+      <block wx:if="{{selectedDateDreams.length > 0}}">
+        <view class="dream-card" 
+              wx:for="{{selectedDateDreams}}" 
+              wx:key="id"
+              bindtap="viewDreamDetail"
+              data-id="{{item.id}}">
+          <!-- 标题栏 -->
+          <view class="card-header">
+            <text class="card-title">{{item.title}}</text>
+            <text class="card-date">{{item.date}} {{item.weekday}}</text>
+          </view>
+          
+          <!-- 梦境图片 -->
+          <image class="dream-image" 
+                 src="{{item.image}}" 
+                 mode="aspectFill"></image>
+          
+          <!-- 梦境内容 -->
+          <text class="dream-content">{{item.content}}</text>
+          
+          <!-- 标签区域 -->
+          <view class="tag-list">
+            <view class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">
+              {{tag}}
+            </view>
+          </view>
+        </view>
+      </block>
+      <view class="no-dreams" wx:else>
+        <text>这一天还没有梦境记录哦～</text>
+      </view>
+    </view>
+  </view>
+</view> 

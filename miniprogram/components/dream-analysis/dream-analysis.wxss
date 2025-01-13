@@ -1,0 +1,117 @@
+.analysis-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  z-index: 1000;
+}
+
+.analysis-modal.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.analysis-content {
+  width: 90%;
+  max-height: 80vh;
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+}
+
+.date {
+  font-size: 14px;
+  color: #666;
+}
+
+.dream-content {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+  padding: 12px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+.dream-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dream-image image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 12px;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #666;
+}
+
+.chat-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 80%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message.ai {
+  align-self: flex-start;
+  background-color: #E9E9EB;
+  color: #333;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #007AFF;
+  color: white;
+} 

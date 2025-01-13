@@ -1,0 +1,32 @@
+<view class="analysis-modal {{visible ? 'visible' : ''}}" bindtap="onModalTap">
+  <view class="analysis-content" catchtap="onContentTap">
+    <!-- 标题和日期 -->
+    <view class="header">
+      <text class="title">{{dreamData.title}}</text>
+      <text class="date">{{dreamData.date}}</text>
+    </view>
+
+    <!-- 梦境内容 -->
+    <view class="dream-content">
+      <text>{{dreamData.content}}</text>
+    </view>
+
+    <!-- AI生成的图片 -->
+    <view class="dream-image">
+      <image src="/assets/default_dream.png" mode="aspectFill"></image>
+    </view>
+
+    <!-- 分析标签 -->
+    <view class="tags">
+      <text class="tag" wx:for="{{['神秘', '探索', '冒险']}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <!-- AI对话区域 -->
+    <view class="chat-area">
+      <view class="message ai">
+        <text>让我来分析一下你的梦境...</text>
+      </view>
+      <!-- 后续会动态添加更多消息 -->
+    </view>
+  </view>
+</view> 

@@ -1,5 +1,7 @@
 {
+  "component": true,
   "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
+    "dream-input": "/components/dream-input/dream-input",
+    "dream-analysis": "/components/dream-analysis/dream-analysis"
   }
 }
