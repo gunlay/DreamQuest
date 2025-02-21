@@ -1,0 +1,265 @@
+.container {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 28px;
+  padding-bottom: 320px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.8;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  margin-top: 40px;
+  margin-bottom: 32px;
+
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.44);
+    border-radius: 60px;
+    padding: 8px 22px;
+    height: 64px;
+
+    .logo {
+      width: 48px;
+      height: 48px;
+    }
+
+    .app-name {
+      color: #FFFFFF;
+      font-size: 32px;
+      font-family: PingFang SC;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  }
+
+  .date-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 64px;
+
+    .date, .weekday, .lunar {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-family: PingFang SC;
+      font-weight: 600;
+    }
+  }
+}
+
+.dream-theory {
+  position: relative;
+  margin-top: 72px;
+  margin-bottom: 32px;
+  z-index: 1;
+
+  .theory-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 40px;
+  }
+
+  .theory-txt {
+    color: #FFFFFF;
+    font-size: 40px;
+    font-family: PingFang SC;
+    font-weight: 600;
+  }
+
+  .theory-content {
+    color: #FFFFFF;
+    font-size: 28px;
+    font-family: PingFang SC;
+    font-weight: 400;
+    line-height: 42px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.fortune-card {
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    font-size: 32px;
+    font-family: PingFang SC;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .zodiac-selector {
+    width: 100%;
+    .picker-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .arrow {
+        font-size: 24px;
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
+
+  .fortune-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+
+    &.expanded {
+      max-height: 2000px;
+    }
+
+    .fortune-item {
+      margin-bottom: 30px;
+
+      .item-title {
+        font-weight: bold;
+        color: #333;
+        margin-right: 20px;
+      }
+
+      .item-content {
+        color: #666;
+      }
+    }
+  }
+}
+
+.weekly-report {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      color: #666;
+    }
+  }
+
+  .report-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+
+    &.expanded {
+      max-height: 2000px;
+    }
+
+    .report-section {
+      margin-bottom: 30px;
+
+      .section-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .section-content {
+        color: #666;
+        line-height: 1.6;
+      }
+    }
+  }
+}
+
+.input-section {
+  margin-top: auto;
+  padding: 20px;
+
+  .chat-bubble {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 30px;
+    margin-bottom: 30px;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .input-area {
+    .dream-input {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 50px;
+      padding: 20px 30px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 32px;
+
+        &::placeholder {
+          color: rgba(60, 60, 67, 0.6);
+        }
+      }
+
+      .voice-icon {
+        width: 48px;
+        height: 24px;
+        margin-left: 20px;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

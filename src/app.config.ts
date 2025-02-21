@@ -1,14 +1,18 @@
 export default defineAppConfig({
   pages: [
+    /** 主包开始位置 */
     "pages/home/index",
-    "pages/index/index",
-    "pages/record/record",
-    "pages/analysis/analysis",
-    "pages/profile/profile",
-    "pages/auth/auth",
-    "pages/login/login",
-    "pages/agreement/agreement",
-    "pages/privacy/privacy"],
+    "pages/record/index",
+    // "pages/profile/index",
+    /** 主包结束位置 */
+    /** 子包开始位置 */
+    // "pages/analysis/analysis",    
+    // "pages/auth/auth",
+    "pages/login/index",
+    // "pages/agreement/agreement",
+    // "pages/privacy/privacy"
+    /** 子包结束位置 */
+  ],
   window: {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#971FCF",
@@ -23,21 +27,21 @@ export default defineAppConfig({
       {
         "pagePath": "pages/home/index",
         "text": "Dream",
-        "iconPath": "assets/tabbar/dream.png",
-        "selectedIconPath": "assets/tabbar/dream_selected.png"
+        "iconPath": "assets/image/tabbar/dream.png",
+        "selectedIconPath": "assets/image/tabbar/dream_selected.png"
       },
       {
-        "pagePath": "pages/record/record",
+        "pagePath": "pages/record/index",
         "text": "记录",
-        "iconPath": "assets/tabbar/record.png",
-        "selectedIconPath": "assets/tabbar/record_selected.png"
+        "iconPath": "assets/image/tabbar/record.png",
+        "selectedIconPath": "assets/image/tabbar/record_selected.png"
       },
-      {
-        "pagePath": "pages/profile/profile",
-        "text": "我的",
-        "iconPath": "assets/tabbar/profile.png",
-        "selectedIconPath": "assets/tabbar/profile_selected.png"
-      }
+      // {
+      //   "pagePath": "pages/profile/profile",
+      //   "text": "我的",
+      //   "iconPath": "assets/tabbar/profile.png",
+      //   "selectedIconPath": "assets/tabbar/profile_selected.png"
+      // }
     ]
   },
 });
