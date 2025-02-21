@@ -40,7 +40,7 @@
     }
 
     .app-name {
-      color: #FFFFFF;
+      color: #ffffff;
       font-size: 32px;
       font-family: PingFang SC;
       font-weight: 600;
@@ -54,8 +54,10 @@
     gap: 16px;
     height: 64px;
 
-    .date, .weekday, .lunar {
-      color: #FFFFFF;
+    .date,
+    .weekday,
+    .lunar {
+      color: #ffffff;
       font-size: 28px;
       font-family: PingFang SC;
       font-weight: 600;
@@ -78,14 +80,14 @@
   }
 
   .theory-txt {
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 40px;
     font-family: PingFang SC;
     font-weight: 600;
   }
 
   .theory-content {
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 28px;
     font-family: PingFang SC;
     font-weight: 400;
@@ -94,68 +96,6 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-}
-
-.fortune-card {
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 32px;
-  width: 100%;
-  box-sizing: border-box;
-
-  .card-title {
-    display: flex;
-    align-items: center;
-    font-size: 32px;
-    font-family: PingFang SC;
-    font-weight: 600;
-    margin-bottom: 24px;
-  }
-
-  .zodiac-selector {
-    width: 100%;
-    .picker-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
-      width: 100%;
-      box-sizing: border-box;
-
-      .arrow {
-        font-size: 24px;
-        color: rgba(0, 0, 0, 0.5);
-      }
-    }
-  }
-
-  .fortune-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-
-    &.expanded {
-      max-height: 2000px;
-    }
-
-    .fortune-item {
-      margin-bottom: 30px;
-
-      .item-title {
-        font-weight: bold;
-        color: #333;
-        margin-right: 20px;
-      }
-
-      .item-content {
-        color: #666;
-      }
-    }
   }
 }
 

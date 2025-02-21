@@ -33,9 +33,8 @@ export interface DreamData {
 }
 
 export interface IndexState {
-  fortune: Fortune;
   weeklyReport: WeeklyReport;
   isReportExpanded: boolean;
   showDreamInput: boolean;
   isGeneratingReport: boolean;
-} 
+}
