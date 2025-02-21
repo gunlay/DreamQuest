@@ -1,0 +1,14 @@
+page {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.container {
+    min-height: 100vh;  
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+} 
