@@ -1,6 +1,6 @@
 import Taro from "@tarojs/taro";
 import { Button, Image, Text, View } from "@tarojs/components";
-import LoginBanner from '@/assets/image/login/login_banner.png'
+import LoginBanner from "@/assets/image/login/login_banner.png";
 import style from "./index.module.scss";
 
 const Login = () => {
@@ -18,6 +18,7 @@ const Login = () => {
         desc: "用于完善会员资料",
         success: (userRes) => {
           const code = Taro.getStorageSync("code");
+          console.log("code", code);
 
           // 调用后端登录接口
           Taro.request({
@@ -38,7 +39,7 @@ const Login = () => {
 
                 // 登录成功后跳转到首页
                 Taro.switchTab({
-                  url: "/pages/index/index",
+                  url: "/pages/home/index",
                 });
               } else {
                 Taro.showToast({
@@ -72,9 +73,7 @@ const Login = () => {
       });
     }
   };
-  const login = () => {
-    
-  }
+  const login = () => {};
   const showUserAgreement = () => {};
   const showPrivacyPolicy = () => {};
 
@@ -90,12 +89,12 @@ const Login = () => {
         <View className={style.desc}>请授权登录以使用完整功能</View>
         <Button
           className={style["login-btn"]}
-          // onClick={getUserProfile}
+          onClick={getUserProfile}
           type="primary"
-          openType="getPhoneNumber"
-          onGetPhoneNumber={(x) => {
-            console.log('x', x);
-          }}
+          // openType="getPhoneNumber"
+          // onGetPhoneNumber={(x) => {
+          //   console.log("x", x);
+          // }}
           // hover-className="button-hover"
         >
           微信一键登录

@@ -4,7 +4,7 @@ import Taro from "@tarojs/taro";
 import Vocie from "@/assets/icon/voice.png";
 import MainBg from "@/assets/image/main/main_bg.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
-import { IndexState, DreamData, DateInfo } from "./types";
+import { DreamData, DateInfo } from "./types";
 import DreamInput from "./DreamInput/index";
 // import DreamAnalysis from './DreamAnalysis/index';
 import TodayFortune from "./TodayFortune";
@@ -12,16 +12,13 @@ import WeeklyReport from "./WeeklyReport";
 
 import style from "./index.module.scss";
 
-
 const Home: React.FC = () => {
   const [dateInfo, setDateInfo] = useState<DateInfo>({
     date: "",
     weekday: "",
   });
-  
-  const [state, setState] = useState<IndexState>({
-    showDreamInput: false,
-  });
+
+  const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
 
   const updateDateInfo = () => {
     const now = new Date();
@@ -35,24 +32,16 @@ const Home: React.FC = () => {
     });
   };
 
-  const showDreamInput = () => {
-    setState((prev) => ({ ...prev, showDreamInput: true }));
-  };
-
-  const hideDreamInput = () => {
-    setState((prev) => ({ ...prev, showDreamInput: false }));
-  };
-
   const handleDreamSave = (dreamData: DreamData) => {
     const existingDreams = Taro.getStorageSync("dreams") || [];
     const updatedDreams = [dreamData, ...existingDreams];
     Taro.setStorageSync("dreams", updatedDreams);
 
-    hideDreamInput();
-    fetchWeeklyReport();
+    setShowDreamInput(false);
+    // fetchWeeklyReport();
 
     Taro.navigateTo({
-      url: "/pages/analysis/analysis",
+      url: "/pages/analysis/index",
     });
   };
 
@@ -105,7 +94,10 @@ const Home: React.FC = () => {
           昨晚梦到什么了嘛?记录一下吧 🤗
         </View>
         <View className={style["input-area"]}>
-          <View className={style["dream-input"]} onClick={showDreamInput}>
+          <View
+            className={style["dream-input"]}
+            onClick={() => setShowDreamInput(true)}
+          >
             <Input
               placeholder="write your dream"
               placeholderStyle="color: rgba(60, 60, 67, 0.6)"
@@ -121,13 +113,10 @@ const Home: React.FC = () => {
       </View>
 
       {/* Dream Input Component */}
-      {state.showDreamInput && (
-        <DreamInput
-          show={state.showDreamInput}
-          onSave={handleDreamSave}
-          onClose={hideDreamInput}
-        />
-      )}
+      <DreamInput
+        show={showDreamInput}
+        onClose={() => setShowDreamInput(false)}
+      />
       {/* 添加梦境分析浮层 */}
       {/* <DreamAnalysis
         visible={state.showDreamAnalysis}

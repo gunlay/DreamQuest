@@ -1,0 +1,70 @@
+.list-view {
+  .search-area {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+
+    .search-input-wrapper {
+      flex: 1;
+      height: 72px;
+      background: #fff;
+      border-radius: 36px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+
+      .search-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 16px;
+      }
+
+      .search-input {
+        flex: 1;
+        height: 100%;
+        font-size: 28px;
+      }
+      .clear-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(0, 0, 0, 0.3);
+        font-size: 32px;
+        margin-left: 16px;
+        cursor: pointer;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    .search-btn {
+      padding: 16px 32px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 36px;
+      color: #971fcf;
+      font-size: 28px;
+      font-weight: 500;
+    }
+  }
+
+  /* 内容区域 */
+  .content-area {
+    margin-top: 240px; /* 为固定头部预留空间 */
+    flex: 1;
+    width: 100%;
+    padding: 0 28px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    /* 月份标题 */
+    .month-title {
+      font-size: 32px;
+      color: #ffffff;
+      font-weight: 600;
+      margin: 32px 0;
+    }
+  }
+}

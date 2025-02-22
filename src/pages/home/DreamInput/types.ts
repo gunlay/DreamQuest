@@ -1,6 +1,5 @@
 export interface DreamInputProps {
   show: boolean;
-  onSave: (dreamData: DreamData) => void;
   onClose: () => void;
 }
 
@@ -16,7 +15,5 @@ export interface DreamData {
 export interface DreamInputState {
   content: string;
   title: string;
-  mood: string;
-  tags: string[];
-  isSubmitting: boolean;
+  currentDate: string;
 }

@@ -31,7 +31,3 @@ export interface DreamData {
   content: string;
   // Add other dream-related fields as needed
 }
-
-export interface IndexState {
-  showDreamInput: boolean
-}

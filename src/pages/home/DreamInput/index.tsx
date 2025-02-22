@@ -1,177 +1,171 @@
-import { View, Text, Textarea, Input, Button } from '@tarojs/components';
-import { useState } from 'react';
-import Taro from '@tarojs/taro';
-import { DreamInputProps, DreamInputState, DreamData } from './types';
-import styles from './index.module.scss';
+import {
+  View,
+  Text,
+  Textarea,
+  Input,
+  Button,
+  ITouchEvent,
+} from "@tarojs/components";
+import { useEffect, useMemo, useState } from "react";
+import { generateDreamImage } from "@/api/home";
+import Taro from "@tarojs/taro";
+import { DreamInputProps, DreamInputState } from "./types";
+import style from "./index.module.scss";
 
-const DreamInput: React.FC<DreamInputProps> = ({ show, onSave, onClose }) => {
-  const [state, setState] = useState<DreamInputState>({
-    content: '',
-    title: '',
-    mood: '',
-    tags: [],
-    isSubmitting: false
+const DreamInput: React.FC<DreamInputProps> = (props) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dreamInput, setDreamInput] = useState<DreamInputState>({
+    title: "",
+    content: "",
+    currentDate: "",
   });
 
-  const handleContentChange = (e: any) => {
-    setState(prev => ({
+  const canSave = useMemo(() => {
+    return !!(dreamInput.title.trim() && dreamInput.content.trim());
+  }, [dreamInput.title, dreamInput.content]);
+  const onTitleInput = (e: any) => {
+    setDreamInput((prev) => ({
       ...prev,
-      content: e.detail.value
+      title: e.detail.value,
     }));
   };
 
-  const handleTitleChange = (e: any) => {
-    setState(prev => ({
+  const onContentInput = (e: any) => {
+    setDreamInput((prev) => ({
       ...prev,
-      title: e.detail.value
+      content: e.detail.value,
     }));
   };
 
-  const handleMoodChange = (e: any) => {
-    setState(prev => ({
-      ...prev,
-      mood: e.detail.value
-    }));
-  };
-
-  const handleTagInput = (e: any) => {
-    const value = e.detail.value.trim();
-    if (value && !state.tags.includes(value)) {
-      setState(prev => ({
-        ...prev,
-        tags: [...prev.tags, value]
-      }));
-    }
-  };
-
-  const removeTag = (index: number) => {
-    setState(prev => ({
-      ...prev,
-      tags: prev.tags.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleSubmit = async () => {
-    if (!state.content.trim()) {
-      Taro.showToast({
-        title: '请输入梦境内容',
-        icon: 'none'
-      });
+  const onSave = async () => {
+    if (!canSave) {
+      console.warn("无法保存：标题或内容为空");
       return;
     }
 
-    setState(prev => ({ ...prev, isSubmitting: true }));
+    const { title, content, currentDate } = dreamInput;
+    console.warn("\n=== 开始保存梦境记录 ===");
+    console.warn("标题:", title);
+    console.warn("内容:", content);
+    console.warn("日期:", currentDate);
+
+    // 显示加载状态
+    setLoading(true);
+    Taro.showLoading({
+      title: "正在生成图片...",
+      mask: true,
+    });
+
+    let dreamData = {
+      id: Date.now(),
+      title: title.trim(),
+      content: content.trim(),
+      date: currentDate,
+      image: "",
+      weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][
+        new Date(currentDate.replace(/\./g, "-")).getDay()
+      ],
+      // image: '/assets/images/default_dream.png'  // 默认图片
+    };
 
     try {
-      const dreamData: DreamData = {
-        id: Date.now(),
-        content: state.content.trim(),
-        title: state.title.trim(),
-        mood: state.mood.trim(),
-        tags: state.tags,
-        createdAt: new Date().toISOString()
-      };
-
-      onSave(dreamData);
-      handleClose();
+      console.warn("\n开始生成图片...");
+      // 生成图片
+      const imageUrl = await generateDreamImage(content.trim());
+      console.warn("图片生成成功:", imageUrl);
+      dreamData.image = imageUrl;
     } catch (error) {
-      console.error('保存梦境失败:', error);
+      console.error("\n图片生成失败:", error);
       Taro.showToast({
-        title: '保存失败，请重试',
-        icon: 'error'
+        title: "图片生成失败",
+        icon: "error",
+        duration: 2000,
       });
     } finally {
-      setState(prev => ({ ...prev, isSubmitting: false }));
+      // 无论图片生成是否成功，都保存数据并跳转
+      console.warn("\n准备保存的数据:", JSON.stringify(dreamData, null, 2));
+
+      // 保存到本地存储
+      Taro.setStorageSync("currentDream", dreamData);
+
+      // 清空输入
+      setDreamInput({
+        title: "",
+        content: "",
+        currentDate: "",
+      });
+
+      // 隐藏加载状态
+      Taro.hideLoading();
+
+      // 跳转到分析页面
+      Taro.navigateTo({
+        url: "/pages/analysis/index",
+        success: () => console.warn("成功跳转到分析页面"),
+        fail: (error) => console.error("跳转失败:", error),
+      });
     }
   };
 
-  const handleClose = () => {
-    setState({
-      content: '',
-      title: '',
-      mood: '',
-      tags: [],
-      isSubmitting: false
-    });
-    onClose();
+  const stopPropagation = (e: ITouchEvent) => {
+    // 阻止事件冒泡
+    e.stopPropagation();
   };
 
-  if (!show) return null;
+  useEffect(() => {
+    const now = new Date();
+    const date = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}.${String(now.getDate()).padStart(2, "0")}`;
+    setDreamInput((prev) => ({ ...prev, currentDate: date }));
+  }, []);
+
+  if (!props.show) return null;
 
   return (
-    <View className={styles.overlay}>
-      <View className={styles.container}>
-        <View className={styles.header}>
-          <Text className={styles.title}>记录梦境</Text>
-          <View className={styles.closeBtn} onClick={handleClose}>✕</View>
+    <View
+      className={`${style["dream-input-modal"]} ${
+        props.show ? style.show : ""
+      }`}
+      onClick={() => props.onClose()}
+    >
+      <View className={style["modal-content"]} onClick={stopPropagation}>
+        <View className={style["title-bar"]}>
+          <Input
+            className={style["title-input"]}
+            placeholder="输入标题..."
+            maxlength={12}
+            placeholder-style="color: rgba(60, 60, 67, 0.6)"
+            focus={props.show}
+            value={dreamInput.title}
+            onInput={onTitleInput}
+          />
+          <Text className={style["date"]}>{dreamInput.currentDate}</Text>
         </View>
-
-        <View className={styles.form}>
-          <View className={styles.formItem}>
-            <Text className={styles.label}>标题</Text>
-            <Input
-              className={styles.input}
-              value={state.title}
-              onInput={handleTitleChange}
-              placeholder='给这个梦境起个标题吧'
-              maxlength={50}
-            />
-          </View>
-
-          <View className={styles.formItem}>
-            <Text className={styles.label}>内容</Text>
-            <Textarea
-              className={styles.textarea}
-              value={state.content}
-              onInput={handleContentChange}
-              placeholder='描述一下你的梦境...'
-              maxlength={1000}
-            />
-          </View>
-
-          <View className={styles.formItem}>
-            <Text className={styles.label}>心情</Text>
-            <Input
-              className={styles.input}
-              value={state.mood}
-              onInput={handleMoodChange}
-              placeholder='这个梦给你什么感觉？'
-              maxlength={20}
-            />
-          </View>
-
-          <View className={styles.formItem}>
-            <Text className={styles.label}>标签</Text>
-            <Input
-              className={styles.input}
-              onConfirm={handleTagInput}
-              placeholder='输入标签并回车'
-              maxlength={20}
-            />
-            <View className={styles.tagList}>
-              {state.tags.map((tag, index) => (
-                <View key={index} className={styles.tag}>
-                  <Text>{tag}</Text>
-                  <Text className={styles.tagDelete} onClick={() => removeTag(index)}>×</Text>
-                </View>
-              ))}
-            </View>
+        <View className={style["content-wrapper"]}>
+          <Textarea
+            className={style["content-input"]}
+            placeholder="描述你的梦境..."
+            placeholder-style="color: rgba(60, 60, 67, 0.6)"
+            maxlength={500}
+            value={dreamInput.content}
+            onInput={onContentInput}
+          />
+          <View className={style["word-count"]}>
+            {dreamInput.content.length}/500
           </View>
         </View>
-
-        <View className={styles.footer}>
+        <View className={style["footer"]}>
           <Button
-            className={styles.cancelBtn}
-            onClick={handleClose}
+            className={`
+              ${style["save-btn"]} 
+              ${canSave ? "" : style.disabled} 
+              ${loading ? style.loading : ""}`}
+            onClick={onSave}
+            disabled={!canSave || loading}
           >
-            取消
-          </Button>
-          <Button
-            className={styles.submitBtn}
-            onClick={handleSubmit}
-            loading={state.isSubmitting}
-          >
-            保存
+            {loading ? "生成中..." : "保存"}
           </Button>
         </View>
       </View>
@@ -179,4 +173,4 @@ const DreamInput: React.FC<DreamInputProps> = ({ show, onSave, onClose }) => {
   );
 };
 
-export default DreamInput; 
+export default DreamInput;

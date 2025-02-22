@@ -1,9 +1,10 @@
-import { Text, View } from '@tarojs/components'
-import Taro from '@tarojs/taro';
-import classNames from 'classnames'
-import { useEffect, useState } from 'react';
-import { WeeklyReportParams } from '../types';
-import style from './index.module.scss'
+import { Text, View } from "@tarojs/components";
+import Taro from "@tarojs/taro";
+import classNames from "classnames";
+import { generateWeeklyReportContent, getWeeklyDreams } from "@/api/home";
+import { useEffect, useState } from "react";
+import { WeeklyReportParams } from "../types";
+import style from "./index.module.scss";
 
 const defaultWeeklyReport: WeeklyReportParams = {
   keywords: "开始记录你的第一个梦境吧",
@@ -15,15 +16,14 @@ const defaultWeeklyReport: WeeklyReportParams = {
 };
 
 const WeeklyReport = () => {
-
   const [isReportExpanded, setIsReportExpanded] = useState<boolean>(false);
   const [weekInfo, setWeekInfo] = useState<{
-    generating: boolean
-    weeklyReport: WeeklyReportParams
+    generating: boolean;
+    weeklyReport: WeeklyReportParams;
   }>({
     generating: false,
-    weeklyReport: defaultWeeklyReport
-  })
+    weeklyReport: defaultWeeklyReport,
+  });
 
   const fetchWeeklyReport = async () => {
     setWeekInfo((prev) => ({ ...prev, generating: true }));
@@ -61,58 +61,66 @@ const WeeklyReport = () => {
   };
 
   useEffect(() => {
-    fetchWeeklyReport()
-  }, [])
-  return <View
-    className={classNames(
-      style["weekly-report"],
-      isReportExpanded ? style.expanded : ""
-    )}
-    onClick={() => setIsReportExpanded((prev) => !prev)}
-  >
-    <View className={style["card-title"]}>
-      <Text>🗒️ 梦境周报</Text>
-    </View>
-
-    {weekInfo.generating ? (
-      <View className={style["loading-wrapper"]}>
-        <View className={style["loading-spinner"]} />
-        <Text className={style["loading-text"]}>正在生成周报...</Text>
+    fetchWeeklyReport();
+  }, []);
+  return (
+    <View
+      className={classNames(
+        style["weekly-report"],
+        isReportExpanded ? style.expanded : ""
+      )}
+      onClick={() => setIsReportExpanded((prev) => !prev)}
+    >
+      <View className={style["card-title"]}>
+        <Text>🗒️ 梦境周报</Text>
       </View>
-    ) : (
-      <View
-        className={classNames(
-          style["report-content"],
-          isReportExpanded ? style.expanded : ""
-        )}
-      >
-        <View className={style["report-section"]}>
-          <Text className={style["section-title"]}>📊 关键词</Text>
-          <Text className={style["section-content"]}>
-            {weekInfo.weeklyReport.keywords}
-          </Text>
+
+      {weekInfo.generating ? (
+        <View className={style["loading-wrapper"]}>
+          <View className={style["loading-spinner"]} />
+          <Text className={style["loading-text"]}>正在生成周报...</Text>
         </View>
+      ) : (
+        <View
+          className={classNames(
+            style["report-content"],
+            isReportExpanded ? style.expanded : ""
+          )}
+        >
+          <View className={style["report-section"]}>
+            <Text className={style["section-title"]}>📊 关键词</Text>
+            <Text className={style["section-content"]}>
+              {weekInfo.weeklyReport.keywords}
+            </Text>
+          </View>
 
-        {/* <!-- 梦境解析 --> */}
-      <View className={style["report-section"]}>
-        <Text className={style["section-title"]}>💭 梦境解析</Text>
-        <Text className={style["section-content"]}>{weekInfo.weeklyReport.analysis}</Text>
-      </View>
-      
-      {/* <!-- 情绪趋势 --> */}
-      <View className={style["report-section"]}>
-        <Text className={style["section-title"]}>📈 情绪趋势</Text>
-        <Text className={style["section-content"]}>{weekInfo.weeklyReport.emotionTrend}</Text>
-      </View>
-      
-      {/* <!-- AI建议 --> */}
-      <View className={style["report-section"]}>
-        <Text className={style["section-title"]}>🤖 AI建议</Text>
-        <Text className={style["section-content"]}>{weekInfo.weeklyReport.aiSuggestion}</Text>
-      </View>
-      </View>
-    )}
-  </View>
-}
+          {/* <!-- 梦境解析 --> */}
+          <View className={style["report-section"]}>
+            <Text className={style["section-title"]}>💭 梦境解析</Text>
+            <Text className={style["section-content"]}>
+              {weekInfo.weeklyReport.analysis}
+            </Text>
+          </View>
 
-export default WeeklyReport
+          {/* <!-- 情绪趋势 --> */}
+          <View className={style["report-section"]}>
+            <Text className={style["section-title"]}>📈 情绪趋势</Text>
+            <Text className={style["section-content"]}>
+              {weekInfo.weeklyReport.emotionTrend}
+            </Text>
+          </View>
+
+          {/* <!-- AI建议 --> */}
+          <View className={style["report-section"]}>
+            <Text className={style["section-title"]}>🤖 AI建议</Text>
+            <Text className={style["section-content"]}>
+              {weekInfo.weeklyReport.aiSuggestion}
+            </Text>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default WeeklyReport;

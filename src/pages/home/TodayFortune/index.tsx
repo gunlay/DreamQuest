@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
 import Taro from "@tarojs/taro";
 import { Picker, Text, View } from "@tarojs/components";
@@ -111,7 +111,7 @@ const TodayFortune = () => {
     }
   }, []);
   return (
-    <View className={style["fortune-card"]} onClick={toggleFortune}>
+    <View className={style["fortune-card"]}>
       <View className={style["card-title"]}>
         <Text>📅 今日运势</Text>
       </View>
@@ -137,6 +137,7 @@ const TodayFortune = () => {
             style["fortune-content"],
             isFortuneExpanded ? style.expanded : ""
           )}
+          onClick={toggleFortune}
         >
           <View className={style["fortune-item"]}>
             <Text className={style["item-title"]}>✨ 整体运势：</Text>
