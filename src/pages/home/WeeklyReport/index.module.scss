@@ -1,0 +1,114 @@
+.weekly-report {
+  position: relative;
+  background: rgba(255, 255, 255, 0.76);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid #971FCF;
+    transition: transform 0.3s ease;
+  }
+  
+  &.expanded::after {
+    transform: translateX(-50%) rotate(180deg);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 32px;
+    font-family: PingFang SC;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 32px;
+  }
+
+  .loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+
+    .loading-spinner {
+      width: 80px;
+      height: 80px;
+      border: 6px solid rgba(151, 31, 207, 0.1);
+      border-top: 6px solid #971FCF;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 32px;
+    }
+    
+    .loading-text {
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .report-content {
+    position: relative;
+    max-height: 240px; /* 大约5行文字的高度 */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9));
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    &.expanded {
+      max-height: none;
+
+      &::after {
+        opacity: 0;
+      }
+    }
+
+    .report-section {
+      margin-bottom: 24px;
+
+      .section-title {
+        font-size: 30px;
+        font-weight: 500;
+        color: #000000;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .section-content {
+        font-size: 28px;
+        font-weight: 400;
+        color: #000000;
+        line-height: 1.6;
+      }
+    }
+  }
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

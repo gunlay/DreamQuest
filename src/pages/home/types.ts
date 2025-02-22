@@ -19,7 +19,7 @@ export interface Fortune {
   luckyDirection: string;
 }
 
-export interface WeeklyReport {
+export interface WeeklyReportParams {
   keywords: string;
   analysis: string;
   emotionTrend: string;
@@ -33,8 +33,5 @@ export interface DreamData {
 }
 
 export interface IndexState {
-  weeklyReport: WeeklyReport;
-  isReportExpanded: boolean;
-  showDreamInput: boolean;
-  isGeneratingReport: boolean;
+  showDreamInput: boolean
 }
