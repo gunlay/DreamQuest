@@ -6,8 +6,6 @@ export default defineAppConfig({
     "pages/profile/index",
     /** 主包结束位置 */
     /** 子包开始位置 */
-    // "pages/analysis/analysis",
-    // "pages/auth/auth",
     "pages/agreement/index",
     "pages/login/index",
     /** 子包结束位置 */
