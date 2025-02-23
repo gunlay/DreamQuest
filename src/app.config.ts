@@ -8,9 +8,8 @@ export default defineAppConfig({
     /** 子包开始位置 */
     // "pages/analysis/analysis",
     // "pages/auth/auth",
+    "pages/agreement/index",
     "pages/login/index",
-    // "pages/agreement/agreement",
-    // "pages/privacy/privacy"
     /** 子包结束位置 */
   ],
   window: {

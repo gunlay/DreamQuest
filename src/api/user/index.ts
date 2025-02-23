@@ -1,19 +1,18 @@
-import { http } from '@/utils/request/index'
-
-interface UserInfo {
-  id: number
-  name: string
-  avatar: string
-}
+import { http } from "@/utils/request/index";
+import Taro from "@tarojs/taro";
+import { UserInfo } from "../types/user";
 
 export const userApi = {
-  // 获取用户信息
-  getUserInfo: () => {
-    return http.get<UserInfo>('/user/info')
+  login: async () => {
+    const { code } = await Taro.login();
+    console.log("data", code);
+    Taro.setStorageSync("logincode", code);
+
+    return http
+      .post<{ token: string }>("/dream/wx/login", { code })
+      .then((res) => res);
   },
-  
-  // 更新用户信息
-  updateUserInfo: (data: Partial<UserInfo>) => {
-    return http.put<UserInfo>('/user/info', data)
-  }
-} 
+  saveUserInfo: async (userInfo: Omit<UserInfo, "phone">) => {
+    return http.post("/dream/wx/saveUserInfo", userInfo).then((res) => res);
+  },
+};

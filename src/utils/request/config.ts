@@ -1,7 +1,7 @@
 // 请求配置
 export const REQUEST_CONFIG = {
   // 基础URL
-  baseURL: "https://api.example.com",
+  baseURL: "http://dreamquest.seekly.tech",
   // 超时时间
   timeout: 10000,
   // 最大重试次数
