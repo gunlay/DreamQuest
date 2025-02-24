@@ -15,4 +15,5 @@ export const userApi = {
   saveUserInfo: async (userInfo: Omit<UserInfo, "phone">) => {
     return http.post("/dream/wx/saveUserInfo", userInfo).then((res) => res);
   },
+  
 };

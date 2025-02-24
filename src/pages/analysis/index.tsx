@@ -1,21 +1,35 @@
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { View, Text, Image, Button, RichText, Input } from "@tarojs/components";
-import DefaultDream from "@/assets/images/default_dream.png";
-// import Empty from "@/assets/images/empty.png";
-import style from "./index.module.scss";
+import DefaultDream from "@/assets/image/default_dream.png";
+// import Empty from "@/assets/image/empty.png";
 import { DreamData, DreamRecord, Message } from "./types";
+import { generateTags, getInitialAnalysis, parseHTMLtoJSFormat } from "./help";
+import style from "./index.module.scss";
 
-export default function Profile() {
+const Analysis = () =>  {
   const [dreamData, setDreamData] = useState<DreamData | null>(null);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const onMessageInput = (e: any) => {
-    const value = e.detail.value;
-    this.setData({
-      inputMessage: value,
-    });
+    setInputMessage(e.detail.value);
   };
+
+  const scrollToTop = () => {
+    // 添加延时确保消息渲染完成后再滚动
+    Taro.nextTick(() => {
+      Taro.pageScrollTo({
+        scrollTop: 9999,
+        duration: 300
+      })
+    })
+  }
+  const addMessage = (type: 'ai' | 'user', content: string) => {
+    setMessages((prev) => [...prev, { type, content }])
+    // 添加延时确保消息渲染完成后再滚动
+    scrollToTop()
+  }
+
   const sendMessage = async () => {
     if (!inputMessage || !inputMessage.trim()) return;
 
@@ -87,7 +101,7 @@ export default function Profile() {
           success: resolve,
           fail: reject,
         });
-      })) as WechatMiniprogram.RequestSuccessCallbackResult;
+      })) as any
 
       const response = result.data as any;
 
@@ -118,34 +132,25 @@ export default function Profile() {
       addMessage("ai", "抱歉，我现在有点累了，请稍后再试～");
     }
   };
-
-  useEffect(() => {
+  const initAnalysis = async () => {
     console.log("分析页面开始加载");
-
     // 从本地存储获取用户刚刚输入的梦境数据
     const _dreamData = Taro.getStorageSync("currentDream");
     console.log("从本地存储获取的梦境数据:", _dreamData);
 
-    if (!_dreamData) {
-      console.error("未找到梦境数据");
-      Taro.showToast({
-        title: "加载失败",
-        icon: "error",
-      });
-      return;
-    }
+    if (!_dreamData) return;
 
     // 获取已有的梦境记录
     const existingDreams = Taro.getStorageSync("dreams") || [];
-    console.log("已有的梦境记录数量:", existingDreams.length);
-
     const existingDream = existingDreams.find(
       (dream: DreamRecord) => dream.id === _dreamData.id
     );
 
+    let tempDreamData: DreamData = existingDream
+    let tempMessages: Message[] = existingDream?.messages || []
+
     if (existingDream) {
       console.log("找到已存在的记录:", existingDream);
-
       // 检查记录是否完整（是否有标签和解析）
       const hasTags = existingDream.tags && existingDream.tags.length > 0;
       const hasAnalysis =
@@ -153,13 +158,6 @@ export default function Profile() {
 
       if (!hasTags || !hasAnalysis) {
         console.log("记录不完整，需要生成标签和解析");
-
-        // 先加载基本数据
-        this.setData({
-          dreamData: existingDream,
-          messages: existingDream.messages || [],
-        });
-
         // 显示加载状态
         Taro.showLoading({
           title: "正在分析梦境...",
@@ -170,20 +168,13 @@ export default function Profile() {
           console.log("开始并行任务: AI分析、标签生成");
           // 并行执行两个任务：AI分析、标签生成
           const [analysisResult, tagsResult] = await Promise.all([
-            this.getInitialAnalysis(existingDream),
-            this.generateTags(existingDream),
+            getInitialAnalysis(existingDream),
+            generateTags(existingDream),
           ]);
 
-          console.log("任务完成:", {
-            analysisResult,
-            tagsResult,
-          });
-
           // 更新数据
-          this.setData({
-            "dreamData.tags": tagsResult,
-            messages: [{ type: "ai", content: analysisResult }],
-          });
+          tempDreamData.tags = tagsResult
+          tempMessages = [{ type: "ai", content: analysisResult }]
 
           // 隐藏加载状态
           Taro.hideLoading();
@@ -194,30 +185,24 @@ export default function Profile() {
             title: "分析失败",
             icon: "error",
           });
-          this.setData({
-            "dreamData.tags": ["神秘", "探索"],
-            messages: [
-              { type: "ai", content: "抱歉，我现在有点累了，请稍后再试～" },
-            ],
-          });
+          tempDreamData.tags = ["神秘", "探索"]
+          tempMessages = [
+            { type: "ai", content: "抱歉，我现在有点累了，请稍后再试～" },
+          ]
         }
       } else {
         console.log("记录完整，直接加载已有数据");
         // 如果记录完整，直接加载保存的分析和聊天记录
-        this.setData({
-          dreamData: existingDream,
-          messages: existingDream.messages || [],
-        });
       }
       console.log("已加载现有记录的图片:", existingDream.image);
 
       // 清除 currentDream，因为已经加载了已存在的记录
-      Taro.removeStorageSync("currentDream");
+      // Taro.removeStorageSync("currentDream");
     } else {
       console.log("创建新记录，基础数据:", _dreamData);
       // 如果是新记录，设置基本信息并请求 AI 分析
       const weekday = ["日", "一", "二", "三", "四", "五", "六"][
-        new Date(dreamData.date.replace(/\./g, "-")).getDay()
+        new Date(_dreamData.date.replace(/\./g, "-")).getDay()
       ];
 
       const initialDreamData = {
@@ -233,9 +218,7 @@ export default function Profile() {
       console.log("设置初始数据:", initialDreamData);
       console.log("使用的图片:", initialDreamData.image);
 
-      this.setData({
-        dreamData: initialDreamData,
-      });
+      tempDreamData = initialDreamData
 
       // 显示加载状态
       Taro.showLoading({
@@ -247,8 +230,8 @@ export default function Profile() {
         console.log("开始并行任务: AI分析、标签生成");
         // 并行执行两个任务：AI分析、标签生成
         const [analysisResult, tagsResult] = await Promise.all([
-          this.getInitialAnalysis(_dreamData),
-          this.generateTags(_dreamData),
+          getInitialAnalysis(_dreamData),
+          generateTags(_dreamData),
         ]);
 
         console.log("任务完成:", {
@@ -257,15 +240,12 @@ export default function Profile() {
         });
 
         // 更新数据
-        this.setData({
-          "dreamData.tags": tagsResult,
-        });
+        tempDreamData.tags = tagsResult
 
         // 添加 AI 回复
-        this.addMessage("ai", analysisResult);
-
+        tempMessages.push({type: 'ai', content: analysisResult})
         // 清除 currentDream，因为已经不需要了
-        Taro.removeStorageSync("currentDream");
+        // Taro.removeStorageSync("currentDream");
 
         // 隐藏加载状态
         Taro.hideLoading();
@@ -276,14 +256,25 @@ export default function Profile() {
           title: "分析失败",
           icon: "error",
         });
-        this.addMessage("ai", "抱歉，我现在有点累了，请稍后再试～");
+        tempMessages.push({type: 'ai', content: '抱歉，我现在有点累了，请稍后再试～'})
         // 设置默认标签
-        this.setData({
-          "dreamData.tags": ["神秘", "探索"],
-        });
+        tempDreamData.tags = ["神秘", "探索"]
       }
     }
+    console.log(tempDreamData);
+    Taro.setStorageSync("currentDream", tempDreamData)
+    setDreamData(tempDreamData)
+    setMessages(tempMessages)
+    scrollToTop()
+  }
+
+  useEffect(() => {
+    initAnalysis()
   }, []);
+
+  if (process.env.TARO_ENV !== 'h5') {
+    require('@tarojs/taro/html.css')
+  }
 
   return (
     <>
@@ -320,12 +311,16 @@ export default function Profile() {
               <View
                 key={i}
                 className={`${style["message"]} ${style[`${item.type}`]}`}
-                id="msg-{{index}}"
+                id={`msg-${i}`}
               >
-                <RichText
+                {/* <RichText
                   className={style["message-content"]}
-                  nodes={item.content}
-                ></RichText>
+                  nodes={parseHTMLtoJSFormat(item.content)}
+                ></RichText> */}
+                <View className={style["message-content"]}>
+                  <View className="taro_html" dangerouslySetInnerHTML={{ __html: item.content }}></View>
+                </View>
+                
               </View>
             ))}
           </View>
@@ -358,3 +353,5 @@ export default function Profile() {
     </>
   );
 }
+
+export default Analysis

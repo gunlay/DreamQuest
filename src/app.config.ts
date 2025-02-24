@@ -8,6 +8,7 @@ export default defineAppConfig({
     /** 子包开始位置 */
     "pages/agreement/index",
     "pages/login/index",
+    "pages/analysis/index",
     /** 子包结束位置 */
   ],
   window: {

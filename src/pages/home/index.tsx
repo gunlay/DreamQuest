@@ -1,10 +1,9 @@
 import { View, Text, Image, Input } from "@tarojs/components";
 import { useEffect, useState } from "react";
-import Taro from "@tarojs/taro";
 import Vocie from "@/assets/icon/voice.png";
 import MainBg from "@/assets/image/main/main_bg.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
-import { DreamData, DateInfo } from "./types";
+import {  DateInfo } from "./types";
 import DreamInput from "./DreamInput/index";
 // import DreamAnalysis from './DreamAnalysis/index';
 import TodayFortune from "./TodayFortune";
@@ -32,23 +31,8 @@ const Home: React.FC = () => {
     });
   };
 
-  const handleDreamSave = (dreamData: DreamData) => {
-    const existingDreams = Taro.getStorageSync("dreams") || [];
-    const updatedDreams = [dreamData, ...existingDreams];
-    Taro.setStorageSync("dreams", updatedDreams);
-
-    setShowDreamInput(false);
-    // fetchWeeklyReport();
-
-    Taro.navigateTo({
-      url: "/pages/analysis/index",
-    });
-  };
-
   useEffect(() => {
     updateDateInfo();
-    // fetchDreamTheory();
-    // fetchWeeklyReport();
   }, []);
 
   return (
