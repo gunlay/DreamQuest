@@ -8,6 +8,7 @@ import {
 } from "@tarojs/components";
 import { useEffect, useMemo, useState } from "react";
 import { generateDreamImage } from "@/api/home";
+import { chatApi } from "@/api/chat";
 import Taro from "@tarojs/taro";
 import { DreamInputProps, DreamInputState } from "./types";
 import style from "./index.module.scss";
@@ -44,18 +45,13 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
     }
 
     const { title, content, currentDate } = dreamInput;
-    console.warn("\n=== 开始保存梦境记录 ===");
-    console.warn("标题:", title);
-    console.warn("内容:", content);
-    console.warn("日期:", currentDate);
-
     // 显示加载状态
     setLoading(true);
     Taro.showLoading({
       title: "正在生成图片...",
       mask: true,
     });
-
+    const chatId = await chatApi.createNewChat(dreamInput)
     let dreamData = {
       id: Date.now(),
       title: title.trim(),
@@ -98,11 +94,10 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
       // 隐藏加载状态
       Taro.hideLoading();
 
+      props.onClose()
       // 跳转到分析页面
       Taro.navigateTo({
-        url: "/pages/analysis/index",
-        success: () => console.warn("成功跳转到分析页面"),
-        fail: (error) => console.error("跳转失败:", error),
+        url: `/pages/analysis/index?chatId=${chatId}`,
       });
     }
   };

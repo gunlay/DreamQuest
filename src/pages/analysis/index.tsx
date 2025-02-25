@@ -1,10 +1,10 @@
-import Taro from "@tarojs/taro";
+import Taro, { useDidHide } from "@tarojs/taro";
 import { useEffect, useState } from "react";
-import { View, Text, Image, Button, RichText, Input } from "@tarojs/components";
+import { View, Text, Image, Button, Input } from "@tarojs/components";
 import DefaultDream from "@/assets/image/default_dream.png";
 // import Empty from "@/assets/image/empty.png";
 import { DreamData, DreamRecord, Message } from "./types";
-import { generateTags, getInitialAnalysis, parseHTMLtoJSFormat } from "./help";
+import { generateTags, getInitialAnalysis } from "./help";
 import style from "./index.module.scss";
 
 const Analysis = () =>  {
@@ -197,7 +197,7 @@ const Analysis = () =>  {
       console.log("已加载现有记录的图片:", existingDream.image);
 
       // 清除 currentDream，因为已经加载了已存在的记录
-      // Taro.removeStorageSync("currentDream");
+      Taro.removeStorageSync("currentDream");
     } else {
       console.log("创建新记录，基础数据:", _dreamData);
       // 如果是新记录，设置基本信息并请求 AI 分析
@@ -245,7 +245,7 @@ const Analysis = () =>  {
         // 添加 AI 回复
         tempMessages.push({type: 'ai', content: analysisResult})
         // 清除 currentDream，因为已经不需要了
-        // Taro.removeStorageSync("currentDream");
+        Taro.removeStorageSync("currentDream");
 
         // 隐藏加载状态
         Taro.hideLoading();
@@ -262,15 +262,59 @@ const Analysis = () =>  {
       }
     }
     console.log(tempDreamData);
-    Taro.setStorageSync("currentDream", tempDreamData)
+    // Taro.setStorageSync("currentDream", tempDreamData)
     setDreamData(tempDreamData)
     setMessages(tempMessages)
     scrollToTop()
   }
+  const pageViewOut = () => {
+    if (!dreamData || !dreamData.id) return
+
+    // 获取已有的梦境记录
+    const existingDreams = Taro.getStorageSync('dreams') || []
+    
+    // 检查记录是否已存在
+    const index = existingDreams.findIndex((dream: DreamRecord) => dream.id === dreamData.id)
+    
+    // 获取 AI 的初始分析（第一条 AI 消息）
+    const firstAiMessage = messages.find(msg => msg.type === 'ai')
+    const aiAnalysis = firstAiMessage ? firstAiMessage.content : ''
+    
+    const newDream: DreamRecord = {
+      id: dreamData.id,
+      title: dreamData.title,
+      content: dreamData.content,
+      date: dreamData.date,
+      weekday: dreamData.weekday || '周一',
+      image: dreamData.image || '/assets/images/default_dream.png',
+      tags: dreamData.tags || ['神秘', '探索'],
+      analysis: aiAnalysis,
+      messages: messages
+    }
+
+    if (index === -1) {
+      // 如果记录不存在，添加到开头
+      existingDreams.unshift(newDream)
+    } else {
+      // 如果记录已存在，更新它
+      existingDreams[index] = newDream
+    }
+    console.log('unload', existingDreams);
+    
+    // 保存更新后的记录
+    Taro.setStorageSync('dreams', existingDreams)
+  }
 
   useEffect(() => {
     initAnalysis()
+    return () => {
+      pageViewOut()
+    }
   }, []);
+
+  useDidHide(() => {
+    pageViewOut()
+  })
 
   if (process.env.TARO_ENV !== 'h5') {
     require('@tarojs/taro/html.css')
@@ -313,12 +357,11 @@ const Analysis = () =>  {
                 className={`${style["message"]} ${style[`${item.type}`]}`}
                 id={`msg-${i}`}
               >
-                {/* <RichText
-                  className={style["message-content"]}
-                  nodes={parseHTMLtoJSFormat(item.content)}
-                ></RichText> */}
                 <View className={style["message-content"]}>
-                  <View className="taro_html" dangerouslySetInnerHTML={{ __html: item.content }}></View>
+                  <View 
+                    className="taro_html" 
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
                 </View>
                 
               </View>
