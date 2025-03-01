@@ -1,13 +1,13 @@
 import { View, Text, Image, Input } from "@tarojs/components";
 import { useEffect, useState } from "react";
+import { useDidShow } from "@tarojs/taro";
 import Vocie from "@/assets/icon/voice.png";
 import MainBg from "@/assets/image/main/main_bg.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
 import PageContainer from "@/Components/PageContainer";
 import classNames from "classnames";
 import { useSystemStore } from "@/store/systemStore";
-
-import { DateInfo } from "./types";
+import { homeApi } from "@/api/home";
 import DreamInput from "./DreamInput/index";
 // import DreamAnalysis from './DreamAnalysis/index';
 import TodayFortune from "./TodayFortune";
@@ -17,28 +17,42 @@ import style from "./index.module.scss";
 
 const Home: React.FC = () => {
   const { appBarHeight } = useSystemStore();
-  const [dateInfo, setDateInfo] = useState<DateInfo>({
+  const [homeInfo, setHomeInfo] = useState<{
+    content: string;
+    date: string;
+    title: string;
+    week: string;
+  }>({
+    content: "",
     date: "",
-    weekday: "",
+    title: "",
+    week: "",
   });
 
   const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
 
-  const updateDateInfo = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-    setDateInfo({
-      date: `${year}.${month}.${day}`,
-      weekday: `周${weekdays[now.getDay()]}`,
+  // const updateDateInfo = () => {
+  //   const now = new Date();
+  //   const year = now.getFullYear();
+  //   const month = String(now.getMonth() + 1).padStart(2, "0");
+  //   const day = String(now.getDate()).padStart(2, "0");
+  //   const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+  //   setDateInfo({
+  //     date: `${year}.${month}.${day}`,
+  //     weekday: `周${weekdays[now.getDay()]}`,
+  //   });
+  // };
+  useDidShow(() => {
+    homeApi.fetchHomeInfo().then((res) => {
+      setHomeInfo(res);
     });
-  };
+  });
 
-  useEffect(() => {
-    updateDateInfo();
-  }, []);
+  // useEffect(() => {
+  //   homeApi.fetchHomeInfo().then((res) => {
+  //     setHomeInfo(res);
+  //   });
+  // }, []);
 
   return (
     <PageContainer
@@ -63,8 +77,8 @@ const Home: React.FC = () => {
             <Text className={style["app-name"]}>梦寻</Text>
           </View>
           <View className={style["date-wrapper"]}>
-            <Text className={style["date"]}>{dateInfo.date}</Text>
-            <Text className={style["weekday"]}>{dateInfo.weekday}</Text>
+            <Text className={style["date"]}>{homeInfo.date}</Text>
+            <Text className={style["weekday"]}>{homeInfo.week}</Text>
           </View>
         </View>
 
@@ -72,11 +86,9 @@ const Home: React.FC = () => {
         <View className={style["dream-theory"]}>
           <View className={style["theory-title"]}>
             <Text>✨</Text>
-            <Text className={style["theory-txt"]}>弗洛伊德的梦境理论</Text>
+            <Text className={style["theory-txt"]}>{homeInfo.title}</Text>
           </View>
-          <Text className={style["theory-content"]}>
-            弗洛伊德认为，梦境是潜意识欲望和冲突的表现，尤其是那些被压抑的欲望。昨晚的梦，是不是某种未实现的渴望？
-          </Text>
+          <Text className={style["theory-content"]}>{homeInfo.content}</Text>
         </View>
 
         {/* Fortune Card */}

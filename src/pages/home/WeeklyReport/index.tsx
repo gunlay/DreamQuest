@@ -1,7 +1,11 @@
 import { Text, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import classNames from "classnames";
-import { generateWeeklyReportContent, getWeeklyDreams } from "@/api/home";
+import {
+  generateWeeklyReportContent,
+  getWeeklyDreams,
+  homeApi,
+} from "@/api/home";
 import { useEffect, useState } from "react";
 import { WeeklyReportParams } from "../types";
 import style from "./index.module.scss";
@@ -30,6 +34,8 @@ const WeeklyReport = () => {
 
     try {
       const weeklyDreams = getWeeklyDreams();
+      const _weeklyDreams = await homeApi.fetchWeeklyReport();
+      console.log("_weeklyDreams", _weeklyDreams);
 
       if (weeklyDreams.length === 0) {
         setWeekInfo((prev) => ({

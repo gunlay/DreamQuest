@@ -56,7 +56,6 @@
     "@tarojs/runtime": "3.6.34",
     "@tarojs/shared": "3.6.34",
     "@tarojs/taro": "3.6.34",
-    "axios": "^1.7.9",
     "classnames": "^2.5.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

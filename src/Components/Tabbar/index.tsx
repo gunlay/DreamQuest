@@ -1,6 +1,7 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Taro, { useDidShow } from "@tarojs/taro";
 import classNames from "classnames";
+import { useLoginStore } from "@/store/loginStore";
 import { Image, Text, View } from "@tarojs/components";
 import { useTabbarStore } from "@/store/tabbarStore";
 import styles from "./index.module.scss";
@@ -24,6 +25,7 @@ const LoginButton: FC<{ className?: string }> = ({ className }) => {
 
 const Tabbar: FC<{ currentTab: number }> = ({ currentTab }) => {
   const { tabs, switchTab } = useTabbarStore();
+  const { isLogin: _isLogin, checkLogin } = useLoginStore();
   const [isLogin, setIsLogin] = useState(false);
   const onClickItem = (_, index) => {
     if (currentTab === index) return;
@@ -32,6 +34,14 @@ const Tabbar: FC<{ currentTab: number }> = ({ currentTab }) => {
   useDidShow(() => {
     Taro.hideTabBar().catch(() => 0);
   });
+
+  useEffect(() => {
+    checkLogin().then((res) => {
+      if (res) {
+        setIsLogin(res);
+      }
+    });
+  }, [_isLogin]);
 
   return (
     <View className={`${styles.tabbar} safe-area-inset-bottom`}>
@@ -47,15 +57,15 @@ const Tabbar: FC<{ currentTab: number }> = ({ currentTab }) => {
             width: `calc(100% / ${tabs.length})`,
           }}
         >
-          <Image
+          {/* <Image
             src={
               currentTab === index
                 ? `@/assets/images/tabbar/${item.key}_selected`
                 : `@/assets/images/tabbar/${item.key}`
             }
             className={styles.icon}
-          />
-          <Text className={styles.text}>{item.text}</Text>
+          /> */}
+          <View className={styles.text}>{item.text}</View>
         </View>
       ))}
       {!isLogin ? (

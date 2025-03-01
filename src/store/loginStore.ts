@@ -26,7 +26,7 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       Taro.setStorageSync("session_key", data.sessionKey);
       set({ isLogin: true, token: data.token });
       // 6. 获取用户完整信息
-      await useUserStore.getState().fetchUserInfo();
+      // await useUserStore.getState().fetchUserInfo();
       return true;
     } catch (error) {
       Taro.showToast({ title: "登录失败", icon: "none" });

@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: "协议",
+  navigationBarTitleText: "梦寻",
 });

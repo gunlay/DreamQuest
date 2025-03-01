@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import classNames from "classnames";
 import Taro from "@tarojs/taro";
 import { Picker, Text, View } from "@tarojs/components";
-import { Fortune } from "../types";
+import { homeApi } from "@/api/home";
+import { FortuneDTO, HoroType, LuckDTO } from "@/api/types/home";
 import style from "./index.module.scss";
 
 const zodiacs = [
@@ -21,15 +22,15 @@ const zodiacs = [
 ];
 
 const TodayFortune = () => {
-  const [fortune, setFortune] = useState<Fortune>({
-    overall: "",
-    career: "",
+  const [fortune, setFortune] = useState<FortuneDTO & LuckDTO>({
+    all: "",
+    work: "",
     love: "",
     money: "",
     health: "",
-    luckyNumber: "",
-    luckyColor: "",
-    luckyDirection: "",
+    luckynumber: "",
+    luckycolor: "",
+    luckyconstellation: "",
   });
   const [zodiacIndex, setodiacIndex] = useState<number>(-1);
   const [hasSelectedZodiac, setHasSelectedZodiac] = useState<boolean>(false);
@@ -40,7 +41,7 @@ const TodayFortune = () => {
     setIsFortuneExpanded((prev) => !prev);
   };
   const fetchFortune = async (zodiac: string) => {
-    const zodiacMap: { [key: string]: string } = {
+    const zodiacMap: Record<string, HoroType> = {
       白羊座: "aries",
       金牛座: "taurus",
       双子座: "gemini",
@@ -54,51 +55,31 @@ const TodayFortune = () => {
       水瓶座: "aquarius",
       双鱼座: "pisces",
     };
+    const zodiacEn = zodiacMap[zodiac];
+    if (!zodiacEn) throw new Error("无效的星座选择");
+    const result = await homeApi.fetchHoroScope({
+      time: "today",
+      type: zodiacEn,
+    });
+    console.log(result);
 
-    try {
-      const zodiacEn = zodiacMap[zodiac];
-      if (!zodiacEn) throw new Error("无效的星座选择");
-
-      const result = await Taro.request({
-        url: "https://api.vvhan.com/api/horoscope",
-        method: "GET",
-        data: {
-          type: zodiacEn,
-          time: "today",
-        },
-      });
-
-      const { data } = result;
-      if (data?.success) {
-        Taro.setStorageSync("userZodiac", zodiac);
-        setFortune((prev) => ({
-          ...prev,
-          overall: data.data.fortunetext.all || "",
-          career: data.data.fortunetext.work || "",
-          love: data.data.fortunetext.love || "",
-          money: data.data.fortunetext.money || "",
-          health: data.data.fortunetext.health || "",
-          luckyNumber: data.data.luckynumber || "",
-          luckyColor: data.data.luckycolor || "",
-          luckyDirection: data.data.luckyconstellation || "",
-        }));
-        setHasSelectedZodiac(true);
-      }
-    } catch (error) {
-      console.error("获取运势失败:", error);
-      Taro.showToast({
-        title: "获取运势失败",
-        icon: "error",
-      });
-    }
+    const { fortunetext, luckynumber, luckycolor, luckyconstellation } = result;
+    Taro.setStorageSync("userZodiac", zodiac);
+    setFortune({
+      ...fortunetext,
+      luckynumber,
+      luckycolor,
+      luckyconstellation,
+    });
+    setHasSelectedZodiac(true);
   };
 
-  const handleZodiacChange = (e: any) => {
+  const handleZodiacChange = async (e: any) => {
     const index = parseInt(e.detail.value);
+    await fetchFortune(zodiacs[index]);
     setodiacIndex(index);
     setHasSelectedZodiac(true);
     setIsFortuneExpanded(true);
-    fetchFortune(zodiacs[index]);
   };
 
   useEffect(() => {
@@ -141,15 +122,11 @@ const TodayFortune = () => {
         >
           <View className={style["fortune-item"]}>
             <Text className={style["item-title"]}>✨ 整体运势：</Text>
-            <Text className={style["item-content"]}>{fortune.overall}</Text>
-          </View>
-          <View className={style["fortune-item"]}>
-            <Text className={style["item-title"]}>✨ 整体运势：</Text>
-            <Text className={style["item-content"]}>{fortune.overall}</Text>
+            <Text className={style["item-content"]}>{fortune.all}</Text>
           </View>
           <View className={style["fortune-item"]}>
             <Text className={style["item-title"]}>💼 事业运势：</Text>
-            <Text className={style["item-content"]}>{fortune.career}</Text>
+            <Text className={style["item-content"]}>{fortune.work}</Text>
           </View>
           <View className={style["fortune-item"]}>
             <Text className={style["item-title"]}>💕 爱情运势：</Text>
@@ -164,9 +141,9 @@ const TodayFortune = () => {
             <Text className={style["item-content"]}>{fortune.health}</Text>
           </View>
           <View className={style["fortune-numbers"]}>
-            <Text>🔢 幸运数字：{fortune.luckyNumber}</Text>
-            <Text>🎨 幸运色：{fortune.luckyColor}</Text>
-            <Text>🧭 幸运星座：{fortune.luckyDirection}</Text>
+            <Text>🔢 幸运数字：{fortune.luckynumber}</Text>
+            <Text>🎨 幸运色：{fortune.luckycolor}</Text>
+            <Text>🧭 幸运星座：{fortune.luckyconstellation}</Text>
           </View>
         </View>
       )}

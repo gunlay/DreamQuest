@@ -1,12 +1,15 @@
 import Taro from "@tarojs/taro";
 import { config, getAuth } from "@/utils/request/config";
+import { http } from "@/utils/request";
 import {
   DeepSeekResponse,
   DreamRecord,
+  HoroScopeDTO,
+  HoroType,
+  TimeType,
   WeeklyReportContent,
   WeeklyReportData,
 } from "./types/home";
-
 
 // 初始化API客户端
 const client = {
@@ -28,6 +31,28 @@ const client = {
         },
       });
     });
+  },
+};
+
+export const homeApi = {
+  fetchHomeInfo: async () => {
+    return http
+      .get<{
+        content: string;
+        date: string;
+        title: string;
+        week: string;
+      }>("/dream/ai/homePage")
+      .then((res) => res);
+  },
+  fetchHoroScope: async (params: { time: TimeType; type: HoroType }) => {
+    return http
+      .post<HoroScopeDTO>("/dream/ai/horoscope", params)
+      .then((res) => res);
+  },
+
+  fetchWeeklyReport: async () => {
+    return http.post<string>("/dream/ai/weekly-report").then((res) => res);
   },
 };
 
