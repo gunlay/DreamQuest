@@ -93,29 +93,25 @@
       // max-width: 80%;
       word-wrap: break-word;
     }
+
+    &.ai {
+      justify-content: flex-start;
+
+      .message-content {
+        background-color: #f0f0f0;
+        margin-right: auto;
+      }
+    }
+    &.user {
+      justify-content: flex-end;
+      padding-right: 28px;
+      .message-content {
+        background-color: #971fcf;
+        color: white;
+        margin-left: auto;
+      }
+    }
   }
-}
-
-.message.ai {
-  justify-content: flex-start;
-}
-
-.message.user {
-  justify-content: flex-end;
-  padding-right: 28px;
-}
-
-/* AI 消息样式 */
-.message.ai .message-content {
-  background-color: #f0f0f0;
-  margin-right: auto;
-}
-
-/* 用户消息样式 */
-.message.user .message-content {
-  background-color: #971fcf;
-  color: white;
-  margin-left: auto;
 }
 
 /* Rich Text 样式 */

@@ -1,6 +1,6 @@
 import { http } from "@/utils/request/index";
 import Taro from "@tarojs/taro";
-import { UserInfo } from "../types/user";
+import { UserInfo } from "./types/user";
 
 export const userApi = {
   login: async () => {

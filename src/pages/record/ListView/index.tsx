@@ -65,6 +65,7 @@ const ListView = () => {
     setDreamList(groupedDreams);
     setOriginalDreamList(groupedDreams);
   }, []);
+
   return (
     <View className={style["list-view"]}>
       <View className={style["search-area"]}>
