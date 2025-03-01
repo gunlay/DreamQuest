@@ -21,7 +21,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 1001;
     background: transparent;
     padding: 40px 28px 0;
     backdrop-filter: blur(10px);
@@ -71,6 +71,6 @@
     position: relative;
     z-index: 100;
     padding: 0 28px;
-    margin-top: 152px;
+    margin-top: 70px;
   }
 }

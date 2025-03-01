@@ -4,4 +4,10 @@ page {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+// 安全区域占位元素（可选）
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+  // background: transparent;
 }

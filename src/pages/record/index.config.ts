@@ -1,6 +1,4 @@
 export default {
-  navigationBarTitleText: '梦境记录',
-  // navigationBarBackgroundColor: '#ffffff',
-  // navigationBarTextStyle: 'black',
-  // backgroundColor: '#f8f8f8'
-} 
+  navigationBarTitleText: "梦境记录",
+  navigationStyle: "custom",
+};

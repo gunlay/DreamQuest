@@ -1,3 +1,5 @@
+import tabbarList from "./Components/Tabbar/tabbarList";
+
 export default defineAppConfig({
   pages: [
     /** 主包开始位置 */
@@ -18,28 +20,10 @@ export default defineAppConfig({
     navigationBarTextStyle: "white",
   },
   tabBar: {
+    custom: true,
     color: "#999999",
     selectedColor: "#971FCF",
     backgroundColor: "#ffffff",
-    list: [
-      {
-        pagePath: "pages/home/index",
-        text: "Dream",
-        iconPath: "assets/image/tabbar/dream.png",
-        selectedIconPath: "assets/image/tabbar/dream_selected.png",
-      },
-      {
-        pagePath: "pages/record/index",
-        text: "记录",
-        iconPath: "assets/image/tabbar/record.png",
-        selectedIconPath: "assets/image/tabbar/record_selected.png",
-      },
-      {
-        pagePath: "pages/profile/index",
-        text: "我的",
-        iconPath: "assets/image/tabbar/profile.png",
-        selectedIconPath: "assets/image/tabbar/profile_selected.png",
-      },
-    ],
+    list: tabbarList,
   },
 });

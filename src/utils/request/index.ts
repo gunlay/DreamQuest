@@ -1,5 +1,6 @@
 import Taro from "@tarojs/taro";
 import { REQUEST_CONFIG, HTTP_STATUS } from "./config";
+import { navigateToLogin } from "../navigate";
 
 // 定义响应接口
 interface ResponseData<T = any> {
@@ -28,7 +29,7 @@ export class HttpRequest {
   // 请求拦截器
   private requestInterceptor(options: RequestOptions): RequestOptions {
     // 添加token
-    const token = Taro.getStorageSync("token");
+    const token = Taro.getStorageSync("auth_token");
     const header = {
       "Content-Type": "application/json",
       ...options.header,
@@ -52,7 +53,13 @@ export class HttpRequest {
     const { statusCode, data } = response;
 
     // 请求成功
-    if (statusCode === HTTP_STATUS.SUCCESS) {
+    if (
+      [
+        HTTP_STATUS.SUCCESS,
+        HTTP_STATUS.ACCEPTED,
+        HTTP_STATUS.ACCEPTED,
+      ].includes(statusCode)
+    ) {
       if (data.code === 0) {
         return data.data;
       }
@@ -72,7 +79,7 @@ export class HttpRequest {
       case 401:
         // token过期，清除登录信息
         Taro.clearStorageSync();
-        Taro.navigateTo({ url: "/pages/login/index" });
+        navigateToLogin();
         break;
       default:
         Taro.showToast({

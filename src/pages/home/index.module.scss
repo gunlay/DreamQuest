@@ -1,8 +1,6 @@
 .container {
   position: relative;
-  // min-height: 100vh;
-  padding: 0 28px;
-  padding-bottom: 154px;
+  padding: 0 28px 330px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -102,7 +100,7 @@
 /* 底部固定区域 */
 .input-section {
   position: fixed;
-  bottom: 10px;
+  bottom: 110px;
   left: 28px;
   right: 28px;
   z-index: 100;
@@ -148,6 +146,7 @@
       padding: 4rpx;
       box-sizing: border-box;
       position: relative;
+      display: flex;
 
       input {
         width: 100%;
@@ -160,7 +159,7 @@
         box-sizing: border-box;
       }
 
-      .voice-btn {
+      .voice-icon {
         width: 110px;
         height: 74px;
         background: linear-gradient(

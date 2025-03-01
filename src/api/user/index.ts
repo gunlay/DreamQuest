@@ -9,11 +9,10 @@ export const userApi = {
     Taro.setStorageSync("logincode", code);
 
     return http
-      .post<{ token: string }>("/dream/wx/login", { code })
+      .post<{ token: string; sessionKey: string }>("/dream/wx/login", { code })
       .then((res) => res);
   },
   saveUserInfo: async (userInfo: Omit<UserInfo, "phone">) => {
     return http.post("/dream/wx/saveUserInfo", userInfo).then((res) => res);
   },
-  
 };
