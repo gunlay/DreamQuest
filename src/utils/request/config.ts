@@ -2,7 +2,7 @@
 export const REQUEST_CONFIG = {
   // 临时url
   baseURL: "http://139.224.52.179:8080",
-  // "http://dreamquest.seekly.tech"
+  // "https://dreamquest.top"
   // 超时时间
   timeout: 100000,
   // 最大重试次数

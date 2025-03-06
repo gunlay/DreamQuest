@@ -60,10 +60,10 @@ const Login = () => {
         <View className={style.desc}>请授权登录以使用完整功能</View>
         <Button
           className={style["login-btn"]}
-          onClick={handleLogin}
+          // onClick={handleLogin}
           type="primary"
-          openType="getPhoneNumber"
-          onGetPhoneNumber={(x) => {
+          openType="getRealtimePhoneNumber"
+          onGetRealTimePhoneNumber={(x) => {
             console.log("x", x);
           }}
           // hover-className="button-hover"
