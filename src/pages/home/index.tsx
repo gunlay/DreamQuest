@@ -1,7 +1,7 @@
 import { View, Text, Image, Input } from "@tarojs/components";
 import { useEffect, useState } from "react";
 import { useDidShow } from "@tarojs/taro";
-import Vocie from "@/assets/icon/voice.png";
+import SendIcon from "@/assets/icon/send.png";
 import MainBg from "@/assets/image/main/main_bg.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
 import PageContainer from "@/Components/PageContainer";
@@ -117,11 +117,9 @@ const Home: React.FC = () => {
                 placeholderStyle="color: rgba(60, 60, 67, 0.6)"
                 disabled
               />
-              <Image
-                className={style["voice-icon"]}
-                src={Vocie}
-                mode="aspectFit"
-              />
+            </View>
+            <View className={style["send-icon"]}>
+              <Image src={SendIcon} mode="aspectFit" className={style.icon} />
             </View>
           </View>
         </View>

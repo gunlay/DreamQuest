@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { View, Text, ScrollView, Image, Button } from "@tarojs/components";
+import { useLoginStore } from "@/store/loginStore";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { profileApi } from "@/api/profile";
 import PageContainer from "@/Components/PageContainer";
@@ -12,6 +13,7 @@ import style from "./index.module.scss";
 
 export default function Profile() {
   const { appBarHeight } = useSystemStore();
+  const { isLogin } = useLoginStore();
   const [messageInfo, setMessageInfo] = useState<{
     lastId: string;
     messages: Message[];
@@ -24,6 +26,7 @@ export default function Profile() {
     num: 500,
   });
   const loadDreamsAndAnalyze = async () => {
+    if (!isLogin) return;
     // const data = await chatApi.fetchChatStatistics();
     const [_statistic, report] = await Promise.allSettled([
       await profileApi.fetchChatStatistics(),

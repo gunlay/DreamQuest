@@ -131,6 +131,8 @@
   }
 
   .input-area {
+    display: flex;
+    align-items: center;
     margin-top: 16px;
     margin: 0 28px;
 
@@ -158,26 +160,25 @@
         color: #333;
         box-sizing: border-box;
       }
+    }
+    .send-icon {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 110px;
+      height: 74px;
+      margin-left: 16px;
+      background: linear-gradient(
+        180deg,
+        rgba(207, 20, 191, 0.1) 0%,
+        rgba(151, 31, 207, 0.1) 100%
+      );
+      border-radius: 26px;
 
-      .voice-icon {
-        width: 110px;
-        height: 74px;
-        background: linear-gradient(
-          180deg,
-          rgba(151, 31, 207, 0.15) 0%,
-          rgba(207, 20, 191, 0.15) 100%
-        );
-        border-radius: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        image {
-          width: 48px;
-          height: 48px;
-          filter: brightness(0) saturate(100%) invert(35%) sepia(74%)
-            saturate(3042%) hue-rotate(271deg) brightness(87%) contrast(93%);
-        }
+      .icon {
+        width: 40px;
+        height: 44px;
       }
     }
   }

@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import Taro, { useDidShow } from "@tarojs/taro";
 import classNames from "classnames";
 import { useLoginStore } from "@/store/loginStore";
-import { Image, Text, View } from "@tarojs/components";
+import { Image, View } from "@tarojs/components";
 import { useTabbarStore } from "@/store/tabbarStore";
 import styles from "./index.module.scss";
 
@@ -18,7 +18,7 @@ const LoginButton: FC<{ className?: string }> = ({ className }) => {
       onClick={login}
     >
       {/* <Image></Image> */}
-      <Text>登录</Text>
+      <View>登录</View>
     </View>
   );
 };
