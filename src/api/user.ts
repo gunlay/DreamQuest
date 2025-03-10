@@ -5,7 +5,6 @@ import { UserInfo } from "./types/user";
 export const userApi = {
   login: async () => {
     const { code } = await Taro.login();
-    console.log("data", code);
     Taro.setStorageSync("logincode", code);
 
     return http

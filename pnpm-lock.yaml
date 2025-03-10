@@ -59,9 +59,6 @@ importers:
       '@tarojs/taro':
         specifier: 3.6.34
         version: 3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3)
-      axios:
-        specifier: ^1.7.9
-        version: 1.7.9
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -89,7 +86,7 @@ importers:
         version: 3.6.34(@swc/helpers@0.5.15)(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3)
       '@tarojs/test-utils-react':
         specifier: ^0.1.1
-        version: 0.1.1(hizpqqlbpson3yispd4vwz2c2m)
+        version: 0.1.1(2e953902d3861a3be5dd861ed423dde4)
       '@tarojs/webpack5-runner':
         specifier: 3.6.34
         version: 3.6.34(@babel/core@7.26.9)(@swc/core@1.3.96(@swc/helpers@0.5.15))(@swc/helpers@0.5.15)(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@types/react@18.3.18)(postcss@8.5.3)(react@18.3.1))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))(@types/react@18.3.18)(@vue/compiler-sfc@3.5.13)(postcss@8.5.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(webpack@5.78.0(@swc/core@1.3.96(@swc/helpers@0.5.15)))
@@ -1325,28 +1322,24 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@swc/core-linux-arm64-musl@1.3.96':
     resolution: {integrity: sha512-i5/UTUwmJLri7zhtF6SAo/4QDQJDH2fhYJaBIUhrICmIkRO/ltURmpejqxsM/ye9Jqv5zG7VszMC0v/GYn/7BQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@swc/core-linux-x64-gnu@1.3.96':
     resolution: {integrity: sha512-USdaZu8lTIkm4Yf9cogct/j5eqtdZqTgcTib4I+NloUW0E/hySou3eSyp3V2UAA1qyuC72ld1otXuyKBna0YKQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@swc/core-linux-x64-musl@1.3.96':
     resolution: {integrity: sha512-QYErutd+G2SNaCinUVobfL7jWWjGTI0QEoQ6hqTp7PxCJS/dmKmj3C5ZkvxRYcq7XcZt7ovrYCTwPTHzt6lZBg==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@swc/core-win32-arm64-msvc@1.3.96':
     resolution: {integrity: sha512-hjGvvAduA3Un2cZ9iNP4xvTXOO4jL3G9iakhFsgVhpkU73SGmK7+LN8ZVBEu4oq2SUcHO6caWvnZ881cxGuSpg==}
@@ -1415,7 +1408,6 @@ packages:
     engines: {node: '>= 16'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@tarojs/binding-win32-x64-msvc@3.6.34':
     resolution: {integrity: sha512-vEO0autpmk1k+EHOdEsJcDgozzJn6BsDeJcD3nwKMMBfRoyE+nilUJD6XFmFP/GaBRP4nLgsUvsshVaC+GOJ5A==}
@@ -1499,28 +1491,24 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@tarojs/plugin-doctor-linux-arm64-musl@0.0.11':
     resolution: {integrity: sha512-SXes1wj2MLQod50+9sgSZlN4eli3VXVxMNqdk03ArrWtFURCpuDiHwRERjoqlo91Hf4IxU6zU7ml86gPZ0dkaw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@tarojs/plugin-doctor-linux-x64-gnu@0.0.11':
     resolution: {integrity: sha512-nyW2tjzYA8nw39pKpaYtpGbEOZNRTV97Ir+UEvsuZbAr5F1lV2Q+2IwN8dGY41/lXw9JQay6FDRqUPRXAMB4kw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@tarojs/plugin-doctor-linux-x64-musl@0.0.11':
     resolution: {integrity: sha512-epKcAwJdVYMGmeWdqGZrdOS+nhDz4SiGlZqYMcDjSlGK7OM0wlSor6xpz59adYVe86t/a/gjimu5IT2ofVEfsA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@tarojs/plugin-doctor-win32-ia32-msvc@0.0.11':
     resolution: {integrity: sha512-UBKdbbtDK1QmsRZiKEjo+TtSt+E/ljIzx5wbDna2yEuDtJqBwNg6SqkYg3LxUiJK8O5hwwVJGdJWI9a9bHpI8w==}
@@ -4928,28 +4916,24 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.29.1:
     resolution: {integrity: sha512-UKMFrG4rL/uHNgelBsDwJcBqVpzNJbzsKkbI3Ja5fg00sgQnHw/VrzUTEc4jhZ+AN2BvQYz/tkHu4vt1kLuJyw==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.29.1:
     resolution: {integrity: sha512-u1S+xdODy/eEtjADqirA774y3jLcm8RPtYztwReEXoZKdzgsHYPl0s5V52Tst+GKzqjebkULT86XMSxejzfISw==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.29.1:
     resolution: {integrity: sha512-L0Tx0DtaNUTzXv0lbGCLB/c/qEADanHbu4QdcNOXLIe1i8i22rZRpbT3gpWYsCh9aSL9zFujY/WmEXIatWvXbw==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.29.1:
     resolution: {integrity: sha512-QoOVnkIEFfbW4xPi+dpdft/zAKmgLgsRHfJalEPYuJDOWf7cLQzYg0DEh8/sn737FaeMJxHZRc1oBreiwZCjog==}
@@ -9024,7 +9008,7 @@ snapshots:
       '@tarojs/runtime': 3.6.34(@tarojs/shared@3.6.34)
       '@tarojs/service': 3.6.34(@swc/helpers@0.5.15)(@tarojs/shared@3.6.34)(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))
       '@tarojs/shared': 3.6.34
-      '@tarojs/taro-h5': 3.6.34(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))
+      '@tarojs/taro-h5': 3.6.34(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@types/react@18.3.18)(postcss@8.5.3)(react@18.3.1))(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))
       babel-plugin-transform-taroapi: 3.6.34
       change-case: 4.1.2
       lodash-es: 4.17.21
@@ -9051,7 +9035,7 @@ snapshots:
       '@tarojs/runtime': 3.6.34(@tarojs/shared@3.6.34)
       '@tarojs/service': 3.6.34(@swc/helpers@0.5.15)(@tarojs/shared@3.6.34)(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))
       '@tarojs/shared': 3.6.34
-      '@tarojs/taro-h5': 3.6.34(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))
+      '@tarojs/taro-h5': 3.6.34(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@types/react@18.3.18)(postcss@8.5.3)(react@18.3.1))(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))
       axios: 1.7.9
       babel-plugin-transform-taroapi: 3.6.34
       base64-js: 1.5.1
@@ -9176,7 +9160,7 @@ snapshots:
 
   '@tarojs/shared@3.6.34': {}
 
-  '@tarojs/taro-h5@3.6.34(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))':
+  '@tarojs/taro-h5@3.6.34(@tarojs/components@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@types/react@18.3.18)(postcss@8.5.3)(react@18.3.1))(@tarojs/taro@3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@types/react@18.3.18)(postcss@8.5.3))':
     dependencies:
       '@tarojs/api': 3.6.34
       '@tarojs/components': 3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@types/react@18.3.18)(postcss@8.5.3)(react@18.3.1)
@@ -9229,7 +9213,7 @@ snapshots:
       - '@babel/core'
       - supports-color
 
-  '@tarojs/test-utils-react@0.1.1(hizpqqlbpson3yispd4vwz2c2m)':
+  '@tarojs/test-utils-react@0.1.1(2e953902d3861a3be5dd861ed423dde4)':
     dependencies:
       '@babel/runtime': 7.26.9
       '@tarojs/components': 3.6.34(@tarojs/helper@3.6.34(@swc/helpers@0.5.15))(@tarojs/runtime@3.6.34(@tarojs/shared@3.6.34))(@tarojs/shared@3.6.34)(@types/react@18.3.18)(postcss@8.5.3)(react@18.3.1)

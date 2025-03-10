@@ -17,16 +17,16 @@ export const useLoginStore = create<LoginState>((set, get) => ({
 
   login: async () => {
     try {
-      // 2. 获取用户信息
+      // 1. 获取用户信息
       await useUserStore.getState().getWxUserProfile();
-      // 第二步：调用后端登录接口
+      // 2. 调用后端登录接口
       const data = await userApi.login();
-      // 第三步：保存token
+      // 3.保存token
       Taro.setStorageSync("auth_token", data.token);
-      Taro.setStorageSync("session_key", data.sessionKey);
       set({ isLogin: true, token: data.token });
-      // 6. 获取用户完整信息
-      // await useUserStore.getState().fetchUserInfo();
+      // 4. 保存用户信息
+      await userApi.saveUserInfo(useUserStore.getState().userInfo)
+      Taro.setStorageSync("session_key", data.sessionKey);
       return true;
     } catch (error) {
       Taro.showToast({ title: "登录失败", icon: "none" });

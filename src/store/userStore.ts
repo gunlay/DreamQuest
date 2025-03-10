@@ -3,23 +3,39 @@ import Taro from "@tarojs/taro";
 
 interface UserInfo {
   nickName?: string;
-  avatarUrl?: string;
+  avatarUrl: string;
   phoneNumber?: string;
   openId?: string;
-  unionId?: string;
+  city: string;
+  country: string;
+  gender?: number;
+  phone?: string;
+  province?: string;
 }
 
 interface UserState {
-  userInfo: UserInfo | null;
+  userInfo: UserInfo;
   updateUserInfo: (info: UserInfo) => void;
   clearUserInfo: () => void;
   getWxUserProfile: () => Promise<void>;
-  getWxPhoneNumber: (encryptedData: string, iv: string) => Promise<void>;
+  // getWxPhoneNumber: (encryptedData: string, iv: string) => Promise<void>;
   fetchUserInfo: () => Promise<void>;
 }
 
+let temp = {
+  nickName: '',
+  avatarUrl: '',
+  phoneNumber: '',
+  openId: '',
+  city: '',
+  country: '',
+  gender: 0,
+  phone: '',
+  province: '',
+}
+
 export const useUserStore = create<UserState>((set, get) => ({
-  userInfo: null,
+  userInfo: {...temp},
 
   updateUserInfo: (info) => {
     const newInfo = { ...get().userInfo, ...info };
@@ -28,7 +44,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   clearUserInfo: () => {
-    set({ userInfo: null });
+    set({ userInfo: temp });
     Taro.removeStorage({ key: "user_info" });
   },
 
@@ -43,25 +59,25 @@ export const useUserStore = create<UserState>((set, get) => ({
     }
   },
 
-  getWxPhoneNumber: async (encryptedData, iv) => {
-    try {
-      const { data } = await Taro.request({
-        url: "/api/getPhoneNumber",
-        method: "POST",
-        data: {
-          encryptedData,
-          iv,
-          sessionKey: Taro.getStorageSync("session_key"),
-        },
-      });
+  // getWxPhoneNumber: async (encryptedData, iv) => {
+  //   try {
+  //     const { data } = await Taro.request({
+  //       url: "/api/getPhoneNumber",
+  //       method: "POST",
+  //       data: {
+  //         encryptedData,
+  //         iv,
+  //         sessionKey: Taro.getStorageSync("session_key"),
+  //       },
+  //     });
 
-      if (data.phoneNumber) {
-        get().updateUserInfo({ phoneNumber: data.phoneNumber });
-      }
-    } catch (error) {
-      Taro.showToast({ title: "获取手机号失败", icon: "none" });
-    }
-  },
+  //     if (data.phoneNumber) {
+  //       get().updateUserInfo({ phoneNumber: data.phoneNumber });
+  //     }
+  //   } catch (error) {
+  //     Taro.showToast({ title: "获取手机号失败", icon: "none" });
+  //   }
+  // },
 
   fetchUserInfo: async () => {
     try {

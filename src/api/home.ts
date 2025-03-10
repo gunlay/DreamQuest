@@ -47,7 +47,7 @@ export const homeApi = {
   },
   fetchHoroScope: async (params: { time: TimeType; type: HoroType }) => {
     return http
-      .post<HoroScopeDTO>("/dream/ai/horoscope", params)
+      .post<HoroScopeDTO>("/dream/ai/default/horoscope", params)
       .then((res) => res);
   },
 
