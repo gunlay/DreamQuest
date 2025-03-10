@@ -46,7 +46,9 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       const { token } = get();
       if (token) return true;
 
-      const storage = await Taro.getStorage({ key: "auth_token" });
+      const storage = await Taro.getStorage({ key: "auth_token" })
+      console.log(storage);
+      ;
       if (storage.data) {
         set({ isLogin: true, token: storage.data });
         return true;

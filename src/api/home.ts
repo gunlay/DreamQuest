@@ -52,7 +52,7 @@ export const homeApi = {
   },
 
   fetchWeeklyReport: async () => {
-    return http.post<string>("/dream/ai/weekly-report").then((res) => res);
+    return http.post<string>("/dream/ai/weekly-report", {}).then((res) => res);
   },
 };
 

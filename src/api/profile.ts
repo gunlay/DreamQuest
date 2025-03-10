@@ -10,6 +10,5 @@ export const profileApi = {
     return http
       .post<ChatStatiticDTO>("/dream/chat/statistics")
       .then((res) => res)
-      .catch(() => 0);
   },
 };

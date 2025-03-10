@@ -69,6 +69,8 @@ const WeeklyReport = () => {
   };
 
   useEffect(() => {
+    console.log('islO', isLogin);
+    
     if (!isLogin) return
     fetchWeeklyReport();
   }, []);

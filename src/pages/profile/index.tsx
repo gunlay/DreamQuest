@@ -28,13 +28,12 @@ export default function Profile() {
   const loadDreamsAndAnalyze = async () => {
     if (!isLogin) return;
     // const data = await chatApi.fetchChatStatistics();
-    const [_statistic, report] = await Promise.allSettled([
+    const [_statistic, report] = await Promise.all([
       await profileApi.fetchChatStatistics(),
       await profileApi.fetchMonthReport(),
     ]);
-    console.log(_statistic, report);
 
-    setStatistic(statistic);
+    setStatistic(_statistic);
     // setMessageInfo(report)
     try {
       // 1. 获取最近20条梦境记录

@@ -36,7 +36,7 @@ export class HttpRequest {
     };
 
     if (token) {
-      header["Authorization"] = `Bearer ${token}`;
+      header["Authorization"] = token;
     }
 
     return {
