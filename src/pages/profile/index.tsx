@@ -27,7 +27,6 @@ export default function Profile() {
   });
   const loadDreamsAndAnalyze = async () => {
     if (!isLogin) return;
-    // const data = await chatApi.fetchChatStatistics();
     const [_statistic, report] = await Promise.all([
       await profileApi.fetchChatStatistics(),
       await profileApi.fetchMonthReport(),

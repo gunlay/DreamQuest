@@ -125,7 +125,6 @@ export class HttpRequest {
   // 发起请求
   async request<T>(options: RequestOptions): Promise<T> {
     const { showLoading = true, retries = 0 } = options;
-
     // 显示加载提示
     if (showLoading) {
       Taro.showLoading({ title: "加载中..." });
@@ -133,7 +132,10 @@ export class HttpRequest {
 
     try {
       // 应用请求拦截器
-      const interceptedOptions = this.requestInterceptor(options);
+      const interceptedOptions = this.requestInterceptor({
+        ...options,
+        data: options.data || {}
+      });
 
       const response = await Taro.request<ResponseData<T>>({
         ...interceptedOptions,
@@ -172,7 +174,7 @@ export class HttpRequest {
     });
   }
 
-  post<T>(url: string, data?: any, options?: Partial<RequestOptions>) {
+  post<T>(url: string, data?: any, options?: Partial<RequestOptions>) {    
     return this.request<T>({
       method: "POST",
       url,
