@@ -22,8 +22,8 @@ export default function Profile() {
     messages: [],
   });
   const [statistic, setStatistic] = useState<ChatStatiticDTO>({
-    moreDate: "周三",
-    num: 500,
+    moreDate: "--",
+    num: 0,
   });
   const loadDreamsAndAnalyze = async () => {
     if (!isLogin) return;
@@ -119,7 +119,7 @@ export default function Profile() {
 
             <View className={style["stats-board"]}>
               <View className={style["stat-item"]}>
-                <Text className={style["stat-num"]}>{statistic.num}</Text>
+                <Text className={style["stat-num"]}>{isLogin ? statistic.num : '--'}</Text>
                 <Text className={style["stat-label"]}>梦境数量</Text>
               </View>
               <View className={style["stat-item"]}>

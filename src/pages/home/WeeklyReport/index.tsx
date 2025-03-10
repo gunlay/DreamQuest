@@ -1,6 +1,7 @@
+import classNames from "classnames";
 import { Text, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import classNames from "classnames";
+import { useLoginStore } from "@/store/loginStore";
 import {
   generateWeeklyReportContent,
   getWeeklyDreams,
@@ -20,6 +21,7 @@ const defaultWeeklyReport: WeeklyReportParams = {
 };
 
 const WeeklyReport = () => {
+  const { isLogin } = useLoginStore()
   const [isReportExpanded, setIsReportExpanded] = useState<boolean>(false);
   const [weekInfo, setWeekInfo] = useState<{
     generating: boolean;
@@ -67,6 +69,7 @@ const WeeklyReport = () => {
   };
 
   useEffect(() => {
+    if (!isLogin) return
     fetchWeeklyReport();
   }, []);
   return (
