@@ -23,7 +23,14 @@
         flex: 1;
         height: 100%;
         font-size: 28px;
+        border: none;
+        background: none;
+        
+        &:focus {
+          outline: none;
+        }
       }
+      
       .clear-icon {
         width: 32px;
         height: 32px;
@@ -36,6 +43,11 @@
         cursor: pointer;
         border-radius: 50%;
         background: rgba(0, 0, 0, 0.05);
+        transition: opacity 0.2s;
+        
+        &:active {
+          opacity: 0.8;
+        }
       }
     }
 
@@ -46,25 +58,52 @@
       color: #971fcf;
       font-size: 28px;
       font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      
+      &:active {
+        opacity: 0.8;
+      }
     }
   }
 
-  /* 内容区域 */
   .content-area {
-    margin-top: 240px; /* 为固定头部预留空间 */
+    margin-top: 240px;
     flex: 1;
     width: 100%;
     padding: 0 28px;
     box-sizing: border-box;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
 
-    /* 月份标题 */
-    .month-title {
-      font-size: 32px;
-      color: #ffffff;
-      font-weight: 600;
-      margin: 32px 0;
+      Text {
+        margin: 8px 0;
+        font-size: 28px;
+
+        &:first-child {
+          font-size: 32px;
+          margin-bottom: 16px;
+          color: rgba(255, 255, 255, 0.8);
+        }
+      }
     }
   }
+}
+
+.month-title {
+  margin: 30px 0 18px;
+  margin-left: 10px;
+  font-size: 28px;
+  color: #000000;
+  line-height: 32px;
+  font-weight: 600;
 }

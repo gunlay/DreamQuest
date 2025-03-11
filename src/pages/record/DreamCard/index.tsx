@@ -1,15 +1,15 @@
 import { FC } from "react";
 import Taro from "@tarojs/taro";
 import { Image, Text, View } from "@tarojs/components";
+import { DreamCardVO } from "@/api/types/record";
 import style from "./index.module.scss";
-import { DreamRecord } from "../types";
 
 const DreamCard: FC<{
-  dream: DreamRecord;
+  dream: DreamCardVO;
 }> = ({ dream }) => {
   const viewDreamDetail = (dreamId: number) => {
     const dreams = Taro.getStorageSync("dreams") || [];
-    const dreamData = dreams.find((d: DreamRecord) => d.id === dreamId);
+    const dreamData = dreams.find((d: DreamCardVO) => d.id === dreamId);
 
     if (dreamData) {
       Taro.setStorageSync("currentDream", dreamData);

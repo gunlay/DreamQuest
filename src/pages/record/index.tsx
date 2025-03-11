@@ -1,8 +1,10 @@
 import { View, Image, Text } from "@tarojs/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { DreamCardDTO } from "@/api/types/record";
 import PageContainer from "@/Components/PageContainer";
 import { useSystemStore } from "@/store/systemStore";
 import MainBg from "@/assets/image/main/main_bg.png";
+import { recordApi } from "@/api/record";
 import ListView from "./ListView";
 import CalendarView from "./CalendarView";
 import style from "./index.module.scss";
@@ -10,6 +12,7 @@ import style from "./index.module.scss";
 const Record: React.FC = () => {
   const { titleBarHeight, appBarHeight } = useSystemStore();
   const [currentTab, setCurrentTab] = useState<string>("list");
+
   return (
     <PageContainer
       appbar={{

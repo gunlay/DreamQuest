@@ -1,50 +1,38 @@
-import { View, Input, ScrollView, Image } from "@tarojs/components";
-import { useEffect, useState } from "react";
-import Taro from "@tarojs/taro";
+import dayjs from "dayjs";
+import { View, Input, Image } from "@tarojs/components";
+import { FC, useState } from "react";
+import { DreamCardVO, MonthDreams } from "@/api/types/record";
+import { recordApi } from "@/api/record";
 import Search from "@/assets/icon/search.png";
+import List from "@/Components/List";
 import DreamCard from "../DreamCard";
-import { DreamRecord, MonthDreams } from "../types";
 import style from "./index.module.scss";
 
-const ListView = () => {
+const ListView: FC = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [dreamList, setDreamList] = useState<MonthDreams[]>([]);
-  const [originalDreamList, setOriginalDreamList] = useState<MonthDreams[]>([]);
+  const pageSize = 10;
+  
   const onSearchInput = (e: any) => {
     setSearchKeyword(e.detail.value);
   };
+  
   const clearSearch = () => {
     setSearchKeyword("");
-    setDreamList(originalDreamList);
+    load({ pageIndex: 1, pageSize: 10 });
   };
-  const search = () => {
-    console.log("originalDreamList", originalDreamList);
-
-    if (!searchKeyword.trim()) {
-      setDreamList(originalDreamList);
+  
+  const search = async () => {
+    if (!searchKeyword?.trim()) {
       return;
     }
-
-    const searchResult = originalDreamList
-      .map((monthGroup) => ({
-        month: monthGroup.month,
-        dreams: monthGroup.dreams.filter(
-          (dream) =>
-            dream.title.includes(searchKeyword) ||
-            dream.content.includes(searchKeyword) ||
-            dream.tags.some((tag) => tag.includes(searchKeyword))
-        ),
-      }))
-      .filter((monthGroup) => monthGroup.dreams.length > 0);
-
-    setDreamList(searchResult);
+    load({ pageIndex: 1, pageSize: 10 });
   };
 
-  const groupDreamsByMonth = (dreams: DreamRecord[]): MonthDreams[] => {
-    const grouped: { [key: string]: DreamRecord[] } = {};
+  const groupDreamsByMonth = (dreams: DreamCardVO[]): MonthDreams[] => {
+    const grouped: { [key: string]: DreamCardVO[] } = {};
 
     dreams.forEach((dream) => {
-      const month = dream.date.split(".")[1];
+      const month = parseInt(dream.date.split(".")[1], 10).toString();
       if (!grouped[month]) {
         grouped[month] = [];
       }
@@ -59,12 +47,32 @@ const ListView = () => {
       }));
   };
 
-  useEffect(() => {
-    const dreams = Taro.getStorageSync("dreams") || [];
-    const groupedDreams = groupDreamsByMonth(dreams);
-    setDreamList(groupedDreams);
-    setOriginalDreamList(groupedDreams);
-  }, []);
+  const load = async (params: { pageIndex: number, pageSize: number }) => {
+    const { list, total } = await recordApi.fetchDreamList({
+      pageParam: params,
+      keyword: searchKeyword?.trim() || undefined
+    });
+
+    const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+    const formattedDreams = list.map(dto => {
+      const date = dayjs(dto.createTime);
+      return {
+        ...dto,
+        date: date.format('YYYY.MM.DD'),
+        weekday: weekdays[date.day()],
+      };
+    });
+
+    const groupedDreams = groupDreamsByMonth(formattedDreams);
+
+    return {
+      list: groupedDreams.flatMap(monthGroup => [
+        { type: 'header', month: monthGroup.month, dream: {} as DreamCardVO },
+        ...monthGroup.dreams.map(dream => ({ type: 'dream', month: '', dream }))
+      ]),
+      total
+    };
+  };
 
   return (
     <View className={style["list-view"]}>
@@ -74,7 +82,7 @@ const ListView = () => {
             className={style["search-icon"]}
             src={Search}
             mode="aspectFit"
-          ></Image>
+          />
           <Input
             className={style["search-input"]}
             placeholder="Search"
@@ -93,16 +101,19 @@ const ListView = () => {
         </View>
       </View>
 
-      <ScrollView className={style["content-area"]} scroll-y enable-flex>
-        {dreamList.map((item) => (
-          <View key={item.month}>
-            <View className={style["month-title"]}>{item.month} 月</View>
-            {item.dreams.map((dream) => (
-              <DreamCard dream={dream} key={dream.id} />
-            ))}
-          </View>
-        ))}
-      </ScrollView>
+      <List<string[]>
+        pageSize={pageSize}
+        onLoadMore={load}
+        renderItem={(item: any) => {
+          if (item.type === 'header') {
+            return <View className={style["month-title"]}>{item.month} 月</View>;
+          } else if (item.dream.id) {
+            return <DreamCard dream={item.dream} key={item.dream.id} />;
+          }
+          return null;
+        }}
+        emptyText={searchKeyword ? "没有找到相关梦境" : "暂无梦境记录"}
+      />
     </View>
   );
 };

@@ -1,3 +1,32 @@
+export interface DreamCardDTO {
+  content: string
+  createBy: string
+  createTime: string
+  descri: string
+  id:	number
+  image: string
+  isDeleted: boolean
+  tags: string[]
+  title: string
+  updateBy:	string
+  updateTime: string
+} 
+export interface DreamCardVO {
+  content: string
+  date: string
+  weekday: string
+  descri: string
+  id:	number
+  image: string
+  isDeleted: boolean
+  tags: string[]
+  title: string
+}
+export interface MonthDreams {
+  month: string;
+  dreams: DreamCardVO[];
+}
+
 export interface ReocrdHistoryDTO {
   content: string	
   createBy: string	
@@ -9,4 +38,6 @@ export interface ReocrdHistoryDTO {
   title: string	
   updateBy:	string
   updateTime: string
+  list: DreamCardDTO[]
+  total: number
 }
