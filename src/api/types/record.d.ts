@@ -23,8 +23,9 @@ export interface DreamCardVO {
   title: string
 }
 export interface MonthDreams {
+  type: string;
   month: string;
-  dreams: DreamCardVO[];
+  dream: DreamCardVO;
 }
 
 export interface ReocrdHistoryDTO {

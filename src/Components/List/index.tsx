@@ -1,17 +1,18 @@
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import Taro, { createSelectorQuery } from '@tarojs/taro';
 import { ScrollView, View, Text } from '@tarojs/components';
 import style from './index.module.scss';
 
 interface ListProps<T> {
   /** 加载更多的回调函数 */
-  onLoadMore: (pageIndex: number, pageSize: number) => Promise<{
+  onLoadMore: (params: {pageIndex: number, pageSize: number}) => Promise<{
     /** 当前分页数据 */
     list: T[];
     /** 总数据量 */
     total: number;
   }>;
   /** 自定义渲染项 */
-  renderItem: (item: T, index: number) => ReactNode;
+  renderItem: (item: T, index: number) => ReactNode | JSX.Element;
   /** 空状态展示文案 */
   emptyText?: string;
   /** 加载中文案 */
@@ -20,6 +21,8 @@ interface ListProps<T> {
   noMoreText?: string;
   /** 每页数据量 */
   pageSize?: number;
+  /**list窗口高度, 默认100vh */
+  height?: string;
 }
 
 const List = <T,>({
@@ -29,22 +32,35 @@ const List = <T,>({
   loadingText = '加载中...',
   noMoreText = '没有更多了',
   pageSize = 10,
+  height = '100vh',
 }: ListProps<T>) => {
   const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const scrollRef = useRef<any>(null);
-  const loadingRef = useRef(false);
+  const loading = useRef<boolean>(false);
+  const clientHeight = useRef<number>(0);
 
-  const loadData = async (pageIndex: number) => {
-    if (loading || !hasMore || loadingRef.current) return;
-    
-    loadingRef.current = true;
-    setLoading(true);
+  useEffect(() => {
+    Taro.nextTick(() => {
+      createSelectorQuery()
+      .selectAll('#list-scroll')
+      .boundingClientRect()
+      .exec(res => {
+        clientHeight.current = res[0][0].height;
+      })
+    })
+  }, [])
+
+  const loadData = async (pageIndex: number) => {    
+    if (loading.current || !hasMore) return;
+
+    loading.current = true;
     
     try {
-      const result = await onLoadMore(pageIndex, pageSize);
+      const result = await onLoadMore({pageIndex, pageSize});
+      console.log(result.list);
+      
       const newData = pageIndex === 1 ? result.list : [...data, ...result.list];
       setData(newData);
       setHasMore(newData.length < result.total);
@@ -52,14 +68,15 @@ const List = <T,>({
     } catch (error) {
       console.error('加载数据失败:', error);
     } finally {
-      setLoading(false);
-      loadingRef.current = false;
+      loading.current = false;
     }
   };
 
   const handleScroll = async (e: any) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.detail;
-    if (scrollHeight - scrollTop - clientHeight <= 100) {
+    const { scrollTop, scrollHeight } = e.detail;
+    console.log(scrollHeight - scrollTop - clientHeight.current <= 20);
+    
+    if (scrollHeight - scrollTop - clientHeight.current <= 20) {
       loadData(currentPage + 1);
     }
   };
@@ -68,22 +85,15 @@ const List = <T,>({
     loadData(1);
   }, []);
 
-  useEffect(() => {
-    if (scrollRef.current && data.length < pageSize && hasMore) {
-      const { scrollHeight, clientHeight } = scrollRef.current;
-      if (scrollHeight <= clientHeight) {
-        loadData(currentPage + 1);
-      }
-    }
-  }, [data.length]);
-
   return (
     <ScrollView
+      id="list-scroll"
       className={style['list-container']}
       scrollY
       enableFlex
       onScroll={handleScroll}
       ref={scrollRef}
+      style={{ height }}
     >
       <View className={style['list-content']}>
         {data.length > 0 ? (
@@ -96,7 +106,7 @@ const List = <T,>({
 
         {data.length > 0 && (
           <View className={style['loading-more']}>
-            {loading ? (
+            {loading.current ? (
               loadingText
             ) : hasMore ? (
               ''

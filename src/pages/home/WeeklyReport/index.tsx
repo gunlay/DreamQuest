@@ -2,11 +2,7 @@ import classNames from "classnames";
 import { Text, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useLoginStore } from "@/store/loginStore";
-import {
-  generateWeeklyReportContent,
-  getWeeklyDreams,
-  homeApi,
-} from "@/api/home";
+import { homeApi } from "@/api/home";
 import { useEffect, useState } from "react";
 import { WeeklyReportParams } from "../types";
 import style from "./index.module.scss";
@@ -23,54 +19,50 @@ const defaultWeeklyReport: WeeklyReportParams = {
 const WeeklyReport = () => {
   const { isLogin } = useLoginStore()
   const [isReportExpanded, setIsReportExpanded] = useState<boolean>(false);
-  const [weekInfo, setWeekInfo] = useState<{
-    generating: boolean;
-    weeklyReport: WeeklyReportParams;
-  }>({
-    generating: false,
-    weeklyReport: defaultWeeklyReport,
-  });
+  const [generating, setGenerating] = useState<boolean>(false);
+  const [weeklyReport, setWeeklyReport] = useState<string>('');
 
   const fetchWeeklyReport = async () => {
-    setWeekInfo((prev) => ({ ...prev, generating: true }));
+    // setWeekInfo((prev) => ({ ...prev, generating: true }));
+    setGenerating(true)
 
     try {
-      const weeklyDreams = getWeeklyDreams();
-      const _weeklyDreams = await homeApi.fetchWeeklyReport();
-      console.log("_weeklyDreams", _weeklyDreams);
+      // const weeklyDreams = getWeeklyDreams();
+      const data = await homeApi.fetchWeeklyReport();
+      console.log("_weeklyDreams", data);
+      setWeeklyReport(data)
 
-      if (weeklyDreams.length === 0) {
-        setWeekInfo((prev) => ({
-          ...prev,
-          weeklyReport: defaultWeeklyReport,
-          generating: false,
-        }));
-        return;
-      }
+      // if (weeklyDreams.length === 0) {
+      //   setWeekInfo((prev) => ({
+      //     ...prev,
+      //     weeklyReport: defaultWeeklyReport,
+      //     generating: false,
+      //   }));
+      //   return;
+      // }
 
-      const reportContent = await generateWeeklyReportContent(weeklyDreams);
-      setWeekInfo((prev) => ({
-        ...prev,
-        weeklyReport: reportContent,
-        generating: false,
-      }));
+      // const reportContent = await generateWeeklyReportContent(weeklyDreams);
+      // setWeekInfo((prev) => ({
+      //   ...prev,
+      //   weeklyReport: reportContent,
+      //   generating: false,
+      // }));
     } catch (error) {
       console.error("获取周报失败:", error);
-      setWeekInfo((prev) => ({
-        ...prev,
-        generating: false,
-        weeklyReport: defaultWeeklyReport,
-      }));
-      Taro.showToast({
-        title: "周报生成失败",
-        icon: "error",
-      });
+      // setWeekInfo((prev) => ({
+      //   ...prev,
+      //   generating: false,
+      //   weeklyReport: defaultWeeklyReport,
+      // }));
+      // Taro.showToast({
+      //   title: "周报生成失败",
+      //   icon: "error",
+      // });
     }
+    setGenerating(false)
   };
 
   useEffect(() => {
-    console.log('islO', isLogin);
-    
     if (!isLogin) return
     fetchWeeklyReport();
   }, []);
@@ -86,7 +78,7 @@ const WeeklyReport = () => {
         <Text>🗒️ 梦境周报</Text>
       </View>
 
-      {weekInfo.generating ? (
+      {generating ? (
         <View className={style["loading-wrapper"]}>
           <View className={style["loading-spinner"]} />
           <Text className={style["loading-text"]}>正在生成周报...</Text>
@@ -98,36 +90,37 @@ const WeeklyReport = () => {
             isReportExpanded ? style.expanded : ""
           )}
         >
-          <View className={style["report-section"]}>
+          {weeklyReport}
+          {/* <View className={style["report-section"]}>
             <Text className={style["section-title"]}>📊 关键词</Text>
             <Text className={style["section-content"]}>
               {weekInfo.weeklyReport.keywords}
             </Text>
-          </View>
+          </View> */}
 
           {/* <!-- 梦境解析 --> */}
-          <View className={style["report-section"]}>
+          {/* <View className={style["report-section"]}>
             <Text className={style["section-title"]}>💭 梦境解析</Text>
             <Text className={style["section-content"]}>
               {weekInfo.weeklyReport.analysis}
             </Text>
-          </View>
+          </View> */}
 
           {/* <!-- 情绪趋势 --> */}
-          <View className={style["report-section"]}>
+          {/* <View className={style["report-section"]}>
             <Text className={style["section-title"]}>📈 情绪趋势</Text>
             <Text className={style["section-content"]}>
               {weekInfo.weeklyReport.emotionTrend}
             </Text>
-          </View>
+          </View> */}
 
           {/* <!-- AI建议 --> */}
-          <View className={style["report-section"]}>
+          {/* <View className={style["report-section"]}>
             <Text className={style["section-title"]}>🤖 AI建议</Text>
             <Text className={style["section-content"]}>
               {weekInfo.weeklyReport.aiSuggestion}
             </Text>
-          </View>
+          </View> */}
         </View>
       )}
     </View>

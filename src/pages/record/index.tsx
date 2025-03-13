@@ -1,16 +1,14 @@
 import { View, Image, Text } from "@tarojs/components";
-import { useEffect, useState } from "react";
-import { DreamCardDTO } from "@/api/types/record";
+import { useState } from "react";
 import PageContainer from "@/Components/PageContainer";
 import { useSystemStore } from "@/store/systemStore";
 import MainBg from "@/assets/image/main/main_bg.png";
-import { recordApi } from "@/api/record";
 import ListView from "./ListView";
 import CalendarView from "./CalendarView";
 import style from "./index.module.scss";
 
 const Record: React.FC = () => {
-  const { titleBarHeight, appBarHeight } = useSystemStore();
+  const { titleBarHeight, statusBarHeight } = useSystemStore();
   const [currentTab, setCurrentTab] = useState<string>("list");
 
   return (
@@ -21,7 +19,7 @@ const Record: React.FC = () => {
     >
       <View
         className={style["container"]}
-        style={{ paddingTop: `${appBarHeight}px` }}
+        style={{ paddingTop: `${titleBarHeight}px` }}
       >
         <Image
           className={style["bg-image"]}
@@ -32,7 +30,7 @@ const Record: React.FC = () => {
           className={`${style["fixed-header"]} ${
             currentTab === "calendar" ? style["calendar-header-only"] : ""
           }`}
-          style={{ top: `${titleBarHeight}px` }}
+          style={{ top: `${statusBarHeight}px`, height: `${titleBarHeight}px` }}
         >
           <View className={style["tab-header"]}>
             <View

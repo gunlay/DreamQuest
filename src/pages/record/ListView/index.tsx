@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { View, Input, Image } from "@tarojs/components";
 import { FC, useState } from "react";
-import { DreamCardVO, MonthDreams } from "@/api/types/record";
+import { DreamCardDTO, DreamCardVO, MonthDreams } from "@/api/types/record";
 import { recordApi } from "@/api/record";
 import Search from "@/assets/icon/search.png";
 import List from "@/Components/List";
@@ -10,7 +10,7 @@ import style from "./index.module.scss";
 
 const ListView: FC = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const pageSize = 10;
+  const pageSize = 5;
   
   const onSearchInput = (e: any) => {
     setSearchKeyword(e.detail.value);
@@ -18,58 +18,42 @@ const ListView: FC = () => {
   
   const clearSearch = () => {
     setSearchKeyword("");
-    load({ pageIndex: 1, pageSize: 10 });
+    load({ pageIndex: 1, pageSize });
   };
   
   const search = async () => {
     if (!searchKeyword?.trim()) {
       return;
     }
-    load({ pageIndex: 1, pageSize: 10 });
+    load({ pageIndex: 1, pageSize });
   };
 
-  const groupDreamsByMonth = (dreams: DreamCardVO[]): MonthDreams[] => {
-    const grouped: { [key: string]: DreamCardVO[] } = {};
-
-    dreams.forEach((dream) => {
-      const month = parseInt(dream.date.split(".")[1], 10).toString();
-      if (!grouped[month]) {
-        grouped[month] = [];
-      }
-      grouped[month].push(dream);
-    });
-
-    return Object.keys(grouped)
-      .sort((a, b) => Number(b) - Number(a))
-      .map((month) => ({
-        month,
-        dreams: grouped[month],
-      }));
+  const processAndGroupDreams = (list: DreamCardDTO[]): MonthDreams[] => {
+    return Object.entries(list.map(dto => ({
+        ...dto,
+        date: dayjs(dto.createTime).format('YYYY.MM.DD'),
+        weekday: `周${['日', '一', '二', '三', '四', '五', '六'][dayjs(dto.createTime).day()]}`
+        }))
+        .reduce((grouped, dream) => {
+          const month = dayjs(dream.createTime).format('M');
+          (grouped[month] = grouped[month] || []).push(dream);
+          return grouped;
+      }, {} as { [key: string]: DreamCardVO[] }))
+      .sort(([a], [b]) => Number(b) - Number(a))
+      .flatMap(([month, dreams]) => [
+        { type: 'header', month, dream: {} as DreamCardVO },
+        ...dreams.map(dream => ({ type: 'dream', month: '', dream }))
+      ]);
   };
 
-  const load = async (params: { pageIndex: number, pageSize: number }) => {
+  const load = async (params: {pageIndex: number, pageSize: number} ) => {
     const { list, total } = await recordApi.fetchDreamList({
       pageParam: params,
       keyword: searchKeyword?.trim() || undefined
     });
 
-    const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-    const formattedDreams = list.map(dto => {
-      const date = dayjs(dto.createTime);
-      return {
-        ...dto,
-        date: date.format('YYYY.MM.DD'),
-        weekday: weekdays[date.day()],
-      };
-    });
-
-    const groupedDreams = groupDreamsByMonth(formattedDreams);
-
     return {
-      list: groupedDreams.flatMap(monthGroup => [
-        { type: 'header', month: monthGroup.month, dream: {} as DreamCardVO },
-        ...monthGroup.dreams.map(dream => ({ type: 'dream', month: '', dream }))
-      ]),
+      list: processAndGroupDreams(list),
       total
     };
   };
@@ -101,16 +85,16 @@ const ListView: FC = () => {
         </View>
       </View>
 
-      <List<string[]>
+      <List<MonthDreams>
+        // height='90vh'
         pageSize={pageSize}
         onLoadMore={load}
-        renderItem={(item: any) => {
+        renderItem={(item: MonthDreams) => {
           if (item.type === 'header') {
             return <View className={style["month-title"]}>{item.month} 月</View>;
-          } else if (item.dream.id) {
+          } else {
             return <DreamCard dream={item.dream} key={item.dream.id} />;
           }
-          return null;
         }}
         emptyText={searchKeyword ? "没有找到相关梦境" : "暂无梦境记录"}
       />

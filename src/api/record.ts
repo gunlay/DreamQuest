@@ -13,9 +13,12 @@ export interface FetchDreamRecodParams {
 export const recordApi = {
   fetchDreamList: async (params?: FetchDreamRecodParams): Promise<ReocrdHistoryDTO> => {
     if (process.env.NODE_ENV === 'development') {
-      return Promise.resolve({
-        list: mockDreamList.slice(params?.pageParam?.pageIndex || 1, params?.pageParam?.pageSize || 10),
-      } as ReocrdHistoryDTO);
+      const { pageIndex = 1, pageSize = 10 } = params?.pageParam || {}
+      const result = {
+        list: mockDreamList.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize),
+        total: 15
+      } as ReocrdHistoryDTO
+      return Promise.resolve(result);
     }
     return http
       .post<ReocrdHistoryDTO>("/dream/chat/history/page", params)

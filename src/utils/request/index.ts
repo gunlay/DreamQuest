@@ -78,7 +78,7 @@ export class HttpRequest {
     switch (data.code) {
       case 401:
         // token过期，清除登录信息
-        Taro.clearStorageSync();
+        // Taro.clearStorageSync();
         navigateToLogin();
         break;
       default:

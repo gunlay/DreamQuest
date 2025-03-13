@@ -40,13 +40,15 @@ const DreamCard: FC<{
 
       <Text className={style["dream-content"]}>{dream.content}</Text>
 
-      <View className={style["tag-list"]}>
-        {dream.tags.map((tag) => (
-          <View className={style["tag"]} key={tag}>
-            {tag}
-          </View>
-        ))}
-      </View>
+      {
+        dream.tags?.length ?<View className={style["tag-list"]}>
+          {dream.tags.map((tag) => (
+            <View className={style["tag"]} key={tag}>
+              {tag}
+            </View>
+          ))}
+        </View> : null
+      }
     </View>
   );
 };
