@@ -53,11 +53,17 @@
 }
 
 .privacy-policy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 24px;
   color: #999;
   margin-top: 32px;
-  padding: 0 40px;
   line-height: 1.5;
+
+  .user-confirm {
+    transform: scale(0.5);
+  }
 }
 
 .link {

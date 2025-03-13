@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Taro from "@tarojs/taro";
-import { Button, Image, Text, View } from "@tarojs/components";
+import { Button, Image, Radio, Text, View } from "@tarojs/components";
 import { useLoginStore } from "@/store/loginStore";
 import LoginBanner from "@/assets/image/login/login_banner.png";
 import { AgreementPageType } from "../agreement/data";
@@ -8,9 +8,22 @@ import style from "./index.module.scss";
 
 const Login = () => {
   const login = useLoginStore((state) => state.login);
+  const [confirm, setConfirm] = useState(false)
   const logining = useRef(false)
   const handleLogin = async () => {
     if (logining.current) return
+    if (!confirm) {
+      const result = await Taro.showModal({
+        title: '提示',
+        content: '请先同意用户协议和隐私政策',
+        showCancel: true
+      })
+      if (result.confirm) {
+        setConfirm(true)
+      } else {
+        return
+      }
+    }
     logining.current = true
     try {
       const success = await login();
@@ -57,6 +70,13 @@ const Login = () => {
           微信一键登录
         </Button>
         <View className={style["privacy-policy"]}>
+         <View onClick={() => setConfirm(prev => !prev)}>
+         <Radio 
+           checked={confirm} 
+           color='#971fcf'
+           className={style['user-confirm']}
+         ></Radio>
+         </View>
           登录即代表您同意
           <Text
             className={style.link}
