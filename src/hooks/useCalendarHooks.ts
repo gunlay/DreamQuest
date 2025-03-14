@@ -3,7 +3,6 @@ import Taro from "@tarojs/taro";
 import { useState } from "react";
 
 const useCalendarHooks = () => {
-  const weekdays = ["一", "二", "三", "四", "五", "六", "日"];
   const [currentYear, setCurrentYear] = useState<number>(
     new Date().getFullYear()
   );
@@ -111,11 +110,6 @@ const useCalendarHooks = () => {
     }
   };
 
-  const selectDate = (date: string) => {
-    if (!date) return;
-    setSelectedDate(date);
-    generateCalendarDays(date);
-  };
   const initCalendar = () => {
     const today = new Date();
     setCurrentYear(today.getFullYear());
@@ -130,14 +124,11 @@ const useCalendarHooks = () => {
 
   return {
     currentYear,
-    currentMonth,
-    weekdays,
-    calendarDays,
+    currentMonth,    
     selectedDateDreams,
     prevMonth,
     onDatePickerChange,
     nextMonth,
-    selectDate,
     initCalendar
   }
 }

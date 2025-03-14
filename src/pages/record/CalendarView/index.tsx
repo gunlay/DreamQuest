@@ -3,8 +3,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { View, Picker, Text } from "@tarojs/components";
 import { Day } from "@antmjs/vantui";
 import useCalendarHooks from "@/hooks/useCalendarHooks";
-import {Calendar} from "@antmjs/vantui/es/calendar";
+import { Calendar } from "@antmjs/vantui/es/calendar";
+import { DatePicker } from "@antmjs/vantui/es/datetime-picker";
 import '@antmjs/vantui/es/calendar/style'
+import '@antmjs/vantui/es/datetime-picker/style'
 import DreamCard from "../DreamCard";
 import style from "./index.module.scss";
 
@@ -16,14 +18,11 @@ const CalendarView = () => {
   const [showRange, setShowRange] = useState<[Dayjs, Dayjs]>([dayjs().startOf('month'), dayjs().endOf('month')]);
 
   const {
-    selectDate,
-    calendarDays,
     currentYear,
     currentMonth,
     onDatePickerChange,
     prevMonth,
     nextMonth,
-    weekdays,
     initCalendar,
     selectedDateDreams
   } = useCalendarHooks()
