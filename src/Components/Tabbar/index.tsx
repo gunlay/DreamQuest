@@ -31,9 +31,9 @@ const Tabbar: FC<{ currentTab: number }> = ({ currentTab }) => {
     if (currentTab === index) return;
     switchTab(index);
   };
-  useDidShow(() => {
-    Taro.hideTabBar().catch(() => 0);
-  });
+  // useDidShow(() => {
+  //   Taro.hideTabBar().catch(() => 0);
+  // });
 
   useEffect(() => {
     checkLogin().then((res) => {

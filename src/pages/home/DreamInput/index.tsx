@@ -7,7 +7,6 @@ import {
   ITouchEvent,
 } from "@tarojs/components";
 import { useEffect, useMemo, useState } from "react";
-import { generateDreamImage } from "@/api/home";
 import { chatApi } from "@/api/chat";
 import Taro from "@tarojs/taro";
 import { DreamInputProps, DreamInputState } from "./types";
@@ -44,62 +43,13 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
       return;
     }
 
-    const { title, content, currentDate } = dreamInput;
     // 显示加载状态
     setLoading(true);
     Taro.showLoading({
       title: "正在生成图片...",
       mask: true,
     });
-    const chatId = await chatApi.createNewChat(dreamInput)
-    let dreamData = {
-      id: Date.now(),
-      title: title.trim(),
-      content: content.trim(),
-      date: currentDate,
-      image: "",
-      weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][
-        new Date(currentDate.replace(/\./g, "-")).getDay()
-      ],
-      // image: '/assets/images/default_dream.png'  // 默认图片
-    };
-
-    try {
-      console.warn("\n开始生成图片...");
-      // 生成图片
-      const imageUrl = await generateDreamImage(content.trim());
-      console.warn("图片生成成功:", imageUrl);
-      dreamData.image = imageUrl;
-    } catch (error) {
-      console.error("\n图片生成失败:", error);
-      Taro.showToast({
-        title: "图片生成失败",
-        icon: "error",
-        duration: 2000,
-      });
-    } finally {
-      // 无论图片生成是否成功，都保存数据并跳转
-      console.warn("\n准备保存的数据:", JSON.stringify(dreamData, null, 2));
-
-      // 保存到本地存储
-      Taro.setStorageSync("currentDream", dreamData);
-
-      // 清空输入
-      setDreamInput({
-        title: "",
-        content: "",
-        currentDate: "",
-      });
-
-      // 隐藏加载状态
-      Taro.hideLoading();
-
-      props.onClose()
-      // 跳转到分析页面
-      Taro.navigateTo({
-        url: `/pages/analysis/index?chatId=${chatId}`,
-      });
-    }
+    const chatId = await chatApi.createNewChat({...dreamInput, message: dreamInput.content})
   };
 
   const stopPropagation = (e: ITouchEvent) => {

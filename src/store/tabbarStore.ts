@@ -38,9 +38,10 @@ export const useTabbarStore = create<TabbarState>((set, get) => ({
         [`/${tab.pagePath}`]: query || {},
       },
     }));
-    Taro.switchTab({ url: `/${tab.pagePath}` }).then(() =>
-      Taro.hideTabBar().catch(() => 0)
-    );
+    Taro.switchTab({ url: `/${tab.pagePath}` })
+    // .then(() =>
+    //   Taro.hideTabBar().catch(() => 0)
+    // );
     set({
       currentTab: i,
     });

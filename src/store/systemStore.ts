@@ -20,8 +20,6 @@ export const useSystemStore = create<SystemState>((set) => ({
   initSystemInfo: () => {
     const systemInfo = Taro.getSystemInfoSync();
     const menuBtn = Taro.getMenuButtonBoundingClientRect();
-    console.log(menuBtn);
-
     set({
       statusBarHeight: systemInfo.statusBarHeight || 0,
       titleBarHeight: menuBtn.height,

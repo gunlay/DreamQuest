@@ -1,9 +1,10 @@
 import { http } from "@/utils/request";
-import { ChatHistoryDTO, ChatStatiticDTO } from "./types/chat";
+import { ChatHistoryDTO } from "./types/chat";
+import { ChatStatiticDTO } from "./types/profile";
 
 export const chatApi = {
   createNewChat: async (params: {
-    content: string;
+    message: string;
     title: string;
   }): Promise<{ chatId: string }> => {
     return http

@@ -7,16 +7,10 @@ import style from "./index.module.scss";
 const DreamCard: FC<{
   dream: DreamCardVO;
 }> = ({ dream }) => {
-  const viewDreamDetail = (dreamId: number) => {
-    const dreams = Taro.getStorageSync("dreams") || [];
-    const dreamData = dreams.find((d: DreamCardVO) => d.id === dreamId);
-
-    if (dreamData) {
-      Taro.setStorageSync("currentDream", dreamData);
-      Taro.navigateTo({
-        url: "/pages/analysis/index",
-      });
-    }
+  const viewDreamDetail = (chatId: number) => {
+    Taro.navigateTo({
+      url: `/pages/analysis/index?chatId=${chatId}`,
+    });
   };
   return (
     <View

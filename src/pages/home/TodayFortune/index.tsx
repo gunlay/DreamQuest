@@ -61,7 +61,6 @@ const TodayFortune = () => {
       time: "today",
       type: zodiacEn,
     });
-    console.log(result);
 
     const { fortunetext, luckynumber, luckycolor, luckyconstellation } = result;
     Taro.setStorageSync("userZodiac", zodiac);

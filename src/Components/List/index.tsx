@@ -59,8 +59,6 @@ const List = <T,>({
     
     try {
       const result = await onLoadMore({pageIndex, pageSize});
-      console.log(result.list);
-      
       const newData = pageIndex === 1 ? result.list : [...data, ...result.list];
       setData(newData);
       setHasMore(newData.length < result.total);
@@ -74,9 +72,8 @@ const List = <T,>({
 
   const handleScroll = async (e: any) => {
     const { scrollTop, scrollHeight } = e.detail;
-    console.log(scrollHeight - scrollTop - clientHeight.current <= 20);
     
-    if (scrollHeight - scrollTop - clientHeight.current <= 20) {
+    if (scrollHeight - scrollTop - clientHeight.current <= 30) {
       loadData(currentPage + 1);
     }
   };
