@@ -12,6 +12,7 @@ export interface DreamCardDTO {
   updateTime: string
 } 
 export interface DreamCardVO {
+  chatId?: string
   content: string
   date: string
   weekday: string

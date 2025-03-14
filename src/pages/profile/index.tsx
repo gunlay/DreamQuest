@@ -1,89 +1,31 @@
 import { useState } from "react";
 import { View, Text, ScrollView, Image, Button } from "@tarojs/components";
 import { useLoginStore } from "@/store/loginStore";
-import Taro, { useDidShow } from "@tarojs/taro";
+import { useDidShow } from "@tarojs/taro";
 import { profileApi } from "@/api/profile";
 import PageContainer from "@/Components/PageContainer";
 import { useSystemStore } from "@/store/systemStore";
 import { ChatStatiticDTO } from "@/api/types/profile";
 import MainBg from "@/assets/image/main/main_bg.png";
 import Vip from "@/assets/icon/vip.png";
-import { Message } from "./types";
 import style from "./index.module.scss";
 
 export default function Profile() {
   const { appBarHeight } = useSystemStore();
   const { isLogin } = useLoginStore();
-  const [messageInfo, setMessageInfo] = useState<{
-    lastId: string;
-    messages: Message[];
-  }>({
-    lastId: "",
-    messages: [],
-  });
+  const [monthReport, setMonthReport] = useState<string>('');
   const [statistic, setStatistic] = useState<ChatStatiticDTO>({
     moreDate: "--",
     num: 0,
   });
   const loadDreamsAndAnalyze = async () => {
     if (!isLogin) return;
-    const [_statistic, report] = await Promise.all([
-      await profileApi.fetchChatStatistics(),
-      await profileApi.fetchMonthReport(),
-    ]);
-
-    setStatistic(_statistic);
-    // setMessageInfo(report)
-    try {
-      // 1. 获取最近20条梦境记录
-      // const dreamsResult = (await Taro.cloud.callFunction({
-      //   name: "getDreams",
-      //   data: { limit: 20 },
-      // })) as CloudFunctionResult<{ data: Dream[] }>;
-      // if (!dreamsResult.result?.data) {
-      //   throw new Error("获取梦境记录失败");
-      // }
-      // const dreams = dreamsResult.result.data;
-      // // 3. 如果有梦境记录，调用大模型进行分析
-      // if (dreams.length > 0) {
-      //   const dreamTexts = dreams.map((dream) => dream.content).join("\n");
-      //   // 调用大模型API
-      //   const analysisResult = (await Taro.cloud.callFunction({
-      //     name: "analyzeDreams",
-      //     data: { dreams: dreamTexts },
-      //   })) as CloudFunctionResult<{ content: string }>;
-      //   if (!analysisResult.result?.content) {
-      //     throw new Error("分析结果格式错误");
-      //   }
-      //   // 4. 显示分析结果
-      //   const aiMessage: Message = {
-      //     id: `msg_${Date.now()}`,
-      //     type: "ai",
-      //     content: analysisResult.result.content,
-      //   };
-      //   setMessageInfo({
-      //     messages: [aiMessage],
-      //     lastId: aiMessage.id || "",
-      //   });
-      // } else {
-      //   // 没有梦境记录时显示提示信息
-      //   const aiMessage: Message = {
-      //     id: `msg_${Date.now()}`,
-      //     type: "ai",
-      //     content: "你还没有记录任何梦境哦，快去记录一下吧！",
-      //   };
-      //   setMessageInfo({
-      //     messages: [aiMessage],
-      //     lastId: aiMessage.id || "",
-      //   });
-      // }
-    } catch (error) {
-      console.error("Analysis failed:", error);
-      Taro.showToast({
-        title: error instanceof Error ? error.message : "分析失败，请稍后重试",
-        icon: "none",
-      });
-    }
+    profileApi.fetchChatStatistics().then(_statistic => {
+      setStatistic(_statistic);
+    })
+    profileApi.fetchMonthReport().then(report => {
+      setMonthReport(report)
+    })
   };
 
   useDidShow(() => {
@@ -150,21 +92,11 @@ export default function Profile() {
             className={style["chat-area"]}
             enhanced
             scroll-y
-            scroll-into-view={messageInfo.lastId}
+            // scroll-into-view={messageInfo.lastId}
             scroll-with-animation
             show-scrollbar={false}
           >
-            {messageInfo.messages.map((item) => (
-              <View
-                key={item.id}
-                className={`${style.message} ${
-                  item.type === "ai" ? style.ai : "user"
-                }`}
-                id={item.id}
-              >
-                <Text className={style["message-content"]}>{item.content}</Text>
-              </View>
-            ))}
+            {monthReport}
           </ScrollView>
         </View>
       </View>

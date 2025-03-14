@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { Text, View } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import { useLoginStore } from "@/store/loginStore";
 import { homeApi } from "@/api/home";
 import { useEffect, useState } from "react";
@@ -23,49 +23,22 @@ const WeeklyReport = () => {
   const [weeklyReport, setWeeklyReport] = useState<string>('');
 
   const fetchWeeklyReport = async () => {
-    // setWeekInfo((prev) => ({ ...prev, generating: true }));
     setGenerating(true)
 
     try {
-      // const weeklyDreams = getWeeklyDreams();
       const data = await homeApi.fetchWeeklyReport();
       console.log("_weeklyDreams", data);
       setWeeklyReport(data)
-
-      // if (weeklyDreams.length === 0) {
-      //   setWeekInfo((prev) => ({
-      //     ...prev,
-      //     weeklyReport: defaultWeeklyReport,
-      //     generating: false,
-      //   }));
-      //   return;
-      // }
-
-      // const reportContent = await generateWeeklyReportContent(weeklyDreams);
-      // setWeekInfo((prev) => ({
-      //   ...prev,
-      //   weeklyReport: reportContent,
-      //   generating: false,
-      // }));
     } catch (error) {
-      console.error("获取周报失败:", error);
-      // setWeekInfo((prev) => ({
-      //   ...prev,
-      //   generating: false,
-      //   weeklyReport: defaultWeeklyReport,
-      // }));
-      // Taro.showToast({
-      //   title: "周报生成失败",
-      //   icon: "error",
-      // });
+      console.error("获取周报失败:", error)
     }
     setGenerating(false)
   };
 
-  useEffect(() => {
+  useDidShow(() => {
     if (!isLogin) return
     fetchWeeklyReport();
-  }, []);
+  });
   return (
     <View
       className={classNames(

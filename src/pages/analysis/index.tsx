@@ -1,6 +1,7 @@
 import Taro, { useDidHide } from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { View, Text, Image, Button, Input } from "@tarojs/components";
+import { chatApi } from "@/api/chat";
 import DefaultDream from "@/assets/image/default_dream.png";
 // import Empty from "@/assets/image/empty.png";
 import { DreamData, DreamRecord, Message } from "./types";
@@ -11,6 +12,8 @@ const Analysis = () =>  {
   const [dreamData, setDreamData] = useState<DreamData | null>(null);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
+  // 获取当前路由的参数
+  const chatId = Taro.getCurrentInstance()?.router?.params.chatId as string;
   const onMessageInput = (e: any) => {
     setInputMessage(e.detail.value);
   };
@@ -305,8 +308,18 @@ const Analysis = () =>  {
     Taro.setStorageSync('dreams', existingDreams)
   }
 
+  const init = async () => {
+    console.log('chatId', chatId);
+    
+    const result = chatApi.fetchChatHistory({chatId})
+    console.log(result);
+    
+  }
+
+
   useEffect(() => {
-    initAnalysis()
+    // initAnalysis()
+    init()
     return () => {
       pageViewOut()
     }

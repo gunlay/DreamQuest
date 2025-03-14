@@ -7,16 +7,16 @@ import style from "./index.module.scss";
 const DreamCard: FC<{
   dream: DreamCardVO;
 }> = ({ dream }) => {
-  const viewDreamDetail = (chatId: number) => {
+  const viewDreamDetail = () => {
     Taro.navigateTo({
-      url: `/pages/analysis/index?chatId=${chatId}`,
+      url: `/pages/analysis/index?chatId=${dream.chatId}`,
     });
   };
   return (
     <View
       className={style["dream-card"]}
       key={dream.id}
-      onClick={() => viewDreamDetail(dream.id)}
+      onClick={viewDreamDetail}
       data-id={dream.id}
     >
       <View className={style["card-header"]}>

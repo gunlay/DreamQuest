@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames";
-import Taro from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import { Picker, Text, View } from "@tarojs/components";
 import { homeApi } from "@/api/home";
 import { FortuneDTO, HoroType, LuckDTO } from "@/api/types/home";
@@ -81,7 +81,7 @@ const TodayFortune = () => {
     setIsFortuneExpanded(true);
   };
 
-  useEffect(() => {
+  useDidShow(() => {
     const savedZodiac = Taro.getStorageSync("userZodiac");
     if (savedZodiac) {
       const _zodiacIndex = zodiacs.findIndex((z) => z === savedZodiac);
@@ -89,7 +89,7 @@ const TodayFortune = () => {
       setHasSelectedZodiac(true);
       fetchFortune(savedZodiac);
     }
-  }, []);
+  });
   return (
     <View className={style["fortune-card"]}>
       <View className={style["card-title"]}>

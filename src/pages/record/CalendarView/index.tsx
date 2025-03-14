@@ -1,35 +1,23 @@
-import { useEffect, useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { View, Picker, Text } from "@tarojs/components";
-import { Day } from "@antmjs/vantui";
 import useCalendarHooks from "@/hooks/useCalendarHooks";
-import { Calendar } from "@antmjs/vantui/es/calendar";
-import { DatePicker } from "@antmjs/vantui/es/datetime-picker";
-import '@antmjs/vantui/es/calendar/style'
-import '@antmjs/vantui/es/datetime-picker/style'
+import { Calendar, DatePicker, Day } from "@antmjs/vantui";
 import DreamCard from "../DreamCard";
 import style from "./index.module.scss";
 
 
-
-
-
 const CalendarView = () => {
-  const [showRange, setShowRange] = useState<[Dayjs, Dayjs]>([dayjs().startOf('month'), dayjs().endOf('month')]);
+
 
   const {
+    showRange,
     currentYear,
     currentMonth,
     onDatePickerChange,
     prevMonth,
     nextMonth,
-    initCalendar,
     selectedDateDreams
   } = useCalendarHooks()
-
-  useEffect(() => {
-    initCalendar();
-  }, []);
 
   return (
     <View className={style["calendar-view"]}>
@@ -65,8 +53,8 @@ const CalendarView = () => {
           showMark={false}
           showTitle={false}          
           firstDayOfWeek={1}
-          minDate={showRange[0]}
-          maxDate={showRange[1]}
+          minDate={showRange[0] as unknown as Date}
+          maxDate={showRange[1] as unknown as Date}
           className={style['calendar']}
           formatter={(day: Day) => {
             const isToday = dayjs(day.date).isSame(dayjs(), 'day');

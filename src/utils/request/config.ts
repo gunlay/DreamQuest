@@ -1,8 +1,8 @@
 // 请求配置
 export const REQUEST_CONFIG = {
   // 临时url
-  baseURL: "http://139.224.52.179:8080",
-  // "https://dreamquest.top"
+  // baseURL: "http://139.224.52.179:8080",
+  baseURL: "https://dreamquest.top",
   // 超时时间
   timeout: 100000,
   // 最大重试次数

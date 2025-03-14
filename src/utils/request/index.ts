@@ -126,9 +126,9 @@ export class HttpRequest {
   async request<T>(options: RequestOptions): Promise<T> {
     const { showLoading = true, retries = 0 } = options;
     // 显示加载提示
-    if (showLoading) {
-      Taro.showLoading({ title: "加载中..." });
-    }
+    // if (showLoading) {
+    //   Taro.showLoading({ title: "加载中..." });
+    // }
 
     try {
       // 应用请求拦截器
