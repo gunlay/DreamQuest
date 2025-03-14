@@ -10,6 +10,7 @@
     "framework": "React"
   },
   "scripts": {
+    "dev": "node scripts/dev.js",
     "build:weapp": "taro build --type weapp",
     "build:swan": "taro build --type swan",
     "build:alipay": "taro build --type alipay",
@@ -82,6 +83,7 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-react": "^7.8.2",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "inquirer": "^8.2.4",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.5.0",
     "postcss": "^8.4.18",
