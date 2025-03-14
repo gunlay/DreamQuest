@@ -11,11 +11,30 @@ Page({
   },
 
   async getUserProfile() {
-    if (!this.data.isAgreed) {
-      wx.showToast({
-        title: '请先同意用户协议和隐私政策',
-        icon: 'none'
-      });
+    // if (!this.data.isAgreed) {
+    //   const result = await wx.showModal({
+    //     content: '请先同意用户协议和隐私政策',
+    //     // icon: 'none'
+    //     showCancel: true
+    //   });
+    //   if (result.confirm) {
+    //     this.setData({
+    //       isAgreed: true
+    //     })
+    //   } else {
+    //     return 
+    //   }
+    // }
+    const result = await wx.showModal({
+      content: !this.data.isAgreed ? '请先同意用户协议和隐私政策' : '确认要登录吗',
+      // icon: 'none'
+      showCancel: true
+    });
+    if (result.confirm) {
+      this.setData({
+        isAgreed: true
+      })
+    } else {
       return 
     }
     const code = await wx.login();
@@ -39,9 +58,11 @@ Page({
         app.checkSession();
         
         // 登录成功后跳转到首页
-        wx.switchTab({
-          url: '/pages/index/index'
-        });
+        wx.nextTick(() => {
+          wx.switchTab({
+            url: '/pages/index/index'
+          });
+        })
       } else {
         wx.showToast({
           title: result.message || '登录失败',

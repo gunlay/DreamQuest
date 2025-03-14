@@ -24,8 +24,8 @@ Component({
       const index = this.data.list.findIndex(item => item.pagePath === currentPath);
       if (index !== -1) {
         this.setData({ selected: index });
-      }
-      app.checkSession();
+      } 
+      app.checkSession();      
     }
   },
   properties: {

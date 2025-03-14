@@ -37,7 +37,7 @@ interface WeeklyReportData {
   keywords: string[];   // 关键词列表
 }
 
-const { config } = require('../config/config')
+// const { config } = require('../config/config')
 
 // DeepSeek API 响应类型
 interface DeepSeekResponse {

@@ -1,4 +1,4 @@
-import { apiConfig } from '../config/config';
+// import { apiConfig } from '../config/config';
 const sign = require('../utils/sign');
 
 // 生成图片
