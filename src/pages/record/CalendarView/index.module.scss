@@ -51,86 +51,86 @@
     }
   }
 
-  /* 星期表头 */
-  .weekday-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    margin-bottom: 24px;
-    padding: 0 8px;
-    gap: 16px;
+  // /* 星期表头 */
+  // .weekday-header {
+  //   display: grid;
+  //   grid-template-columns: repeat(7, 1fr);
+  //   text-align: center;
+  //   margin-bottom: 24px;
+  //   padding: 0 8px;
+  //   gap: 16px;
 
-    .weekday {
-      color: #ffffff;
-      font-size: 28px;
-      padding: 16px 0;
-    }
-  }
+  //   .weekday {
+  //     color: #ffffff;
+  //     font-size: 28px;
+  //     padding: 16px 0;
+  //   }
+  // }
 
   /* 日历主体 */
   .calendar-body {
-    background: rgba(255, 255, 255, 0.76);
-    border-radius: 16px;
-    padding: 32px;
+    // background: rgba(255, 255, 255, 0.76);
+    // border-radius: 16px;
+    // padding: 32px;
     margin-bottom: 40px;
-    height: 33vh;
-    box-sizing: border-box;
+    // height: 33vh;
+    // box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    .calendar-row {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 16px;
-      height: calc(
-        (33vh - 64px) / 6
-      ); /* 调整计算方式，32px 是上下 padding 的总和 */
-      .calendar-cell {
-        position: relative;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        color: #000000;
-        border-radius: 8px;
-        cursor: pointer;
-        padding: 8px;
-        box-sizing: border-box;
+    // .calendar-row {
+    //   display: grid;
+    //   grid-template-columns: repeat(7, 1fr);
+    //   gap: 16px;
+    //   height: calc(
+    //     (33vh - 64px) / 6
+    //   ); /* 调整计算方式，32px 是上下 padding 的总和 */
+    //   .calendar-cell {
+    //     position: relative;
+    //     height: 100%;
+    //     display: flex;
+    //     align-items: center;
+    //     justify-content: center;
+    //     font-size: 28px;
+    //     color: #000000;
+    //     border-radius: 8px;
+    //     cursor: pointer;
+    //     padding: 8px;
+    //     box-sizing: border-box;
 
-        .dream-indicator {
-          position: absolute;
-          bottom: 8px;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
+    //     .dream-indicator {
+    //       position: absolute;
+    //       bottom: 8px;
+    //       width: 8px;
+    //       height: 8px;
+    //       border-radius: 50%;
+    //     }
 
-        &.today {
-          background: #971fcf;
-          color: #ffffff;
-        }
+    //     &.today {
+    //       background: #971fcf;
+    //       color: #ffffff;
+    //     }
 
-        &.selected {
-          background: rgba(151, 31, 207, 0.2);
-        }
+    //     &.selected {
+    //       background: rgba(151, 31, 207, 0.2);
+    //     }
 
-        &.positive {
-          border: 1px solid #4caf50;
+    //     &.positive {
+    //       border: 1px solid #4caf50;
 
-          &.dream-indicator {
-            background: #4caf50;
-          }
-        }
-        &.negative {
-          border: 1px solid #f44336;
-          &.dream-indicator {
-            background: #f44336;
-          }
-        }
-      }
-    }
+    //       &.dream-indicator {
+    //         background: #4caf50;
+    //       }
+    //     }
+    //     &.negative {
+    //       border: 1px solid #f44336;
+    //       &.dream-indicator {
+    //         background: #f44336;
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   /* 选中日期的梦境记录 */
@@ -145,4 +145,62 @@
     color: rgba(255, 255, 255, 0.6);
     font-size: 28px;
   }
+}
+.calendar {
+  :global {
+    .van-calendar__header-title,
+    .van-calendar__header-subtitle {
+      display: none; 
+    }
+
+    .van-calendar__body {
+      overflow: unset;
+    }
+
+    .van-calendar__weekday {
+      color: #ffffff;
+      font-size: 28px;
+      padding: 16px 0;
+      line-height: initial;
+    }
+    .van-calendar__month {
+      min-height: initial !important;
+      background: rgba(255, 255, 255, 0.76);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .van-calendar__day {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #000000;
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 0 6px;
+      box-sizing: border-box;
+      height: calc(
+        (33vh - 56px) / 6
+      ); 
+    }
+
+    .van-calendar__selected-day {
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(151, 31, 207, 0.2);
+    }
+  }
+}
+.today {
+  background: #971fcf;
+  color: #ffffff !important;
+}
+.positive {
+  border: 1px solid #4caf50;
+}
+.negative {
+  border: 1px solid #f44336;
 }

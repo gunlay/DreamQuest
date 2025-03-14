@@ -31,28 +31,3 @@ export const appConfig = {
     dreamImages: "dream-images/", // 梦境图片存储路径
   },
 };
-
-// API配置
-export const apiConfig = {
-  baseUrl: "https://dreamquest.seekly.tech", // 本地开发环境
-  deepseek: {
-    baseUrl: "https://api.deepseek.com",
-    apiKey: "sk-276d5267971644bca803a9130d6db1ac", // DeepSeek API Key
-  },
-};
-
-// 导出统一配置对象
-export const config = {
-  ...appConfig,
-  ...apiConfig,
-  deepseekApiKey: "sk-276d5267971644bca803a9130d6db1ac",
-};
-
-const API_KEY = "sk-5e355a7af3b842f1b646034657664a76";
-
-export function getAuth() {
-  return {
-    Authorization: `Bearer ${API_KEY}`,
-    "Content-Type": "application/json",
-  };
-}

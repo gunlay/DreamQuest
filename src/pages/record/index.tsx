@@ -9,7 +9,7 @@ import style from "./index.module.scss";
 
 const Record: React.FC = () => {
   const { titleBarHeight, statusBarHeight } = useSystemStore();
-  const [currentTab, setCurrentTab] = useState<string>("list");
+  const [currentTab, setCurrentTab] = useState<string>("calendar");
 
   return (
     <PageContainer
