@@ -3,12 +3,21 @@
 const app = getApp<IAppOption>()
 const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 
+import { getWeeklyDreams, generateWeeklyReportContent } from '../../services/weeklyReport.service'
+
+interface WeeklyReport {
+  keywords: string;
+  analysis: string;
+  emotionTrend: string;
+  aiSuggestion: string;
+}
+
 Component({
   data: {
+    app,
     dateInfo: {
       date: '2024.12.24',
-      weekday: '周二',
-      lunar: '腊月廿四'
+      weekday: '周二'
     },
     dreamTheory: {
       title: '弗洛伊德的梦境理论',
@@ -30,20 +39,26 @@ Component({
       luckyDirection: ''
     },
     weeklyReport: {
-      image: '',
-      keywords: '本周你的梦境中出现最多的是【自由】【压力】【探索】，这些关键词可能与你近期的情绪或生活事件有关。',
-      analysis: '重复出现的场景或人物，可能反映了你内心未解决的问题。梦中追逐或迷路的情节，或许是内心对方向感缺失的隐喻。如果梦里充满新奇事物，这可能是你潜意识在激发创造力。',
-      emotionTrend: '本周梦境情绪呈现【波动】的特点，建议关注梦境带来的情绪变化，这会帮助你更好地了解自己的内心需求。',
-      aiSuggestion: '试着记录梦中细节，特别是让你印象深刻的画面，或许能挖掘出潜藏的灵感或答案！'
-    },
+      keywords: '开始记录你的第一个梦境吧',
+      analysis: '开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。',
+      emotionTrend: '开始记录梦境，探索内心情感的变化。',
+      aiSuggestion: '建议在睡醒后第一时间记录梦境，这样能记住更多细节。可以从印象最深刻的片段开始写起，慢慢培养记录习惯。'
+    } as WeeklyReport,
     isReportExpanded: false,
-    showDreamInput: false
+    showDreamInput: false,
+    isGeneratingReport: false
   },
 
   lifetimes: {
     attached() {
+      if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+        this.getTabBar().setData({
+          selected: 0
+        })
+      }
       this.updateDateInfo()
       this.fetchDreamTheory()
+      this.fetchWeeklyReport()
       
       // 获取保存的星座并更新运势
       const savedZodiac = wx.getStorageSync('userZodiac')
@@ -69,8 +84,7 @@ Component({
       this.setData({
         dateInfo: {
           date: `${year}.${month}.${day}`,
-          weekday: `周${weekdays[now.getDay()]}`,
-          lunar: '腊月廿四'
+          weekday: `周${weekdays[now.getDay()]}`
         }
       })
     },
@@ -174,6 +188,63 @@ Component({
       }
     },
 
+    async fetchWeeklyReport() {
+      console.log('开始生成周报...');
+      this.setData({ isGeneratingReport: true });
+      
+      try {
+        // 获取最近一周的梦境数据
+        console.log('获取最近一周的梦境数据...');
+        const weeklyDreams = getWeeklyDreams();
+        console.log('获取到的梦境数据:', weeklyDreams);
+        
+        if (weeklyDreams.length === 0) {
+          console.log('没有梦境记录，使用默认值');
+          this.setData({ 
+            weeklyReport: {
+              keywords: '开始记录你的第一个梦境吧',
+              analysis: '开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。',
+              emotionTrend: '开始记录梦境，探索内心情感的变化。',
+              aiSuggestion: '建议在睡醒后第一时间记录梦境，这样能记住更多细节。可以从印象最深刻的片段开始写起，慢慢培养记录习惯。'
+            } as WeeklyReport,
+            isGeneratingReport: false
+          });
+          return;
+        }
+        
+        // 生成周报内容
+        console.log('开始生成周报内容...');
+        const reportContent = await generateWeeklyReportContent(weeklyDreams);
+        console.log('生成的周报内容:', reportContent);
+        
+        // 更新UI
+        wx.nextTick(() => {
+          this.setData({
+            weeklyReport: reportContent,
+            isGeneratingReport: false
+          });
+          console.log('周报生成完成，UI已更新');
+        });
+      } catch (error) {
+        console.error('获取周报失败:', error);
+        wx.nextTick(() => {
+          this.setData({ 
+            isGeneratingReport: false,
+            weeklyReport: {
+              keywords: '开始记录你的第一个梦境吧',
+              analysis: '开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。',
+              emotionTrend: '开始记录梦境，探索内心情感的变化。',
+              aiSuggestion: '建议在睡醒后第一时间记录梦境，这样能记住更多细节。可以从印象最深刻的片段开始写起，慢慢培养记录习惯。'
+            } as WeeklyReport
+          });
+        });
+        wx.showToast({
+          title: '周报生成失败',
+          icon: 'error'
+        });
+      }
+    },
+
     toggleReport() {
       this.setData({
         isReportExpanded: !this.data.isReportExpanded
@@ -194,11 +265,23 @@ Component({
         id: Date.now() // 添加唯一ID
       }
       
-      // 保存梦境数据到本地存储
-      wx.setStorageSync('currentDream', dreamData)
+      // 获取现有的梦境记录
+      const existingDreams = wx.getStorageSync('dreams') || [];
+      console.log('现有的梦境记录:', existingDreams);
+      
+      // 添加新的梦境记录
+      const updatedDreams = [dreamData, ...existingDreams];
+      console.log('更新后的梦境记录:', updatedDreams);
+      
+      // 保存到本地存储
+      wx.setStorageSync('dreams', updatedDreams);
+      console.log('梦境记录已保存到本地存储');
       
       // 关闭输入浮层
       this.hideDreamInput()
+      
+      // 更新周报
+      this.fetchWeeklyReport()
       
       // 跳转到分析页面
       wx.navigateTo({

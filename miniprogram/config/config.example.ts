@@ -11,4 +11,12 @@ export const appConfig = {
   cloudStoragePath: {
     dreamImages: 'dream-images/'  // 梦境图片存储路径
   }
+}
+
+// 配置文件模板
+export const config = {
+  // DeepSeek API配置
+  deepseekApiKey: 'your_deepseek_api_key_here',
+  
+  // 其他配置项...
 } 

@@ -1,2 +1,5 @@
 # 配置文件
 miniprogram/config/config.ts 
+
+node_modules
+dist

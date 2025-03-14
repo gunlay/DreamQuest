@@ -58,12 +58,71 @@ Page({
 
     if (existingDream) {
       console.log('找到已存在的记录:', existingDream)
-      // 如果找到已存在的记录，直接加载保存的分析和聊天记录
-      this.setData({
-        dreamData: existingDream,
-        messages: existingDream.messages || []
-      })
+      
+      // 检查记录是否完整（是否有标签和解析）
+      const hasTags = existingDream.tags && existingDream.tags.length > 0
+      const hasAnalysis = existingDream.analysis && existingDream.analysis.length > 0
+      
+      if (!hasTags || !hasAnalysis) {
+        console.log('记录不完整，需要生成标签和解析')
+        
+        // 先加载基本数据
+        this.setData({
+          dreamData: existingDream,
+          messages: existingDream.messages || []
+        })
+
+        // 显示加载状态
+        wx.showLoading({
+          title: '正在分析梦境...',
+          mask: true
+        })
+
+        try {
+          console.log('开始并行任务: AI分析、标签生成')
+          // 并行执行两个任务：AI分析、标签生成
+          const [analysisResult, tagsResult] = await Promise.all([
+            this.getInitialAnalysis(existingDream),
+            this.generateTags(existingDream)
+          ])
+
+          console.log('任务完成:', {
+            analysisResult,
+            tagsResult
+          })
+
+          // 更新数据
+          this.setData({
+            'dreamData.tags': tagsResult,
+            messages: [{type: 'ai', content: analysisResult}]
+          })
+
+          // 隐藏加载状态
+          wx.hideLoading()
+        } catch (error) {
+          console.error('分析失败，详细错误:', error)
+          wx.hideLoading()
+          wx.showToast({
+            title: '分析失败',
+            icon: 'error'
+          })
+          this.setData({
+            'dreamData.tags': ['神秘', '探索'],
+            messages: [{type: 'ai', content: '抱歉，我现在有点累了，请稍后再试～'}]
+          })
+        }
+      } else {
+        console.log('记录完整，直接加载已有数据')
+        // 如果记录完整，直接加载保存的分析和聊天记录
+        this.setData({
+          dreamData: existingDream,
+          messages: existingDream.messages || []
+        })
+      }
       console.log('已加载现有记录的图片:', existingDream.image)
+      
+      // 清除 currentDream，因为已经加载了已存在的记录
+      wx.removeStorageSync('currentDream')
     } else {
       console.log('创建新记录，基础数据:', dreamData)
       // 如果是新记录，设置基本信息并请求 AI 分析
@@ -113,6 +172,9 @@ Page({
         // 添加 AI 回复
         this.addMessage('ai', analysisResult)
         
+        // 清除 currentDream，因为已经不需要了
+        wx.removeStorageSync('currentDream')
+        
         // 隐藏加载状态
         wx.hideLoading()
       } catch (error) {
@@ -150,7 +212,7 @@ Page({
             },
             {
               role: "user",
-              content: `请分析这个梦境。\n标题：${dreamData.title}\n内容：${dreamData.content}`
+              content: `请分析这个梦境：${dreamData.content}`
             }
           ],
           temperature: 0.7,
@@ -187,7 +249,7 @@ Page({
             },
             {
               role: "user",
-              content: `请为这个梦境生成标签。\n标题：${dreamData.title}\n内容：${dreamData.content}`
+              content: `请为这个梦境生成标签：${dreamData.content}`
             }
           ],
           temperature: 0.7,
@@ -214,40 +276,40 @@ Page({
   onUnload() {
     // 页面卸载前保存数据到本地存储
     const { dreamData, messages } = this.data
-    if (dreamData && dreamData.id) {
-      // 获取已有的梦境记录
-      const existingDreams = wx.getStorageSync('dreams') || []
-      
-      // 检查记录是否已存在
-      const index = existingDreams.findIndex((dream: DreamRecord) => dream.id === dreamData.id)
-      
-      // 获取 AI 的初始分析（第一条 AI 消息）
-      const firstAiMessage = messages.find(msg => msg.type === 'ai')
-      const aiAnalysis = firstAiMessage ? firstAiMessage.content : ''
-      
-      const newDream: DreamRecord = {
-        id: dreamData.id,
-        title: dreamData.title,
-        content: dreamData.content,
-        date: dreamData.date,
-        weekday: dreamData.weekday || '周一',
-        image: dreamData.image || '/assets/images/default_dream.png',
-        tags: dreamData.tags || ['神秘', '探索'],
-        analysis: aiAnalysis,
-        messages: messages
-      }
+    if (!dreamData || !dreamData.id) return
 
-      if (index === -1) {
-        // 如果记录不存在，添加到开头
-        existingDreams.unshift(newDream)
-      } else {
-        // 如果记录已存在，更新它
-        existingDreams[index] = newDream
-      }
-      
-      // 保存更新后的记录
-      wx.setStorageSync('dreams', existingDreams)
+    // 获取已有的梦境记录
+    const existingDreams = wx.getStorageSync('dreams') || []
+    
+    // 检查记录是否已存在
+    const index = existingDreams.findIndex((dream: DreamRecord) => dream.id === dreamData.id)
+    
+    // 获取 AI 的初始分析（第一条 AI 消息）
+    const firstAiMessage = messages.find(msg => msg.type === 'ai')
+    const aiAnalysis = firstAiMessage ? firstAiMessage.content : ''
+    
+    const newDream: DreamRecord = {
+      id: dreamData.id,
+      title: dreamData.title,
+      content: dreamData.content,
+      date: dreamData.date,
+      weekday: dreamData.weekday || '周一',
+      image: dreamData.image || '/assets/images/default_dream.png',
+      tags: dreamData.tags || ['神秘', '探索'],
+      analysis: aiAnalysis,
+      messages: messages
     }
+
+    if (index === -1) {
+      // 如果记录不存在，添加到开头
+      existingDreams.unshift(newDream)
+    } else {
+      // 如果记录已存在，更新它
+      existingDreams[index] = newDream
+    }
+    
+    // 保存更新后的记录
+    wx.setStorageSync('dreams', existingDreams)
   },
 
   onMessageInput(e: any) {

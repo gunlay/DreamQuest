@@ -12,7 +12,6 @@
     <view class="date-wrapper">
       <text class="date">{{dateInfo.date}}</text>
       <text class="weekday">{{dateInfo.weekday}}</text>
-      <text class="lunar">{{dateInfo.lunar}}</text>
     </view>
   </view>
 
@@ -26,7 +25,7 @@
   </view>
 
   <!-- 今日运势 -->
-  <view class="fortune-card" bindtap="{{hasSelectedZodiac ? 'toggleFortune' : ''}}">
+  <view class="fortune-card" bindtap="toggleFortune">
     <view class="card-title">
       <text>📅 今日运势</text>
     </view>
@@ -72,37 +71,40 @@
   </view>
 
   <!-- 梦境周报 -->
-  <view class="weekly-report card" bindtap="toggleReport">
+  <view class="weekly-report {{isReportExpanded ? 'expanded' : ''}}" bindtap="toggleReport">
     <view class="card-title">
       <text>🗒️ 梦境周报</text>
     </view>
     
-    <!-- 配图区域 -->
-    <image class="report-image" src="{{weeklyReport.image || '/assets/default_dream.png'}}" mode="aspectFill"></image>
+    <!-- 加载状态 -->
+    <view class="loading-wrapper" wx:if="{{isGeneratingReport}}">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">正在生成周报...</text>
+    </view>
     
     <!-- 详细内容区域 -->
-    <view class="report-content {{isReportExpanded ? 'expanded' : ''}}">
+    <view class="report-content {{isReportExpanded ? 'expanded' : ''}}" wx:if="{{!isGeneratingReport}}">
       <!-- 关键词 -->
       <view class="report-section">
-        <text class="section-title">📊 关键词：</text>
+        <text class="section-title">📊 关键词</text>
         <text class="section-content">{{weeklyReport.keywords}}</text>
       </view>
       
       <!-- 梦境解析 -->
       <view class="report-section">
-        <text class="section-title">💭 梦境解析：</text>
+        <text class="section-title">💭 梦境解析</text>
         <text class="section-content">{{weeklyReport.analysis}}</text>
       </view>
       
       <!-- 情绪趋势 -->
       <view class="report-section">
-        <text class="section-title">📈 情绪趋势：</text>
+        <text class="section-title">📈 情绪趋势</text>
         <text class="section-content">{{weeklyReport.emotionTrend}}</text>
       </view>
       
       <!-- AI建议 -->
       <view class="report-section">
-        <text class="section-title">🤖 AI建议：</text>
+        <text class="section-title">🤖 AI建议</text>
         <text class="section-content">{{weeklyReport.aiSuggestion}}</text>
       </view>
     </view>
@@ -116,7 +118,7 @@
         <input placeholder="write your dream" 
                placeholder-style="color: rgba(60, 60, 67, 0.6)" 
                disabled />
-        <image class="voice-icon" src="/assets/icons/voice.png" mode="aspectFit" />
+        <!-- <image class="voice-icon" src="/assets/icons/voice.png" mode="aspectFit" /> -->
       </view>
     </view>
   </view>
@@ -134,4 +136,8 @@
     dreamData="{{currentDream}}"
     bind:close="onDreamAnalysisClose"
   />
+
+  <tabbar selected='index' />
+  <!-- 底部导航栏 -->
+  <tabbar is-logged-in="{{app.globalData.isLoggedIn}}"></tabbar>
 </view>

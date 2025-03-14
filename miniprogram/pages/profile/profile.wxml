@@ -13,19 +13,11 @@
       <view class="stats-board">
         <view class="stat-item">
           <text class="stat-num">600</text>
-          <text class="stat-label">梦境</text>
+          <text class="stat-label">梦境数量</text>
         </view>
         <view class="stat-item">
-          <text class="stat-num">工作</text>
-          <text class="stat-label">最常梦到</text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-num">周三</text>
+          <text class="stat-num">周五</text>
           <text class="stat-label">最常做梦时间</text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-num">焦虑</text>
-          <text class="stat-label">最多的情绪</text>
         </view>
       </view>
     </view>
@@ -39,7 +31,7 @@
         </view>
         <text class="vip-subtitle">开通VIP，扩充大模型的梦境记忆数量</text>
       </view>
-      <button class="vip-button">立即开通</button>
+      <button class="vip-button">敬请期待</button>
     </view>
   </view>
 
@@ -59,16 +51,5 @@
       </block>
     </scroll-view>
   </view>
-
-  <!-- 输入区域 -->
-  <view class="input-section">
-    <input class="message-input" 
-           placeholder="ask" 
-           placeholder-style="color: rgba(60, 60, 67, 0.6)"
-           value="{{inputMessage}}"
-           bindinput="onInputChange"/>
-    <button class="send-button" bindtap="sendMessage" disabled="{{!inputMessage}}">
-      <image class="send-icon" src="/assets/icons/send.png" mode="aspectFit"></image>
-    </button>
-  </view>
+  <tabbar selected='profile'></tabbar>
 </view> 

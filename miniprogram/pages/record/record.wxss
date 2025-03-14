@@ -28,6 +28,11 @@
   backdrop-filter: blur(10px);
 }
 
+/* 日历视图下的头部样式 */
+.calendar-header-only {
+  padding-bottom: 10px;
+}
+
 /* Tab 切换 */
 .tab-header {
   display: flex;
@@ -197,9 +202,9 @@
 
 /* 日历视图 */
 .calendar-view {
-  margin-top: 120px; /* 为固定头部预留空间 */
+  margin-top: 70px; /* 减小顶部间距，因为没有搜索框 */
   padding: 0 12px;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 70px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

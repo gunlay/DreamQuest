@@ -1,0 +1,11 @@
+<view class="container">
+  <view class="title">用户协议</view>
+  <view class="content">
+    <block wx:for="{{sections}}" wx:key="title">
+      <view class="section">
+        <view class="section-title">{{item.title}}</view>
+        <view class="section-content">{{item.content}}</view>
+      </view>
+    </block>
+  </view>
+</view> 

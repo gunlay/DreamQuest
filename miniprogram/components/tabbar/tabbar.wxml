@@ -1,0 +1,11 @@
+<view class="tab-bar">
+  <block wx:for="{{list}}" wx:key="pagePath">
+    <view class="tab-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab" wx:if="{{!item.requireLogin || app.globalData.isLoggedIn}}">
+      <image class="tab-icon" src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+      <view class="tab-text" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
+    </view>
+    <view class="tab-item login-btn" bindtap="switchTab" data-index="{{index}}" wx:elif="{{item.requireLogin}}">
+      <view class="tab-text">登录</view>
+    </view>
+  </block>
+</view>

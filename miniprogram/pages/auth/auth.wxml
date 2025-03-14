@@ -1,0 +1,8 @@
+<!--pages/auth/auth.wxml-->
+<view class="container">
+  <text class="title">授权登录</text>
+  
+  <button class="auth-button" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+    点击授权获取用户信息
+  </button>
+</view>

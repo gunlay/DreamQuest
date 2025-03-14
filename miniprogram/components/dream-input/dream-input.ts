@@ -68,7 +68,7 @@ Component({
         content: content.trim(),
         date: currentDate,
         weekday: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][new Date(currentDate.replace(/\./g, '-')).getDay()],
-        image: '/assets/images/default_dream.png'  // 默认图片
+        // image: '/assets/images/default_dream.png'  // 默认图片
       }
 
       try {
@@ -90,9 +90,8 @@ Component({
         
         // 保存到本地存储
         wx.setStorageSync('currentDream', dreamData)
-        
-        // 触发保存事件
-        this.triggerEvent('save', dreamData)
+
+        this.hideDreamInput()
         
         // 清空输入
         this.setData({

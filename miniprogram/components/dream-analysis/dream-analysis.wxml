@@ -13,7 +13,7 @@
 
     <!-- AI生成的图片 -->
     <view class="dream-image">
-      <image src="/assets/default_dream.png" mode="aspectFill"></image>
+      <!-- <image src="/assets/default_dream.png" mode="aspectFill"></image> -->
     </view>
 
     <!-- 分析标签 -->

@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="login-box">
+    <image class="logo" src="/assets/images/login/login_banner.png" mode="aspectFit"></image>
+    <view class="title">欢迎使用梦寻</view>
+    <view class="desc">请授权登录以使用完整功能</view>
+    <button class="login-btn" 
+            bindtap="getUserProfile" 
+            type="primary"
+            hover-class="button-hover">
+      微信一键登录
+    </button>
+    <view class="privacy-policy">
+      <radio value="agree" checked="{{isAgreed}}" bindtap="toggleAgreement" color="#971FCF" style='transform:scale(0.5)'/>
+      登录即代表您同意
+      <text class="link" bindtap="showUserAgreement">《用户协议》</text>
+      和
+      <text class="link" bindtap="showPrivacyPolicy">《隐私政策》</text>
+    </view>
+  </view>
+</view>

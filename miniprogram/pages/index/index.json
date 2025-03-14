@@ -2,6 +2,7 @@
   "component": true,
   "usingComponents": {
     "dream-input": "/components/dream-input/dream-input",
-    "dream-analysis": "/components/dream-analysis/dream-analysis"
+    "dream-analysis": "/components/dream-analysis/dream-analysis",
+    "tabbar": "/components/tabbar/tabbar"
   }
 }

@@ -2,8 +2,12 @@
   "pages": [
     "pages/index/index",
     "pages/record/record",
+    "pages/analysis/analysis",
     "pages/profile/profile",
-    "pages/analysis/analysis"
+    "pages/auth/auth",
+    "pages/login/login",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -12,6 +16,7 @@
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
+    "custom": true,
     "color": "#999999",
     "selectedColor": "#971FCF",
     "backgroundColor": "#ffffff",
@@ -34,7 +39,10 @@
         "iconPath": "assets/tabbar/profile.png",
         "selectedIconPath": "assets/tabbar/profile_selected.png"
       }
-    ]
+    ],
+    "usingComponents": {
+      "tabbar": "/components/tabbar/tabbar"
+    }
   },
   "usingComponents": {}
 }

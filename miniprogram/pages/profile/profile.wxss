@@ -23,7 +23,7 @@
   top: 245px;
   left: 0;
   right: 0;
-  bottom: 46px;
+  bottom: 0;
   background-color: rgba(250, 250, 250, 0.93);
   z-index: 2;
 }
@@ -72,55 +72,6 @@
   border-bottom-right-radius: 4px;
 }
 
-/* 输入区域 */
-.input-section {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 30px;
-  padding: 8px 16px;
-  background-color: rgba(250, 250, 250, 0.93);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 3;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.message-input {
-  flex: 1;
-  height: 36px;
-  background: #FFFFFF;
-  border-radius: 18px;
-  padding: 0 16px;
-  font-size: 14px;
-  color: #333333;
-  border: 1px solid #CF14BF;
-}
-
-.send-button {
-  width: 50px;
-  height: 36px;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, #CF14BF 0%, #971FCF 100%);
-  border-radius: 12.5px;
-}
-
-.send-button[disabled] {
-  opacity: 0.5;
-}
-
-.send-icon {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) invert(1);
-}
-
 /* 页面内容样式 */
 text {
   color: #FFFFFF;
@@ -153,16 +104,16 @@ text {
 /* 数据看板 */
 .stats-board {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 8px 0;
 }
 
 .stat-item {
-  flex: 1;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 8px;
+  padding: 0 24px;
 }
 
 .stat-num {

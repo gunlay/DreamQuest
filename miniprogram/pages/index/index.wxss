@@ -1,6 +1,6 @@
 /**index.wxss**/
 page {
-  height: 100vh;
+  height: initial;
   display: flex;
   flex-direction: column;
 }
@@ -9,7 +9,7 @@ page {
   position: relative;
   min-height: 100vh;
   padding: 0 14px;
-  padding-bottom: 160px;
+  padding-bottom: 150px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -146,19 +146,10 @@ page {
   -webkit-box-orient: vertical;
 }
 
-/* 梦境周报图片 */
-.report-image {
-  width: 100%;
-  height: 160px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  object-fit: cover;
-}
-
 /* 底部固定区域 */
 .input-section {
   position: fixed;
-  bottom: 5px;
+  bottom: 60px;
   left: 14px;
   right: 14px;
   z-index: 100;
@@ -289,20 +280,15 @@ page {
 
 /* 运势内容 */
 .fortune-content {
-  font-size: 13px;
-  font-family: PingFang SC;
-  font-weight: 400;
-  line-height: 1.6;
-  color: #000000;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 6;  /* 默认显示6行 */
   transition: all 0.3s ease;
 }
 
 .fortune-content.expanded {
-  -webkit-line-clamp: unset;
+  -webkit-line-clamp: unset;  /* 展开时不限制行数 */
 }
 
 .fortune-item {
@@ -313,16 +299,15 @@ page {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 
 .item-content {
   display: block;
   margin-top: 4px;
-  font-size: 13px;
-  font-weight: 400;
-  color: #000000;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .fortune-numbers {
@@ -330,7 +315,7 @@ page {
   flex-direction: column;
   gap: 8px;
   margin-top: 12px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: #000000;
 }
@@ -379,20 +364,45 @@ page {
   margin-bottom: 16px;
 }
 
-.report-image {
-  width: 100%;
-  height: 200px;
-  border-radius: 8px;
-  object-fit: cover;
+/* 加载状态 */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
 }
 
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(151, 31, 207, 0.1);
+  border-top: 3px solid #971FCF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 报告内容区域 */
 .report-content {
-  display: none;
-  margin-top: 16px;
+  position: relative;
+  max-height: 120px; /* 大约5行文字的高度 */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
 }
 
 .report-content.expanded {
-  display: block;
+  max-height: none;
 }
 
 .report-section {
@@ -400,7 +410,7 @@ page {
 }
 
 .report-section .section-title {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: #000000;
   margin-bottom: 4px;
@@ -408,11 +418,46 @@ page {
 }
 
 .report-section .section-content {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: #000000;
   line-height: 1.6;
-  display: block;
+}
+
+/* 渐变遮罩 */
+.report-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9));
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.report-content.expanded::after {
+  opacity: 0;
+}
+
+/* 展开/收起指示器 */
+.weekly-report::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #971FCF;
+  transition: transform 0.3s ease;
+}
+
+.weekly-report.expanded::after {
+  transform: translateX(-50%) rotate(180deg);
 }
 
 .bg-image {
@@ -422,4 +467,16 @@ page {
   width: 100%;
   height: 100%;
   z-index: -1;
+}
+
+.fortune-item-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.fortune-item-content {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
 }
