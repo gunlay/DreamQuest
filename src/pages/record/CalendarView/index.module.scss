@@ -127,8 +127,18 @@
   }
 }
 .today {
-  background: #971fcf;
-  color: #ffffff !important;
+  view {
+    display: flex;
+    justify-content: center;
+    background: #971fcf;
+    color: #ffffff !important;
+    width: 128px; 
+    height: calc(
+      (33vh - 56px) / 6
+    );
+    border-radius: 8px;
+    align-items: center;
+  } 
   // .van-calendar__day { }
 }
 .positive {
