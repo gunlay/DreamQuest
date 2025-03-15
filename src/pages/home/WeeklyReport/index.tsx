@@ -27,7 +27,6 @@ const WeeklyReport = () => {
 
     try {
       const data = await homeApi.fetchWeeklyReport();
-      console.log("_weeklyDreams", data);
       setWeeklyReport(data)
     } catch (error) {
       console.error("获取周报失败:", error)

@@ -22,9 +22,9 @@ export const chatApi = {
 
   fetchChatHistory: async (params: {
     chatId: string;
-  }): Promise<ChatHistoryDTO[]> => {
+  }): Promise<ChatHistoryDTO> => {
     return http
-      .post<ChatHistoryDTO[]>("/dream/chat/history", params)
+      .post<ChatHistoryDTO>("/dream/chat/current/chat", params)
       .then((res) => res);
   },
 

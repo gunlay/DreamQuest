@@ -1,9 +1,14 @@
 .list-view {
-  padding-bottom: 100px;
+  padding-bottom: 144px;
   .search-area {
+    position: fixed;
+    left: 0;
+    right: 0;
     display: flex;
-    gap: 24px;
+    // gap: 24px;
+    padding: 0 32px;
     align-items: center;
+    z-index:999;
 
     .search-input-wrapper {
       flex: 1;
@@ -53,6 +58,7 @@
     }
 
     .search-btn {
+      margin-left: 24px;
       padding: 16px 32px;
       background: rgba(255, 255, 255, 0.9);
       border-radius: 36px;
@@ -68,43 +74,16 @@
     }
   }
 
-  .content-area {
-    margin-top: 240px;
-    flex: 1;
-    width: 100%;
-    padding: 0 28px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 20px;
-      text-align: center;
-      color: rgba(255, 255, 255, 0.6);
-
-      Text {
-        margin: 8px 0;
-        font-size: 28px;
-
-        &:first-child {
-          font-size: 32px;
-          margin-bottom: 16px;
-          color: rgba(255, 255, 255, 0.8);
-        }
-      }
-    }
+  .list {
+    padding-top: 72px;
   }
 }
 
 .month-title {
   margin: 30px 0 18px;
   margin-left: 10px;
-  font-size: 28px;
-  color: #000000;
+  font-size: 32px;
+  color: #fff;
   line-height: 32px;
   font-weight: 600;
 }

@@ -32,7 +32,7 @@ const DreamCard: FC<{
         mode="aspectFill"
       ></Image>
 
-      <Text className={style["dream-content"]}>{dream.content}</Text>
+      <Text className={style["dream-content"]}>{dream.desc}</Text>
 
       {
         dream.tags?.length ?<View className={style["tag-list"]}>

@@ -23,6 +23,7 @@ interface ListProps<T> {
   pageSize?: number;
   /**list窗口高度, 默认100vh */
   height?: string;
+  className?:string
 }
 
 const List = <T,>({
@@ -33,6 +34,7 @@ const List = <T,>({
   noMoreText = '没有更多了',
   pageSize = 10,
   height = '100vh',
+  className
 }: ListProps<T>) => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -85,7 +87,7 @@ const List = <T,>({
   return (
     <ScrollView
       id="list-scroll"
-      className={style['list-container']}
+      className={`${style['list-container']} ${className}`}
       scrollY
       enableFlex
       onScroll={handleScroll}

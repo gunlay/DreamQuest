@@ -3,15 +3,19 @@ import { useEffect, useState } from "react";
 import { View, Text, Image, Button, Input } from "@tarojs/components";
 import { chatApi } from "@/api/chat";
 import DefaultDream from "@/assets/image/default_dream.png";
+import { ChatHistoryDTO, MessageDTO } from "@/api/types/chat";
 // import Empty from "@/assets/image/empty.png";
 import { DreamData, DreamRecord, Message } from "./types";
 import { generateTags, getInitialAnalysis } from "./help";
 import style from "./index.module.scss";
+import Markdown from "@/Components/Markdown";
+// import Markdown from "react-markdown";
+
 
 const Analysis = () =>  {
-  const [dreamData, setDreamData] = useState<DreamData | null>(null);
+  const [dreamData, setDreamData] = useState<ChatHistoryDTO | null>(null);
   const [inputMessage, setInputMessage] = useState<string>("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<MessageDTO[]>([]);
   // 获取当前路由的参数
   const chatId = Taro.getCurrentInstance()?.router?.params.chatId as string;
   const onMessageInput = (e: any) => {
@@ -27,8 +31,8 @@ const Analysis = () =>  {
       })
     })
   }
-  const addMessage = (type: 'ai' | 'user', content: string) => {
-    setMessages((prev) => [...prev, { type, content }])
+  const addMessage = (sender: 'ai' | 'user', message: string) => {
+    setMessages((prev) => [...prev, { sender, message }])
     // 添加延时确保消息渲染完成后再滚动
     scrollToTop()
   }
@@ -66,15 +70,15 @@ const Analysis = () =>  {
           role: "user",
           content: `请分析这个梦境。\n标题：${
             (dreamData && dreamData.title) || ""
-          }\n内容：${(dreamData && dreamData.content) || ""}`,
+          }\n内容：${(dreamData && dreamData.desc) || ""}`,
         });
       } else {
         // 添加之前的所有对话历史（最多保留最近的 10 轮对话）
         const recentMessages = messages.slice(-20); // 20条消息约等于10轮对话
         recentMessages.forEach((msg) => {
           apiMessages.push({
-            role: msg.type === "user" ? "user" : "assistant",
-            content: msg.content,
+            role: msg.sender === "user" ? "user" : "assistant",
+            content: msg.message,
           });
         });
       }
@@ -270,64 +274,20 @@ const Analysis = () =>  {
     setMessages(tempMessages)
     scrollToTop()
   }
-  const pageViewOut = () => {
-    if (!dreamData || !dreamData.id) return
-
-    // 获取已有的梦境记录
-    const existingDreams = Taro.getStorageSync('dreams') || []
-    
-    // 检查记录是否已存在
-    const index = existingDreams.findIndex((dream: DreamRecord) => dream.id === dreamData.id)
-    
-    // 获取 AI 的初始分析（第一条 AI 消息）
-    const firstAiMessage = messages.find(msg => msg.type === 'ai')
-    const aiAnalysis = firstAiMessage ? firstAiMessage.content : ''
-    
-    const newDream: DreamRecord = {
-      id: dreamData.id,
-      title: dreamData.title,
-      content: dreamData.content,
-      date: dreamData.date,
-      weekday: dreamData.weekday || '周一',
-      image: dreamData.image || '/assets/images/default_dream.png',
-      tags: dreamData.tags || ['神秘', '探索'],
-      analysis: aiAnalysis,
-      messages: messages
-    }
-
-    if (index === -1) {
-      // 如果记录不存在，添加到开头
-      existingDreams.unshift(newDream)
-    } else {
-      // 如果记录已存在，更新它
-      existingDreams[index] = newDream
-    }
-    console.log('unload', existingDreams);
-    
-    // 保存更新后的记录
-    Taro.setStorageSync('dreams', existingDreams)
-  }
-
   const init = async () => {
     console.log('chatId', chatId);
     
-    const result = chatApi.fetchChatHistory({chatId})
+    const result = await chatApi.fetchChatHistory({chatId})
     console.log(result);
-    
+    setDreamData(result)
+    setMessages(result.messages)
+    scrollToTop()
   }
 
 
   useEffect(() => {
-    // initAnalysis()
     init()
-    return () => {
-      pageViewOut()
-    }
   }, []);
-
-  useDidHide(() => {
-    pageViewOut()
-  })
 
   if (process.env.TARO_ENV !== 'h5') {
     require('@tarojs/taro/html.css')
@@ -340,12 +300,12 @@ const Analysis = () =>  {
           <View className={style["header"]}>
             <Text className={style["title"]}>{dreamData.title}</Text>
             <Text className={style["date"]}>
-              {dreamData.date} {dreamData.weekday}
+              {dreamData.date} {dreamData.week}
             </Text>
           </View>
 
           <View className={style["dream-content-wrapper"]}>
-            <View className={style["dream-content"]}>{dreamData.content}</View>
+            <View className={style["dream-content"]}>{dreamData.desc}</View>
           </View>
 
           <View className={style["dream-image"]}>
@@ -367,14 +327,15 @@ const Analysis = () =>  {
             {messages.map((item, i) => (
               <View
                 key={i}
-                className={`${style["message"]} ${style[`${item.type}`]}`}
+                className={`${style["message"]} ${style[`${item.sender}`]}`}
                 id={`msg-${i}`}
               >
                 <View className={style["message-content"]}>
-                  <View 
+                  {/* <View 
                     className="taro_html" 
-                    dangerouslySetInnerHTML={{ __html: item.content }}
-                  />
+                    dangerouslySetInnerHTML={{ __html: item.message }}
+                  /> */}
+                  <Markdown content={item.message}></Markdown>
                 </View>
                 
               </View>

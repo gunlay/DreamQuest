@@ -57,14 +57,14 @@ const Tabbar: FC<{ currentTab: number }> = ({ currentTab }) => {
             width: `calc(100% / ${tabs.length})`,
           }}
         >
-          {/* <Image
+          <Image
             src={
               currentTab === index
-                ? `@/assets/images/tabbar/${item.key}_selected`
-                : `@/assets/images/tabbar/${item.key}`
+                ? item.iconPath
+                : item.selectedIconPath
             }
             className={styles.icon}
-          /> */}
+          />
           <View className={styles.text}>{item.text}</View>
         </View>
       ))}

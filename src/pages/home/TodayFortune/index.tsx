@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import classNames from "classnames";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { Picker, Text, View } from "@tarojs/components";

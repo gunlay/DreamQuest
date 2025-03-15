@@ -3,29 +3,35 @@ import { View, Input, Image } from "@tarojs/components";
 import { FC, useState } from "react";
 import { DreamCardDTO, DreamCardVO, MonthDreams } from "@/api/types/record";
 import { recordApi } from "@/api/record";
+import { useSystemStore } from "@/store/systemStore";
 import Search from "@/assets/icon/search.png";
 import List from "@/Components/List";
 import DreamCard from "../DreamCard";
 import style from "./index.module.scss";
 
+
 const ListView: FC = () => {
+  const {appBarHeight} = useSystemStore()
   const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [key, setKey] = useState<number>(0);
   const pageSize = 5;
   
   const onSearchInput = (e: any) => {
     setSearchKeyword(e.detail.value);
   };
   
-  const clearSearch = () => {
+  const clearSearch = async () => {
     setSearchKeyword("");
-    load({ pageIndex: 1, pageSize });
+    await load({ pageIndex: 1, pageSize });
+    setKey(prev => prev + 1);
   };
   
   const search = async () => {
     if (!searchKeyword?.trim()) {
       return;
     }
-    load({ pageIndex: 1, pageSize });
+    await load({ pageIndex: 1, pageSize });
+    setKey(prev => prev + 1);
   };
 
   const processAndGroupDreams = (list: DreamCardDTO[]): MonthDreams[] => {
@@ -49,7 +55,7 @@ const ListView: FC = () => {
   const load = async (params: {pageIndex: number, pageSize: number} ) => {
     const { list, total } = await recordApi.fetchDreamList({
       pageParam: params,
-      keyword: searchKeyword?.trim() || undefined
+      message: searchKeyword?.trim() || undefined
     });
 
     return {
@@ -85,19 +91,22 @@ const ListView: FC = () => {
         </View>
       </View>
 
-      <List<MonthDreams>
-        // height='90vh'
-        pageSize={pageSize}
-        onLoadMore={load}
-        renderItem={(item: MonthDreams) => {
-          if (item.type === 'header') {
-            return <View className={style["month-title"]}>{item.month} 月</View>;
-          } else {
-            return <DreamCard dream={item.dream} key={item.dream.id} />;
-          }
-        }}
-        emptyText={searchKeyword ? "没有找到相关梦境" : "暂无梦境记录"}
-      />
+      <View className={style.list}>
+        <List<MonthDreams>
+          key={key}
+          height={`calc(100vh - 144px - ${appBarHeight}px)`}
+          pageSize={pageSize}
+          onLoadMore={load}
+          renderItem={(item: MonthDreams) => {
+            if (item.type === 'header') {
+              return <View className={style["month-title"]}>{item.month} 月</View>;
+            } else {
+              return <DreamCard dream={item.dream} key={item.dream.id} />;
+            }
+          }}
+          emptyText={searchKeyword ? "没有找到相关梦境" : "暂无梦境记录"}
+        />
+      </View>
     </View>
   );
 };

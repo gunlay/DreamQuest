@@ -1,23 +1,24 @@
 import dayjs from "dayjs";
 import { View, Picker, Text } from "@tarojs/components";
 import useCalendarHooks from "@/hooks/useCalendarHooks";
-import { Calendar, DatePicker, Day } from "@antmjs/vantui";
+import { Calendar, Day } from "@antmjs/vantui";
 import DreamCard from "../DreamCard";
 import style from "./index.module.scss";
 
 
 const CalendarView = () => {
-
-
   const {
+    dreams,
     showRange,
     currentYear,
     currentMonth,
+    fetchDreams,
     onDatePickerChange,
     prevMonth,
     nextMonth,
-    selectedDateDreams
   } = useCalendarHooks()
+
+
 
   return (
     <View className={style["calendar-view"]}>
@@ -48,13 +49,14 @@ const CalendarView = () => {
 
       <View className={style["calendar-body"]}>
         <Calendar
+          key={currentMonth}
           poppable={false}
           showConfirm={false}
           showMark={false}
           showTitle={false}          
           firstDayOfWeek={1}
-          minDate={showRange[0] as unknown as Date}
-          maxDate={showRange[1] as unknown as Date}
+          minDate={showRange[0]}
+          maxDate={showRange[1]}
           className={style['calendar']}
           formatter={(day: Day) => {
             const isToday = dayjs(day.date).isSame(dayjs(), 'day');
@@ -66,12 +68,13 @@ const CalendarView = () => {
           style={{
             background: 'transparent'
           }}
+          onSelect={(e) => fetchDreams(e.detail.value as Date)}
         />
       </View>
       <View className={style["selected-date-dreams"]}>
-        {selectedDateDreams.length > 0 ? (
+        {dreams.length > 0 ? (
           <>
-            {selectedDateDreams.map((item) => (
+            {dreams.map((item) => (
               <DreamCard dream={item} key={item.id} />
             ))}
           </>

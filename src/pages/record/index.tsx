@@ -8,7 +8,7 @@ import CalendarView from "./CalendarView";
 import style from "./index.module.scss";
 
 const Record: React.FC = () => {
-  const { titleBarHeight, statusBarHeight } = useSystemStore();
+  const { titleBarHeight, statusBarHeight, appBarHeight } = useSystemStore();
   const [currentTab, setCurrentTab] = useState<string>("calendar");
 
   return (
@@ -19,7 +19,7 @@ const Record: React.FC = () => {
     >
       <View
         className={style["container"]}
-        style={{ paddingTop: `${titleBarHeight}px` }}
+        style={{ paddingTop: `${appBarHeight}px` }}
       >
         <Image
           className={style["bg-image"]}
