@@ -1,5 +1,5 @@
 import { WeeklyReportDTO } from "@/api/types/home";
-import { DreamRecord } from "@/pages/analysis/types";
+import { DreamRecord } from "@/pages/sub/analysis/types";
 import Taro from "@tarojs/taro";
 
 export function getWeeklyDreams(): DreamRecord[] {

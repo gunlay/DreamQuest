@@ -1,23 +1,21 @@
-import Taro, { useDidHide } from "@tarojs/taro";
+import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { View, Text, Image, Button, Input } from "@tarojs/components";
 import { chatApi } from "@/api/chat";
-import DefaultDream from "@/assets/image/default_dream.png";
 import { ChatHistoryDTO, MessageDTO } from "@/api/types/chat";
 // import Empty from "@/assets/image/empty.png";
 import { DreamData, DreamRecord, Message } from "./types";
 import { generateTags, getInitialAnalysis } from "./help";
 import style from "./index.module.scss";
-import Markdown from "@/Components/Markdown";
-// import Markdown from "react-markdown";
 
 
 const Analysis = () =>  {
+  const chatId = Taro.getCurrentInstance()?.router?.params.chatId as string;
+  const DefaultDream = ''
   const [dreamData, setDreamData] = useState<ChatHistoryDTO | null>(null);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageDTO[]>([]);
   // 获取当前路由的参数
-  const chatId = Taro.getCurrentInstance()?.router?.params.chatId as string;
   const onMessageInput = (e: any) => {
     setInputMessage(e.detail.value);
   };
@@ -335,7 +333,7 @@ const Analysis = () =>  {
                     className="taro_html" 
                     dangerouslySetInnerHTML={{ __html: item.message }}
                   /> */}
-                  <Markdown content={item.message}></Markdown>
+                  {/* <Markdown content={item.message}></Markdown> */}
                 </View>
                 
               </View>

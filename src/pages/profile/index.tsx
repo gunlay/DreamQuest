@@ -6,11 +6,11 @@ import { profileApi } from "@/api/profile";
 import PageContainer from "@/Components/PageContainer";
 import { useSystemStore } from "@/store/systemStore";
 import { ChatStatiticDTO } from "@/api/types/profile";
-import MainBg from "@/assets/image/main/main_bg.png";
 import Vip from "@/assets/icon/vip.png";
 import style from "./index.module.scss";
 
 export default function Profile() {
+  const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png'
   const { appBarHeight } = useSystemStore();
   const { isLogin } = useLoginStore();
   const [monthReport, setMonthReport] = useState<string>('');

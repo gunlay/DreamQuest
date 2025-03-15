@@ -1,6 +1,6 @@
 // src/components/Markdown.tsx
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+// import ReactMarkdown from 'react-markdown';
 // import remarkGfm from 'remark-gfm';
 import { RichText } from '@tarojs/components';
 

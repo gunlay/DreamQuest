@@ -2,11 +2,11 @@ import { useRef, useState } from "react";
 import Taro from "@tarojs/taro";
 import { Button, Image, Radio, Text, View } from "@tarojs/components";
 import { useLoginStore } from "@/store/loginStore";
-import LoginBanner from "@/assets/image/login/login_banner.png";
 import { AgreementPageType } from "../agreement/data";
 import style from "./index.module.scss";
 
 const Login = () => {
+  const LoginBanner = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/login_banner.png'
   const login = useLoginStore((state) => state.login);
   const [confirm, setConfirm] = useState(false)
   const logining = useRef(false)

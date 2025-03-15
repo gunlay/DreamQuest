@@ -4,7 +4,7 @@ import devConfig from './dev'
 import prodConfig from './prod'
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
-export default defineConfig(async (merge, { command, mode }) => {
+export default defineConfig(async (merge, {  }) => {
   const baseConfig: UserConfigExport = {
     projectName: 'DreamQuest',
     date: '2025-2-20',
@@ -32,6 +32,16 @@ export default defineConfig(async (merge, { command, mode }) => {
       enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
     },
     mini: {
+      optimizeMainPackage: {
+        enable: true
+      },
+      
+      // preloadRule: {
+      //   'pages/home/index': {
+      //     network: 'all',
+      //     packages: ['pages']
+      //   }
+      // },
       postcss: {
         pxtransform: {
           enable: true,
@@ -56,6 +66,18 @@ export default defineConfig(async (merge, { command, mode }) => {
       },
       webpackChain(chain) {
         chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
+        // chain.optimization.splitChunks({
+        //   cacheGroups: {
+        //     // 修改默认的 "taro" 名称
+        //     taroCustom: {
+        //       name: 'taro-custom', // 使用不同的名称
+        //       test: /[\\/]node_modules[\\/]taro[\\/]/, // 匹配 Taro 相关模块
+        //       priority: 100, // 优先级
+        //       chunks: 'all',
+        //     },
+        //     // 其他 cacheGroups...
+        //   },
+        // });
       }
     },
     h5: {

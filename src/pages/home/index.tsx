@@ -2,7 +2,6 @@ import { View, Text, Image, Input } from "@tarojs/components";
 import { useEffect, useState } from "react";
 import { useDidShow } from "@tarojs/taro";
 import SendIcon from "@/assets/icon/send.png";
-import MainBg from "@/assets/image/main/main_bg.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
 import PageContainer from "@/Components/PageContainer";
 import classNames from "classnames";
@@ -16,6 +15,7 @@ import WeeklyReport from "./WeeklyReport";
 import style from "./index.module.scss";
 
 const Home: React.FC = () => {
+  const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png'
   const { appBarHeight } = useSystemStore();
   const [homeInfo, setHomeInfo] = useState<{
     content: string;

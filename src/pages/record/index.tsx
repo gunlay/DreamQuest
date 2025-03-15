@@ -2,12 +2,12 @@ import { View, Image, Text } from "@tarojs/components";
 import { useState } from "react";
 import PageContainer from "@/Components/PageContainer";
 import { useSystemStore } from "@/store/systemStore";
-import MainBg from "@/assets/image/main/main_bg.png";
 import ListView from "./ListView";
 import CalendarView from "./CalendarView";
 import style from "./index.module.scss";
 
 const Record: React.FC = () => {
+  const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png'
   const { titleBarHeight, statusBarHeight, appBarHeight } = useSystemStore();
   const [currentTab, setCurrentTab] = useState<string>("calendar");
 

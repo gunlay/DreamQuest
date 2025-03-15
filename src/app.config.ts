@@ -2,16 +2,19 @@ import tabbarList from "./Components/Tabbar/tabbarList";
 
 export default defineAppConfig({
   pages: [
-    /** 主包开始位置 */
     "pages/home/index",
     "pages/record/index",
-    "pages/profile/index",
-    /** 主包结束位置 */
-    /** 子包开始位置 */
-    "pages/agreement/index",
-    "pages/login/index",
-    "pages/analysis/index",
-    /** 子包结束位置 */
+    "pages/profile/index"
+  ],
+  subpackages: [
+    {
+      root: "pages/sub",
+      pages: [
+        "agreement/index",
+        "login/index",
+        "analysis/index"
+      ]
+    }
   ],
   window: {
     backgroundTextStyle: "light",
