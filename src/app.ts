@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react'
 import { useError, useLaunch } from '@tarojs/taro'
-import './app.scss'
 import { useLoginStore } from './store/loginStore'
+import './app.scss'
 
 function App({ children }: PropsWithChildren<any>) {
   const { checkLogin } = useLoginStore()

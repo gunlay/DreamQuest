@@ -1,5 +1,5 @@
 import { View, Text, Image, Input } from "@tarojs/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDidShow } from "@tarojs/taro";
 import SendIcon from "@/assets/icon/send.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
@@ -8,7 +8,6 @@ import classNames from "classnames";
 import { useSystemStore } from "@/store/systemStore";
 import { homeApi } from "@/api/home";
 import DreamInput from "./DreamInput/index";
-// import DreamAnalysis from './DreamAnalysis/index';
 import TodayFortune from "./TodayFortune";
 import WeeklyReport from "./WeeklyReport";
 
@@ -29,30 +28,13 @@ const Home: React.FC = () => {
     week: "",
   });
 
-  const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
+  const [showDreamInput, setShowDreamInput] = useState<boolean>(true);
 
-  // const updateDateInfo = () => {
-  //   const now = new Date();
-  //   const year = now.getFullYear();
-  //   const month = String(now.getMonth() + 1).padStart(2, "0");
-  //   const day = String(now.getDate()).padStart(2, "0");
-  //   const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-  //   setDateInfo({
-  //     date: `${year}.${month}.${day}`,
-  //     weekday: `周${weekdays[now.getDay()]}`,
-  //   });
-  // };
   useDidShow(() => {
     homeApi.fetchHomeInfo().then((res) => {
       setHomeInfo(res);
     });
   });
-
-  // useEffect(() => {
-  //   homeApi.fetchHomeInfo().then((res) => {
-  //     setHomeInfo(res);
-  //   });
-  // }, []);
 
   return (
     <PageContainer
@@ -126,15 +108,10 @@ const Home: React.FC = () => {
 
         {/* Dream Input Component */}
         <DreamInput
+          date={homeInfo.date}
           show={showDreamInput}
           onClose={() => setShowDreamInput(false)}
         />
-        {/* 添加梦境分析浮层 */}
-        {/* <DreamAnalysis
-        visible={state.showDreamAnalysis}
-        dreamData={currentDream}
-        onClose={onDreamAnalysisClose}
-      /> */}
       </View>
     </PageContainer>
   );

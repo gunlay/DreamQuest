@@ -9,7 +9,7 @@ const DreamCard: FC<{
 }> = ({ dream }) => {
   const viewDreamDetail = () => {
     Taro.navigateTo({
-      url: `/pages/analysis/index?chatId=${dream.chatId}`,
+      url: `/pages/sub/analysis/index?chatId=${dream.chatId}`,
     });
   };
   return (

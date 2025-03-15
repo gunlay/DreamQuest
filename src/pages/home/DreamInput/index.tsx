@@ -8,21 +8,29 @@ import {
 } from "@tarojs/components";
 import { useEffect, useMemo, useState } from "react";
 import { chatApi } from "@/api/chat";
+import { NewMessageDTO } from "@/api/types/chat";
 import Taro from "@tarojs/taro";
-import { DreamInputProps, DreamInputState } from "./types";
+// import { DreamInputProps, DreamInputState } from "./types";
 import style from "./index.module.scss";
+
+
+export interface DreamInputProps {
+  date: string;
+  show: boolean;
+  onClose: () => void;
+}
 
 const DreamInput: React.FC<DreamInputProps> = (props) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [dreamInput, setDreamInput] = useState<DreamInputState>({
+  const [dreamInput, setDreamInput] = useState<NewMessageDTO & { currentDate: string }>({
     title: "",
-    content: "",
+    message: "",
     currentDate: "",
   });
 
   const canSave = useMemo(() => {
-    return !!(dreamInput.title.trim() && dreamInput.content.trim());
-  }, [dreamInput.title, dreamInput.content]);
+    return !!(dreamInput.title.trim() && dreamInput.message.trim());
+  }, [dreamInput.title, dreamInput.message]);
   const onTitleInput = (e: any) => {
     setDreamInput((prev) => ({
       ...prev,
@@ -33,38 +41,21 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
   const onContentInput = (e: any) => {
     setDreamInput((prev) => ({
       ...prev,
-      content: e.detail.value,
+      message: e.detail.value,
     }));
   };
 
   const onSave = async () => {
-    if (!canSave) {
-      console.warn("无法保存：标题或内容为空");
-      return;
-    }
-
+    if (!canSave) return;
     // 显示加载状态
     setLoading(true);
-    Taro.showLoading({
-      title: "正在生成图片...",
-      mask: true,
-    });
-    const chatId = await chatApi.createNewChat({...dreamInput, message: dreamInput.content})
+    Taro.navigateTo({url: `/pages/sub/analysis/index?dreamInput=${JSON.stringify(dreamInput)}`})
   };
 
   const stopPropagation = (e: ITouchEvent) => {
     // 阻止事件冒泡
     e.stopPropagation();
   };
-
-  useEffect(() => {
-    const now = new Date();
-    const date = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}.${String(now.getDate()).padStart(2, "0")}`;
-    setDreamInput((prev) => ({ ...prev, currentDate: date }));
-  }, []);
 
   if (!props.show) return null;
 
@@ -84,9 +75,10 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
             placeholder-style="color: rgba(60, 60, 67, 0.6)"
             focus={props.show}
             value={dreamInput.title}
+            disabled={loading}
             onInput={onTitleInput}
           />
-          <Text className={style["date"]}>{dreamInput.currentDate}</Text>
+          <Text className={style["date"]}>{props.date}</Text>
         </View>
         <View className={style["content-wrapper"]}>
           <Textarea
@@ -94,11 +86,12 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
             placeholder="描述你的梦境..."
             placeholder-style="color: rgba(60, 60, 67, 0.6)"
             maxlength={500}
-            value={dreamInput.content}
+            value={dreamInput.message}
+            disabled={loading}
             onInput={onContentInput}
           />
           <View className={style["word-count"]}>
-            {dreamInput.content.length}/500
+            {dreamInput.message.length}/500
           </View>
         </View>
         <View className={style["footer"]}>

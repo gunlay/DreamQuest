@@ -2,7 +2,7 @@ export interface DreamCardDTO {
   content: string
   createBy: string
   createTime: string
-  descri: string
+  desc: string
   id:	number
   image: string
   isDeleted: boolean
@@ -16,7 +16,7 @@ export interface DreamCardVO {
   content: string
   date: string
   weekday: string
-  descri: string
+  desc: string
   id:	number
   image: string
   isDeleted: boolean

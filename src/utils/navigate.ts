@@ -7,7 +7,7 @@ export const getCurrentPageUrl = () => {
 
   const { path, params } = current.router;
   const query = Object.keys(params)
-    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+    .map((key) => `${key}=${encodeURIComponent(params[key] || '')}`)
     .join("&");
 
   return query ? `${path}?${query}` : path;

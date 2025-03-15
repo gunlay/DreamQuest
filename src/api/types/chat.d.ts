@@ -1,6 +1,7 @@
 export interface MessageDTO {
   chatId?: string
   id?: string
+  chatting?: boolean
   message: string
   sender: string
 }
@@ -14,4 +15,14 @@ export interface ChatHistoryDTO {
   title: string;
   week: string;
   messages: MessageDTO[]
+}
+
+export interface ChatMessageDTO {
+  chatId?: string;
+  message: string;
+  sender: "ai" | "user";
+}
+export interface NewMessageDTO {
+  message: string;
+  title: string;
 }

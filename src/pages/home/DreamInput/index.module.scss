@@ -20,7 +20,7 @@
     background: #fff;
     border-radius: 24px;
     padding: 40px;
-    margin-bottom: 40vh; /* 给键盘预留空间 */
+    margin-bottom: 35vh; /* 给键盘预留空间 */
 
     .title-bar {
       display: flex;
@@ -79,7 +79,7 @@
     margin-top: 32px;
 
     .save-btn {
-      min-width: 96px;
+      min-width: 144px;
       height: 56px;
       line-height: 56px;
       font-size: 26px;

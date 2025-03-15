@@ -1,23 +1,16 @@
 import { http } from "@/utils/request";
-import { ChatHistoryDTO } from "./types/chat";
+import { ChatHistoryDTO, ChatMessageDTO, NewMessageDTO } from "./types/chat";
 import { ChatStatiticDTO } from "./types/profile";
 
 export const chatApi = {
-  createNewChat: async (params: {
-    message: string;
-    title: string;
-  }): Promise<{ chatId: string }> => {
+  createNewChat: async (params: NewMessageDTO): Promise<{ chatId: string }> => {
     return http
       .post<{ chatId: string }>("/dream/chat/create", params)
       .then((res) => res);
   },
 
-  saveMessages: async (params: {
-    chatId: string;
-    message: string;
-    type: "ai" | "user";
-  }) => {
-    return http.post("/dream/chat/save/message", params).then((res) => res);
+  sendMessages: async (params: ChatMessageDTO) => {
+    return http.post<string>("/dream/chat/save/message", params).then((res) => res);
   },
 
   fetchChatHistory: async (params: {

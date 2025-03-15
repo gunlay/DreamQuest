@@ -14,17 +14,21 @@ export default function Profile() {
   const { appBarHeight } = useSystemStore();
   const { isLogin } = useLoginStore();
   const [monthReport, setMonthReport] = useState<string>('');
+  const [generating, setGenerating] = useState<boolean>(false);
   const [statistic, setStatistic] = useState<ChatStatiticDTO>({
     moreDate: "--",
     num: 0,
   });
   const loadDreamsAndAnalyze = async () => {
     if (!isLogin) return;
+    setGenerating(true);
     profileApi.fetchChatStatistics().then(_statistic => {
       setStatistic(_statistic);
     })
     profileApi.fetchMonthReport().then(report => {
       setMonthReport(report)
+    }).finally(() => {
+      setGenerating(false)
     })
   };
 
@@ -87,7 +91,10 @@ export default function Profile() {
           </View>
         </View>
 
-        <View className={style["chat-container"]}>
+        <View className={style["chat-container"]} style={{
+          top: `${appBarHeight + 243}px`
+        }}
+        >
           <ScrollView
             className={style["chat-area"]}
             enhanced
@@ -96,7 +103,10 @@ export default function Profile() {
             scroll-with-animation
             show-scrollbar={false}
           >
-            {monthReport}
+            {generating ? <View className={style["loading-wrapper"]}>
+          <View className={style["loading-spinner"]} />
+          <Text className={style["loading-text"]}>正在生成月报...</Text>
+        </View> : monthReport}
           </ScrollView>
         </View>
       </View>

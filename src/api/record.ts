@@ -16,15 +16,4 @@ export const recordApi = {
       .post<ReocrdHistoryDTO>("/dream/chat/history/page", params)
       .then(res => res);
   },
-  
-  fetchRecordList: async (params = {
-    pageParam: {
-      pageIndex: 1,
-      pageSize: 10
-    }
-  }): Promise<ReocrdHistoryDTO> => {
-    return http
-      .post<ReocrdHistoryDTO>("/dream/chat/history/page", params)
-      .then((res) => res);
-  },
 };

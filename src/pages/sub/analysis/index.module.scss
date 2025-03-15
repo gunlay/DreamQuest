@@ -63,7 +63,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 
   .tag {
     padding: 12px 24px;
@@ -78,7 +78,7 @@
 
 /* 对话区域 */
 .chat-area {
-  padding: 32px 0;
+  padding: 0 0 32px;
   margin-bottom: 40px;
   width: 100%;
   .message {
@@ -92,10 +92,20 @@
       border-radius: 16px;
       // max-width: 80%;
       word-wrap: break-word;
+
+      .message-loading {
+        width: 20px;
+        height: 20px;
+        border: 6px solid rgba(151, 31, 207, 0.1);
+        border-top: 6px solid #971fcf;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
     }
 
     &.ai {
       justify-content: flex-start;
+      padding-right: 60px;
 
       .message-content {
         background-color: #f0f0f0;
@@ -109,8 +119,21 @@
         background-color: #971fcf;
         color: white;
         margin-left: auto;
+
+        .message-loading {
+          border-top-color: #fff;
+        }
       }
     }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
