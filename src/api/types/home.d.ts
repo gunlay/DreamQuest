@@ -40,8 +40,8 @@ export interface HoroScopeDTO extends LuckDTO {
 }
 
 export interface WeeklyReportDTO {
-  startDate: string;    // 开始日期
-  endDate: string;      // 结束日期
+  // startDate: string;    // 开始日期
+  // endDate: string;      // 结束日期
   dreamCount: number;   // 梦境记录数量
   emotions: {
     positive: number;   // 积极情绪数量

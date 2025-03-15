@@ -4,6 +4,7 @@ import {
   HoroType,
   TimeType,
 } from "./types/home";
+import { DreamCardDTO } from "./types/record";
 
 
 export const homeApi = {
@@ -20,6 +21,11 @@ export const homeApi = {
   fetchHoroScope: async (params: { time: TimeType; type: HoroType }) => {
     return http
       .post<HoroScopeDTO>("/dream/ai/default/horoscope", params)
+      .then((res) => res);
+  },
+  fetchWeekMessage: async () => {
+    return http
+      .post<DreamCardDTO[]>("/dream/chat/week/message")
       .then((res) => res);
   },
 

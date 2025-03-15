@@ -1,5 +1,5 @@
 export interface DreamCardDTO {
-  content: string
+  // content: string
   createBy: string
   createTime: string
   desc: string

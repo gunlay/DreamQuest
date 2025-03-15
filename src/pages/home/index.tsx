@@ -28,7 +28,7 @@ const Home: React.FC = () => {
     week: "",
   });
 
-  const [showDreamInput, setShowDreamInput] = useState<boolean>(true);
+  const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
 
   useDidShow(() => {
     homeApi.fetchHomeInfo().then((res) => {
