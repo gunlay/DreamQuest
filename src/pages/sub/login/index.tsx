@@ -43,7 +43,7 @@ const Login = () => {
   };
   const showUserAgreement = (pageType: string) => {
     Taro.navigateTo({
-      url: `/pages/agreement/index?pageType=${pageType}`,
+      url: `/pages/sub/agreement/index?pageType=${pageType}`,
     });
   };
 

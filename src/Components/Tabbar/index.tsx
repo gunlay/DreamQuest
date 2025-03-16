@@ -9,7 +9,7 @@ import styles from "./index.module.scss";
 const LoginButton: FC<{ className?: string }> = ({ className }) => {
   const login = () => {
     Taro.navigateTo({
-      url: "/pages/login/index",
+      url: "/pages/sub/login/index",
     });
   };
   return (

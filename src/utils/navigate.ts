@@ -21,7 +21,7 @@ export const navigateToLogin = (redirect?: string) => {
   }
 
   Taro.redirectTo({
-    url: `/pages/login/index${
+    url: `/pages/sub/login/index${
       redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""
     }`,
   });
