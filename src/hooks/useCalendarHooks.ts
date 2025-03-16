@@ -54,7 +54,7 @@ const useCalendarHooks = () => {
   };
 
   const fetchDreams = async (date: Date) => {
-    const res = await recordApi.fetchDreamList({ date })
+    const res = await recordApi.fetchDreamList({ date: dayjs(date).format('YYYY-MM-DD') })
     setDreams(res.list.map(dto => {
       return {
         ...dto,

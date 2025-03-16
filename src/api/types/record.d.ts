@@ -13,7 +13,7 @@ export interface DreamCardDTO {
 } 
 export interface DreamCardVO {
   chatId?: string
-  content: string
+  // content: string
   date: string
   weekday: string
   desc: string
@@ -30,7 +30,7 @@ export interface MonthDreams {
 }
 
 export interface ReocrdHistoryDTO {
-  content: string	
+  // content: string	
   createBy: string	
   createTime: string	
   desc: string	

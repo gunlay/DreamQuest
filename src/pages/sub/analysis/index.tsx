@@ -1,80 +1,91 @@
 import Taro from "@tarojs/taro";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { View, Text, Image, Button, Input } from "@tarojs/components";
-import { chatApi } from "@/api/chat";
-import { ChatHistoryDTO, MessageDTO, NewMessageDTO } from "@/api/types/chat";
-// import Empty from "@/assets/image/empty.png";
+import { useChatStore } from "@/store/chatStore";
 import style from "./index.module.scss";
 
-
-const Analysis = () =>  {
-  const chatId = Taro.getCurrentInstance()?.router?.params.chatId as string;
-  const dreamInput = JSON.parse(Taro.getCurrentInstance()?.router?.params.chatId as string) as NewMessageDTO;
+const Analysis = () => {
   const DefaultDream = ''
-  const [chatting, setChatting] = useState<boolean>(false);
-  const [dreamData, setDreamData] = useState<ChatHistoryDTO | null>(null);
-  const [messages, setMessages] = useState<MessageDTO[]>([]);
+  const {
+    activeRequests,
+    initChat,
+    getChatState,
+    sendMessage,
+    clearChat,
+
+  } = useChatStore()
+  const [currentChatId, setCurrentChatId] = useState<string>("");
   const [inputMessage, setInputMessage] = useState<string>("");
-  // 获取当前路由的参数
+
+  const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
+  const chatState = getChatState(currentChatId);
+  
+  const isInputDisabled = useMemo(() => {
+    if (!currentChatId) return true;
+    return !inputMessage.trim() || 
+           activeRequests > 0 || 
+           chatState?.messages.some(msg => msg.chatting);
+  }, [currentChatId, inputMessage, activeRequests, chatState]);
+
   const onMessageInput = (e: any) => {
     setInputMessage(e.detail.value);
   };
 
   const scrollToTop = () => {
-    // 添加延时确保消息渲染完成后再滚动
     Taro.nextTick(() => {
-      Taro.pageScrollTo({
-        scrollTop: 9999,
-        duration: 300
+      const query = Taro.createSelectorQuery();
+      query.select('.chat-area').boundingClientRect().exec((res) => {
+        if (res && res[0]) {
+          Taro.pageScrollTo({
+            scrollTop: res[0].height,
+            duration: 300
+          })
+        }
       })
     })
   }
-  const addMessage = (sender: 'ai' | 'user', message: string, _chatting = false) => {
-    setMessages((prev) => {
-      if (prev[prev.length - 1].chatting) {
-        prev[prev.length - 1].chatting = false;
-        prev[prev.length - 1].message = message;
-        return prev
-      }
-      return [
-        ...prev, 
-        { sender, message, chatting: _chatting }
-      ]
-    })
-    // 添加延时确保消息渲染完成后再滚动
-    scrollToTop()
-  }
 
-  const sendMessage = async () => {
-    if (!inputMessage || !inputMessage.trim()) return;
-    // 清空输入框
+  const handleSendMessage = async () => {
+    if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
     setInputMessage("");
-    setChatting(true)
-    // 添加用户消息
-    addMessage("user", inputMessage.trim());
-    addMessage("ai", '', true);
     try {
-      const data = await chatApi.sendMessages({ chatId, message: inputMessage.trim(), sender: 'user' });
-      // 添加 AI 回复
-      addMessage("ai", data);
-    } catch {}
-    setChatting(false)
-  };
-  const init = async () => {
-    let _chatId = chatId
-    if (!chatId && dreamInput) {
-      const { chatId: newId } = await chatApi.createNewChat(dreamInput)
-      _chatId = newId
+      await sendMessage(currentChatId, inputMessage.trim());
+      scrollToTop();
+    } catch (error: any) {
+      Taro.showToast({
+        title: error.message || '发送失败',
+        icon: 'none'
+      });
     }
-    const result = await chatApi.fetchChatHistory({ chatId: _chatId })
-    setDreamData(result)
-    setMessages(result.messages)
-    scrollToTop()
+  };
+
+  const init = async () => {
+    try {
+      const finalChatId = await initChat(chatId);
+      setCurrentChatId(finalChatId);
+      scrollToTop();
+    } catch (error: any) {
+      Taro.showToast({
+        title: error.message || '加载失败',
+        icon: 'none'
+      });
+    }
   }
 
   useEffect(() => {
-    init()
+    init();
+    return () => {
+      if (currentChatId) {
+        clearChat(currentChatId);
+      }
+    };
   }, []);
+
+  // useEffect(() => {
+  //   if (chatState?.messages && chatState?.messages?.length > 0) {
+  //     scrollToTop();
+  //   }
+  // }, [chatState?.messages]);
 
   if (process.env.TARO_ENV !== 'h5') {
     require('@tarojs/taro/html.css')
@@ -82,28 +93,28 @@ const Analysis = () =>  {
 
   return (
     <>
-      {dreamData ? (
+      {currentChatId && chatState?.dreamData ? (
         <View className={style["container"]}>
           <View className={style["header"]}>
-            <Text className={style["title"]}>{dreamData.title}</Text>
+            <Text className={style["title"]}>{chatState.dreamData.title}</Text>
             <Text className={style["date"]}>
-              {dreamData.date} {dreamData.week}
+              {chatState.dreamData.date} {chatState.dreamData.week}
             </Text>
           </View>
 
           <View className={style["dream-content-wrapper"]}>
-            <View className={style["dream-content"]}>{dreamData.desc}</View>
+            <View className={style["dream-content"]}>{chatState.dreamData.desc}</View>
           </View>
 
           <View className={style["dream-image"]}>
             <Image
-              src={dreamData.image || DefaultDream}
+              src={chatState.dreamData.image || DefaultDream}
               mode="aspectFill"
             ></Image>
           </View>
 
           <View className={style["tags"]}>
-            {dreamData.tags?.map((item, index) => (
+            {chatState.dreamData.tags?.map((item, index) => (
               <View className={style["tag"]} key={index}>
                 {item}
               </View>
@@ -111,7 +122,7 @@ const Analysis = () =>  {
           </View>
 
           <View className={style["chat-area"]}>
-            {messages.map((item, i) => (
+            {chatState.messages.map((item, i) => (
               <View
                 key={i}
                 className={`${style["message"]} ${style[`${item.sender}`]}`}
@@ -125,7 +136,6 @@ const Analysis = () =>  {
                     />
                   }
                 </View>
-                
               </View>
             ))}
           </View>
@@ -140,10 +150,9 @@ const Analysis = () =>  {
               onInput={onMessageInput}
             />
             <Button
-              className={`${style["save-btn"]} ${
-                !inputMessage ? style["disabled"] : ""
-              }`}
-              onClick={sendMessage}
+              className={`${style["save-btn"]} ${isInputDisabled ? style["disabled"] : ""}`}
+              disabled={isInputDisabled}
+              onClick={handleSendMessage}
             >
               发送
             </Button>
@@ -151,7 +160,6 @@ const Analysis = () =>  {
         </View>
       ) : (
         <View className={style["empty-state"]}>
-          {/* <Image src={Empty} mode="aspectFit"></Image> */}
           <Text>加载失败，请返回重试</Text>
         </View>
       )}

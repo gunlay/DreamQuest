@@ -2,7 +2,7 @@ import { http } from "@/utils/request";
 import { ReocrdHistoryDTO } from "./types/record";
 
 export interface FetchDreamRecodParams {
-  date?: Date;
+  date?: string;
   pageParam?: {
     pageIndex: number;
     pageSize: number;

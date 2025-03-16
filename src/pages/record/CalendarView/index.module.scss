@@ -54,12 +54,8 @@
 
   /* 日历主体 */
   .calendar-body {
-    // background: rgba(255, 255, 255, 0.76);
-    // border-radius: 16px;
-    // padding: 32px;
     margin-bottom: 40px;
-    // height: 33vh;
-    // box-sizing: border-box;
+    min-height: 330px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

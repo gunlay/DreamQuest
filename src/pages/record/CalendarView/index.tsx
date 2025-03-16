@@ -19,7 +19,6 @@ const CalendarView = () => {
   } = useCalendarHooks()
 
 
-
   return (
     <View className={style["calendar-view"]}>
       <View className={style["calendar-header"]}>
@@ -49,7 +48,7 @@ const CalendarView = () => {
 
       <View className={style["calendar-body"]}>
         <Calendar
-          key={currentMonth}
+          key={`${currentYear}-${currentMonth}`}
           poppable={false}
           showConfirm={false}
           showMark={false}

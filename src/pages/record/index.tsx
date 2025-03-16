@@ -9,7 +9,7 @@ import style from "./index.module.scss";
 const Record: React.FC = () => {
   const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png'
   const { titleBarHeight, statusBarHeight, appBarHeight } = useSystemStore();
-  const [currentTab, setCurrentTab] = useState<string>("calendar");
+  const [currentTab, setCurrentTab] = useState<string>("list");
 
   return (
     <PageContainer

@@ -6,12 +6,13 @@ import {
   Button,
   ITouchEvent,
 } from "@tarojs/components";
-import { useEffect, useMemo, useState } from "react";
-import { chatApi } from "@/api/chat";
+import { useMemo, useState } from "react";
+import { useChatStore } from "@/store/chatStore";
 import { NewMessageDTO } from "@/api/types/chat";
 import Taro from "@tarojs/taro";
 // import { DreamInputProps, DreamInputState } from "./types";
 import style from "./index.module.scss";
+
 
 
 export interface DreamInputProps {
@@ -21,6 +22,7 @@ export interface DreamInputProps {
 }
 
 const DreamInput: React.FC<DreamInputProps> = (props) => {
+  const { setDreamInput: setGlobalDreamInput } = useChatStore()
   const [loading, setLoading] = useState<boolean>(false);
   const [dreamInput, setDreamInput] = useState<NewMessageDTO & { currentDate: string }>({
     title: "",
@@ -49,7 +51,8 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
     if (!canSave) return;
     // 显示加载状态
     setLoading(true);
-    Taro.navigateTo({url: `/pages/sub/analysis/index?dreamInput=${JSON.stringify(dreamInput)}`})
+    setGlobalDreamInput(dreamInput)
+    Taro.navigateTo({url: `/pages/sub/analysis/index`})
   };
 
   const stopPropagation = (e: ITouchEvent) => {
