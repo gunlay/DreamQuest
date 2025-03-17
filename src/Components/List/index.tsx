@@ -5,7 +5,13 @@ import style from './index.module.scss';
 
 interface ListProps<T> {
   /** 加载更多的回调函数 */
-  onLoadMore: (params: {pageIndex: number, pageSize: number}) => Promise<{
+  onLoadMore: (
+    params: {
+      pageIndex: number, 
+      pageSize: number
+    }, 
+    oringinData?: T[]
+  ) => Promise<{
     /** 当前分页数据 */
     list: T[];
     /** 总数据量 */
@@ -19,6 +25,8 @@ interface ListProps<T> {
   loadingText?: string;
   /** 没有更多数据文案 */
   noMoreText?: string;
+  /** 下拉刷新文案 */
+  refreshingText?: string;
   /** 每页数据量 */
   pageSize?: number;
   /**list窗口高度, 默认100vh */
@@ -34,11 +42,13 @@ const List = <T,>({
   noMoreText = '没有更多了',
   pageSize = 10,
   height = '100vh',
+  refreshingText = '下拉刷新...',
   className
 }: ListProps<T>) => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const scrollRef = useRef<any>(null);
   const loading = useRef<boolean>(false);
   const clientHeight = useRef<number>(0);
@@ -54,13 +64,13 @@ const List = <T,>({
     })
   }, [])
 
-  const loadData = async (pageIndex: number) => {    
-    if (loading.current || !hasMore) return;
+  const loadData = async (pageIndex: number, isRefresh = false) => {    
+    if ((loading.current && !isRefresh) || (!hasMore && !isRefresh)) return;
 
     loading.current = true;
     
     try {
-      const result = await onLoadMore({pageIndex, pageSize});
+      const result = await onLoadMore({pageIndex, pageSize}, data);
       const newData = pageIndex === 1 ? result.list : [...data, ...result.list];
       setData(newData);
       setHasMore(newData.length < result.total);
@@ -69,7 +79,16 @@ const List = <T,>({
       console.error('加载数据失败:', error);
     } finally {
       loading.current = false;
+      if (isRefresh) {
+        setRefreshing(false);
+      }
     }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setHasMore(true);
+    await loadData(1, true);
   };
 
   const handleScroll = async (e: any) => {
@@ -90,6 +109,14 @@ const List = <T,>({
       className={`${style['list-container']} ${className}`}
       scrollY
       enableFlex
+      refresherEnabled
+      refresherTriggered={refreshing}
+      refresherDefaultStyle="none"
+      refresherBackground="transparent"
+      refresherThreshold={45}
+      onRefresherRefresh={onRefresh}
+      onRefresherRestore={() => setRefreshing(false)}
+      onRefresherAbort={() => setRefreshing(false)}
       onScroll={handleScroll}
       ref={scrollRef}
       style={{ height }}

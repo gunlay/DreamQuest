@@ -12,13 +12,12 @@ const Analysis = () => {
     getChatState,
     sendMessage,
     clearChat,
-
   } = useChatStore()
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [inputMessage, setInputMessage] = useState<string>("");
 
   const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
-  const chatState = getChatState(currentChatId);
+  const chatState = getChatState(currentChatId || '');
   
   const isInputDisabled = useMemo(() => {
     if (!currentChatId) return true;
@@ -34,7 +33,7 @@ const Analysis = () => {
   const scrollToTop = () => {
     Taro.nextTick(() => {
       const query = Taro.createSelectorQuery();
-      query.select('.chat-area').boundingClientRect().exec((res) => {
+      query.select('#chat-area').boundingClientRect().exec((res) => {
         if (res && res[0]) {
           Taro.pageScrollTo({
             scrollTop: res[0].height,
@@ -44,6 +43,12 @@ const Analysis = () => {
       })
     })
   }
+
+  useEffect(() => {
+    if (chatState?.messages && chatState.messages.length > 0) {
+      scrollToTop();
+    }
+  }, [chatState?.messages]);
 
   const handleSendMessage = async () => {
     if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
@@ -81,12 +86,6 @@ const Analysis = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (chatState?.messages && chatState?.messages?.length > 0) {
-  //     scrollToTop();
-  //   }
-  // }, [chatState?.messages]);
-
   if (process.env.TARO_ENV !== 'h5') {
     require('@tarojs/taro/html.css')
   }
@@ -121,7 +120,7 @@ const Analysis = () => {
             ))}
           </View>
 
-          <View className={style["chat-area"]}>
+          <View id='chat-area' className={style["chat-area"]}>
             {chatState.messages.map((item, i) => (
               <View
                 key={i}
