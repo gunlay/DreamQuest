@@ -2,7 +2,7 @@
   position: relative;
   background: rgba(255, 255, 255, 0.76);
   border-radius: 16px;
-  padding: 32px;
+  padding: 32px 32px 0;
   margin-bottom: 32px;
   width: 100%;
   box-sizing: border-box;
@@ -11,7 +11,7 @@
   &::after {
     content: "";
     position: absolute;
-    bottom: 16px;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
@@ -37,6 +37,38 @@
     margin-bottom: 32px;
   }
 
+  .report-wrapper {
+    position: relative;
+    max-height: 240px; /* 大约5行文字的高度 */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-bottom: 32px;
+  
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(255, 255, 255, 0.9)
+      );
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+  
+    &.expanded {
+      max-height: none;
+  
+      &::after {
+        opacity: 0;
+      }
+    }
+  }
+
   .loading-wrapper {
     display: flex;
     flex-direction: column;
@@ -58,64 +90,5 @@
       font-size: 28px;
       color: rgba(0, 0, 0, 0.6);
     }
-  }
-
-  .report-content {
-    position: relative;
-    max-height: 240px; /* 大约5行文字的高度 */
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 80px;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(255, 255, 255, 0.9)
-      );
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    &.expanded {
-      max-height: none;
-
-      &::after {
-        opacity: 0;
-      }
-    }
-
-    .report-section {
-      margin-bottom: 24px;
-
-      .section-title {
-        font-size: 30px;
-        font-weight: 500;
-        color: #000000;
-        margin-bottom: 8px;
-        display: block;
-      }
-
-      .section-content {
-        font-size: 28px;
-        font-weight: 400;
-        color: #000000;
-        line-height: 1.6;
-      }
-    }
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }

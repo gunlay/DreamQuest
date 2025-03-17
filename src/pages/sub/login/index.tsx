@@ -25,6 +25,9 @@ const Login = () => {
       }
     }
     logining.current = true
+    Taro.showLoading({
+      title: '登录中'
+    })
     try {
       const success = await login();
       if (success) {
@@ -39,6 +42,7 @@ const Login = () => {
     } catch (err) {
 
     }
+    Taro.hideLoading()
     logining.current = false
   };
   const showUserAgreement = (pageType: string) => {

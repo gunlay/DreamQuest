@@ -1,7 +1,7 @@
-import { useState } from "react";
-import classNames from "classnames";
-import Taro, { useDidShow } from "@tarojs/taro";
 import { Picker, Text, View } from "@tarojs/components";
+import Taro, { useDidShow } from "@tarojs/taro";
+import classNames from "classnames";
+import { useState } from "react";
 import { homeApi } from "@/api/home";
 import { FortuneDTO, HoroType, LuckDTO } from "@/api/types/home";
 import style from "./index.module.scss";
@@ -98,25 +98,16 @@ const TodayFortune = () => {
 
       {!hasSelectedZodiac ? (
         <View className={style["zodiac-selector"]}>
-          <Picker
-            onChange={handleZodiacChange}
-            value={zodiacIndex}
-            range={zodiacs}
-          >
+          <Picker onChange={handleZodiacChange} value={zodiacIndex} range={zodiacs}>
             <View className={style["picker-content"]}>
-              <Text>
-                {zodiacIndex > -1 ? zodiacs[zodiacIndex] : "选择星座"}
-              </Text>
+              <Text>{zodiacIndex > -1 ? zodiacs[zodiacIndex] : "选择星座"}</Text>
               <Text className={style["arrow"]}>▼</Text>
             </View>
           </Picker>
         </View>
       ) : (
         <View
-          className={classNames(
-            style["fortune-content"],
-            isFortuneExpanded ? style.expanded : ""
-          )}
+          className={classNames(style["fortune-content"], isFortuneExpanded ? style.expanded : "")}
           onClick={toggleFortune}
         >
           <View className={style["fortune-item"]}>

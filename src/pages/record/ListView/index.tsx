@@ -38,6 +38,8 @@ const ListView: FC = () => {
     list: DreamCardDTO[], 
     originData?: MonthDreams[]
   ): MonthDreams[] => {
+    // 计算出originData中包含了那些month
+    const originMonths = originData?.map(item => item.month) || [];
     return Object.entries(list.map(dto => ({
         ...dto,
         date: dayjs(dto.createTime).format('YYYY.MM.DD'),
@@ -50,9 +52,9 @@ const ListView: FC = () => {
       }, {} as { [key: string]: DreamCardVO[] }))
       .sort(([a], [b]) => Number(b) - Number(a))
       .flatMap(([month, dreams]) => [
-        { type: 'header', month, dream: {} as DreamCardVO },
+        originMonths.findIndex(o => o === month) > -1 ? { type: 'header', month, dream: {} as DreamCardVO } : null,
         ...dreams.map(dream => ({ type: 'dream', month: '', dream }))
-      ]);
+      ]).filter(Boolean) as MonthDreams[];
   };
 
   const load = async (params: {

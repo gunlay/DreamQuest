@@ -1,7 +1,8 @@
-import dayjs from "dayjs";
 import { View, Picker, Text } from "@tarojs/components";
-import useCalendarHooks from "@/hooks/useCalendarHooks";
 import { Calendar, Day } from "@antmjs/vantui";
+import dayjs from "dayjs";
+import useCalendarHooks from "@/hooks/useCalendarHooks";
+import { debounce } from "@/utils/debounce";
 import DreamCard from "../DreamCard";
 import style from "./index.module.scss";
 
@@ -13,10 +14,12 @@ const CalendarView = () => {
     currentYear,
     currentMonth,
     fetchDreams,
-    onDatePickerChange,
+    onDatePickerChange: handleDatePickerChange,
     prevMonth,
     nextMonth,
   } = useCalendarHooks()
+
+  const onDatePickerChange = debounce(handleDatePickerChange, 300)
 
 
   return (

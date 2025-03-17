@@ -1,17 +1,17 @@
 import { View, Text, Image, Input } from "@tarojs/components";
-import { useState } from "react";
 import { useDidShow } from "@tarojs/taro";
+import classNames from "classnames";
+import { useState } from "react";
+import { homeApi } from "@/api/home";
 import SendIcon from "@/assets/icon/send.png";
 import RecodSelected from "@/assets/image/tabbar/record_selected.png";
 import PageContainer from "@/Components/PageContainer";
-import classNames from "classnames";
 import { useSystemStore } from "@/store/systemStore";
-import { homeApi } from "@/api/home";
 import DreamInput from "./DreamInput/index";
+import style from "./index.module.scss";
 import TodayFortune from "./TodayFortune";
 import WeeklyReport from "./WeeklyReport";
 
-import style from "./index.module.scss";
 
 const Home: React.FC = () => {
   const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png'
