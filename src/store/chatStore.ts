@@ -17,7 +17,7 @@ interface ChatStoreState {
   setChatState: (chatId: string, state: Partial<ChatState>) => void;
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting?: boolean) => void;
   sendMessage: (chatId: string, message: string) => Promise<void>;
-  initChat: (chatId: string, dreamInput?: any) => Promise<string>;
+  initChat: (chatId: string) => Promise<string>;
   clearChat: (chatId: string) => void;
   setDreamInput: (params: NewMessageDTO) => void
   clearDreamInput: () => void
@@ -88,14 +88,13 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
   },
 
-  initChat: async (chatId: string) => {
+  initChat: async (chatId: string): Promise<string> => {
     const { 
-      dreamInput, activeRequests, maxActiveRequests, 
-      getChatState, setChatState, clearDreamInput 
+      dreamInput, activeRequests, getChatState, setChatState, clearDreamInput 
     } = get();
-    if (activeRequests >= maxActiveRequests) {
-      throw new Error('已达到最大并发请求数');
-    }
+    // if (activeRequests >= maxActiveRequests) {
+    //   throw new Error('已达到最大并发请求数');
+    // }
 
     set({ activeRequests: activeRequests + 1 });
     try {
@@ -104,20 +103,29 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         const { chatId: newId } = await chatApi.createNewChat(dreamInput);
         clearDreamInput()
         finalChatId = newId;
+      } else if (!chatId && !dreamInput) {
+        return ''
       }
-
-      const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
       const state = getChatState(finalChatId);
-      setChatState(finalChatId, {
-        chatId: finalChatId,
-        dreamData: result,
-        messages: state?.messages || result.messages || [],
-      });
-
+      // 如果最后一条消息是正在聊天的消息，就不请求接口
+      if (state?.messages?.length && state.messages[state.messages.length - 1].chatting) {
+        setChatState(finalChatId, {
+          chatId: finalChatId,
+          dreamData: state.dreamData,
+          messages: state?.messages
+        })
+      } else {
+        // 请求接口
+        const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
+        setChatState(finalChatId, {
+          chatId: finalChatId,
+          dreamData: result,
+          messages: result.messages || [],
+        });
+        set({ activeRequests: get().activeRequests - 1 });
+      }
       return finalChatId;
-    } finally {
-      set({ activeRequests: get().activeRequests - 1 });
-    }
+    } finally {}
   },
 
   clearChat: (chatId: string) => {

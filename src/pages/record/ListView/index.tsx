@@ -34,7 +34,10 @@ const ListView: FC = () => {
     setKey(prev => prev + 1);
   };
 
-  const processAndGroupDreams = (list: DreamCardDTO[]): MonthDreams[] => {
+  const processAndGroupDreams = (
+    list: DreamCardDTO[], 
+    originData?: MonthDreams[]
+  ): MonthDreams[] => {
     return Object.entries(list.map(dto => ({
         ...dto,
         date: dayjs(dto.createTime).format('YYYY.MM.DD'),
@@ -52,14 +55,17 @@ const ListView: FC = () => {
       ]);
   };
 
-  const load = async (params: {pageIndex: number, pageSize: number} ) => {
+  const load = async (params: {
+    pageIndex: number, 
+    pageSize: number
+  }, originData?: MonthDreams[]) => {
     const { list, total } = await recordApi.fetchDreamList({
       pageParam: params,
       message: searchKeyword?.trim() || undefined
     });
 
     return {
-      list: processAndGroupDreams(list),
+      list: processAndGroupDreams(list, originData),
       total
     };
   };
@@ -94,7 +100,7 @@ const ListView: FC = () => {
       <View className={style.list}>
         <List<MonthDreams>
           key={key}
-          height={`calc(100vh - 144px - ${appBarHeight}px)`}
+          height={`calc(100vh - 118px - ${appBarHeight}px)`}
           pageSize={pageSize}
           onLoadMore={load}
           renderItem={(item: MonthDreams) => {
