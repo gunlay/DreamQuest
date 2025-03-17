@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import Taro, { useDidShow } from "@tarojs/taro";
+import Taro from "@tarojs/taro";
 import classNames from "classnames";
 import { useLoginStore } from "@/store/loginStore";
 import { Image, View } from "@tarojs/components";
@@ -17,7 +17,10 @@ const LoginButton: FC<{ className?: string }> = ({ className }) => {
       className={classNames(styles["login-btn"], className)}
       onClick={login}
     >
-      {/* <Image></Image> */}
+      <Image
+        src='https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/record_selected.png'
+        className={styles.icon}
+      ></Image>
       <View>登录</View>
     </View>
   );
