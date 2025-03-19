@@ -20,7 +20,7 @@ export const homeApi = {
     return http.post<DreamCardDTO[]>('/dream/chat/week/message').then((res) => res);
   },
 
-  fetchWeeklyReport: async () => {
-    return http.post<string>('/dream/ai/weekly-report', {}).then((res) => res);
+  fetchWeeklyReport: async (params?: { retryFlag?: boolean }) => {
+    return http.post<string>('/dream/ai/weekly-report', params).then((res) => res);
   },
 };

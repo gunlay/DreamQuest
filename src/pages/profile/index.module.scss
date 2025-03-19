@@ -131,6 +131,7 @@
 .chat-container {
   position: fixed;
   top: 590px;
+  padding-bottom: 144px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -141,12 +142,10 @@
   .chat-area {
     height: 100%;
     overflow-y: auto;
-    padding: 0 0 144px;
 
     .top-white {
       height: 32px;
       width: 100%;
-      // background-color: rgba(250, 250, 250, 0.93);
     }
 
     .report-wrapper {

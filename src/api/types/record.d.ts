@@ -2,7 +2,7 @@ export interface DreamCardDTO {
   date: string;
   week: string;
   desc: string;
-  chatId: number;
+  chatId: string;
   image: string;
   tags: string[];
   title: string;

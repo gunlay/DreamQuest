@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { chatApi } from '@/api/chat';
 import { ChatHistoryDTO, MessageDTO, NewMessageDTO } from '@/api/types/chat';
+import { useReportStore } from './report';
 
 interface ChatState {
   chatId: string;
@@ -99,6 +100,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       let finalChatId = chatId;
       if (!chatId && dreamInput) {
         const { chatId: newId } = await chatApi.createNewChat(dreamInput);
+        useReportStore.getState().setFlag(true);
         clearDreamInput();
         finalChatId = newId;
       } else if (!chatId && !dreamInput) {

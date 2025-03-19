@@ -1,6 +1,7 @@
-import { View, Text, Image, Button, Input } from '@tarojs/components';
+import { View, Text, Image, Button, Input, ITouchEvent } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useEffect, useState, useMemo } from 'react';
+import Loading from '@/Components/Loading';
 import { useChatStore } from '@/store/chatStore';
 import style from './index.module.scss';
 
@@ -9,6 +10,7 @@ const Analysis = () => {
   const { activeRequests, initChat, getChatState, sendMessage, clearChat } = useChatStore();
   const [currentChatId, setCurrentChatId] = useState<string>('');
   const [inputMessage, setInputMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
   const chatState = getChatState(currentChatId || '');
@@ -20,7 +22,7 @@ const Analysis = () => {
     );
   }, [currentChatId, inputMessage, activeRequests, chatState]);
 
-  const onMessageInput = (e: any) => {
+  const onMessageInput = (e: ITouchEvent) => {
     setInputMessage(e.detail.value);
   };
 
@@ -53,7 +55,7 @@ const Analysis = () => {
     try {
       await sendMessage(currentChatId, inputMessage.trim());
       scrollToTop();
-    } catch (error: any) {
+    } catch (error) {
       Taro.showToast({
         title: error.message || '发送失败',
         icon: 'none',
@@ -63,15 +65,17 @@ const Analysis = () => {
 
   const init = async () => {
     try {
+      setLoading(true);
       const finalChatId = await initChat(chatId);
       setCurrentChatId(finalChatId);
       scrollToTop();
-    } catch (error: any) {
+    } catch (error) {
       Taro.showToast({
         title: error.message || '加载失败',
         icon: 'none',
       });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -89,7 +93,7 @@ const Analysis = () => {
 
   return (
     <>
-      {currentChatId && chatState?.dreamData ? (
+      {currentChatId && chatState?.dreamData && !loading && (
         <View className={style['container']}>
           <View className={style['header']}>
             <Text className={style['title']}>{chatState.dreamData.title}</Text>
@@ -153,7 +157,9 @@ const Analysis = () => {
             </Button>
           </View>
         </View>
-      ) : (
+      )}
+      {loading && <Loading loadingText="梦境大师正在为您分析中..." />}
+      {(!currentChatId || !chatState?.dreamData) && !loading && (
         <View className={style['empty-state']}>
           <Text>加载失败，请返回重试</Text>
         </View>
