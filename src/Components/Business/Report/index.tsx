@@ -78,9 +78,9 @@ const ReportContent: FC<{
             <View className={style["report-section"]}>
               <Text className={style["section-title"]}>🤖 AI建议</Text>
               {report?.aiSuggestion.map((sg) => (
-                <Text key={sg} className={style["section-content"]}>
+                <View key={sg} className={style["section-content"]}>
                   {sg}
-                </Text>
+                </View>
               ))}
             </View>
           ) : null}

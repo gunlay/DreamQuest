@@ -190,15 +190,10 @@ export async function generateAIAnalysis(): Promise<{ analysis: string; aiSugges
     }
     const content = JSON.parse(data.replace(/^```json\n|```$/g, ""));
 
-    // const content = JSON.parse(response.choices[0].message.content);
-    console.log("content.suggestion", content.suggestion);
-    console.log("content.suggestion", content.suggestion.split(/\r?\n|\r/));
-
     // 确保建议之间有换行
     const suggestion: string[] = content.suggestion
-      ? content.suggestion.split(/\r?\n|\r/).filter(Boolean)
-      : // .map((s: string) => "建议" + s.trim())
-        defaultReport;
+      ? content.suggestion.split("\\n").filter(Boolean)
+      : defaultReport;
 
     return {
       analysis: content.analysis || defaultReport.analysis,
