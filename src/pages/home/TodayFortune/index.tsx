@@ -1,4 +1,4 @@
-import { Picker, Text, View } from "@tarojs/components";
+import { ITouchEvent, Picker, Text, View } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import classNames from "classnames";
 import { useState } from "react";
@@ -73,7 +73,7 @@ const TodayFortune = () => {
     setHasSelectedZodiac(true);
   };
 
-  const handleZodiacChange = async (e: any) => {
+  const handleZodiacChange = async (e: ITouchEvent) => {
     const index = parseInt(e.detail.value);
     await fetchFortune(zodiacs[index]);
     setodiacIndex(index);

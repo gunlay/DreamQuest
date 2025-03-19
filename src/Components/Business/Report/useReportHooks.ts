@@ -21,15 +21,16 @@ export interface ReportParams {
   keywords: string;
   analysis: string;
   emotionTrend: string;
-  aiSuggestion: string;
+  aiSuggestion: string[];
 }
 
 const defaultReport: ReportParams = {
   keywords: "开始记录你的第一个梦境吧",
   analysis: "开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。",
   emotionTrend: "开始记录梦境，探索内心情感的变化。",
-  aiSuggestion:
+  aiSuggestion: [
     "建议在睡醒后第一时间记录梦境，这样能记住更多细节。可以从印象最深刻的片段开始写起，慢慢培养记录习惯。",
+  ],
 };
 
 // 分析梦境情绪
@@ -152,7 +153,7 @@ export function generateReportContent(dreams: DreamCardDTO[]): ReportParams {
       keywords: keywordsStr,
       analysis: "",
       emotionTrend,
-      aiSuggestion: "",
+      aiSuggestion: [],
     };
 
     return finalReport;
@@ -177,11 +178,9 @@ function getEmotionTrendDescription(emotions: ReportDTO["emotions"]): string {
 }
 
 // // 生成AI分析和建议
-export async function generateAIAnalysis(): Promise<{ analysis: string; aiSuggestion: string }> {
+export async function generateAIAnalysis(): Promise<{ analysis: string; aiSuggestion: string[] }> {
   try {
     const data = await homeApi.fetchWeeklyReport();
-    console.log(data.replace(/^```json\n|```$/g, ""));
-    console.log(JSON.parse(data.replace(/^```json\n|```$/g, "")));
 
     if (!data) {
       return {
@@ -192,15 +191,14 @@ export async function generateAIAnalysis(): Promise<{ analysis: string; aiSugges
     const content = JSON.parse(data.replace(/^```json\n|```$/g, ""));
 
     // const content = JSON.parse(response.choices[0].message.content);
+    console.log("content.suggestion", content.suggestion);
+    console.log("content.suggestion", content.suggestion.split(/\r?\n|\r/));
 
     // 确保建议之间有换行
-    const suggestion = content.suggestion
-      ? content.suggestion
-          .split("建议")
-          .filter(Boolean)
-          .map((s: string) => "建议" + s.trim())
-          .join("\n\n")
-      : defaultReport;
+    const suggestion: string[] = content.suggestion
+      ? content.suggestion.split(/\r?\n|\r/).filter(Boolean)
+      : // .map((s: string) => "建议" + s.trim())
+        defaultReport;
 
     return {
       analysis: content.analysis || defaultReport.analysis,

@@ -1,9 +1,6 @@
 .dream-input-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
   display: none;
   z-index: 999;
@@ -34,6 +31,7 @@
         padding: 16px 0;
         border-bottom: 2px solid #eee;
       }
+
       .date {
         color: #999;
         font-size: 28px;
@@ -61,6 +59,7 @@
       border-radius: 16px;
       background: white;
     }
+
     .word-count {
       position: absolute;
       right: 24px;
@@ -98,6 +97,7 @@
         background: #ccc;
         color: #fff;
       }
+
       &.loading {
         opacity: 0.7;
         position: relative;
@@ -117,10 +117,12 @@
     }
   }
 }
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

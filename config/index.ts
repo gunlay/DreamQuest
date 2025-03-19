@@ -32,6 +32,9 @@ export default defineConfig(async (merge, {}) => {
       optimizeMainPackage: {
         enable: true,
       },
+      miniCssExtractPluginOption: {
+        ignoreOrder: true,
+      },
 
       // preloadRule: {
       //   'pages/home/index': {

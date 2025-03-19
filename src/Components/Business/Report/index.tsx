@@ -1,4 +1,4 @@
-import { Text, View } from "@tarojs/components";
+import { RichText, Text, View } from "@tarojs/components";
 import { useDidShow } from "@tarojs/taro";
 import classNames from "classnames";
 import { FC, useState } from "react";
@@ -29,10 +29,8 @@ const ReportContent: FC<{
           _data = await homeApi.fetchWeekMessage();
         } else if (type === "month") {
           _data = await profileApi.fetchMonthReport();
-          console.log("month _data", _data);
         }
       }
-      console.log("data", generateReportContent(_data));
       const aiSuggestion = await generateAIAnalysis();
       setReport({
         ...generateReportContent(_data),
@@ -49,7 +47,7 @@ const ReportContent: FC<{
   return (
     <>
       {generating ? (
-        <Loading loadingText="正在生成月报..."></Loading>
+        <Loading loadingText={`正在生成${type === "week" ? "周报" : "月报"}...`}></Loading>
       ) : (
         <View className={classNames(style["report-content"])}>
           {report?.keywords ? (
@@ -79,7 +77,11 @@ const ReportContent: FC<{
           {report?.aiSuggestion ? (
             <View className={style["report-section"]}>
               <Text className={style["section-title"]}>🤖 AI建议</Text>
-              <Text className={style["section-content"]}>{report?.aiSuggestion}</Text>
+              {report?.aiSuggestion.map((sg) => (
+                <Text key={sg} className={style["section-content"]}>
+                  {sg}
+                </Text>
+              ))}
             </View>
           ) : null}
         </View>
