@@ -1,7 +1,7 @@
 // stores/useTabbarStore.ts
-import tabbarList from "@/Components/Tabbar/tabbarList";
-import Taro from "@tarojs/taro";
-import { create } from "zustand";
+import Taro from '@tarojs/taro';
+import { create } from 'zustand';
+import tabbarList from '@/Components/Tabbar/tabbarList';
 
 interface TabItem {
   key: string;
@@ -22,12 +22,15 @@ interface TabbarState {
 
 const tabbarImg = {
   dream: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/dream.png',
-  dreamSelected: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/dream_selected.png',
+  dreamSelected:
+    'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/dream_selected.png',
   record: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/record.png',
-  recordSelected: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/record_selected.png',
+  recordSelected:
+    'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/record_selected.png',
   profile: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/profile.png',
-  profileSelected: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/profile_selected.png',
-}
+  profileSelected:
+    'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/profile_selected.png',
+};
 
 const queryCache: Record<string, Record<string, unknown> | undefined> = {};
 tabbarList.forEach((tab) => {
@@ -51,7 +54,7 @@ export const useTabbarStore = create<TabbarState>((set, get) => ({
         [`/${tab.pagePath}`]: query || {},
       },
     }));
-    Taro.switchTab({ url: `/${tab.pagePath}` })
+    Taro.switchTab({ url: `/${tab.pagePath}` });
     // .then(() =>
     //   Taro.hideTabBar().catch(() => 0)
     // );

@@ -1,29 +1,23 @@
-import Taro from "@tarojs/taro";
-import { useEffect, useState, useMemo } from "react";
-import { View, Text, Image, Button, Input } from "@tarojs/components";
-import { useChatStore } from "@/store/chatStore";
-import style from "./index.module.scss";
+import { View, Text, Image, Button, Input } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import { useEffect, useState, useMemo } from 'react';
+import { useChatStore } from '@/store/chatStore';
+import style from './index.module.scss';
 
 const Analysis = () => {
-  const DefaultDream = ''
-  const {
-    activeRequests,
-    initChat,
-    getChatState,
-    sendMessage,
-    clearChat,
-  } = useChatStore()
-  const [currentChatId, setCurrentChatId] = useState<string>("");
-  const [inputMessage, setInputMessage] = useState<string>("");
+  const DefaultDream = '';
+  const { activeRequests, initChat, getChatState, sendMessage, clearChat } = useChatStore();
+  const [currentChatId, setCurrentChatId] = useState<string>('');
+  const [inputMessage, setInputMessage] = useState<string>('');
 
   const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
   const chatState = getChatState(currentChatId || '');
-  
+
   const isInputDisabled = useMemo(() => {
     if (!currentChatId) return true;
-    return !inputMessage.trim() || 
-           activeRequests > 0 || 
-           chatState?.messages.some(msg => msg.chatting);
+    return (
+      !inputMessage.trim() || activeRequests > 0 || chatState?.messages.some((msg) => msg.chatting)
+    );
   }, [currentChatId, inputMessage, activeRequests, chatState]);
 
   const onMessageInput = (e: any) => {
@@ -33,16 +27,19 @@ const Analysis = () => {
   const scrollToTop = () => {
     Taro.nextTick(() => {
       const query = Taro.createSelectorQuery();
-      query.select('#chat-area').boundingClientRect().exec((res) => {
-        if (res && res[0]) {
-          Taro.pageScrollTo({
-            scrollTop: res[0].height,
-            duration: 300
-          })
-        }
-      })
-    })
-  }
+      query
+        .select('#chat-area')
+        .boundingClientRect()
+        .exec((res) => {
+          if (res && res[0]) {
+            Taro.pageScrollTo({
+              scrollTop: res[0].height,
+              duration: 300,
+            });
+          }
+        });
+    });
+  };
 
   useEffect(() => {
     if (chatState?.messages && chatState.messages.length > 0) {
@@ -52,14 +49,14 @@ const Analysis = () => {
 
   const handleSendMessage = async () => {
     if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
-    setInputMessage("");
+    setInputMessage('');
     try {
       await sendMessage(currentChatId, inputMessage.trim());
       scrollToTop();
     } catch (error: any) {
       Taro.showToast({
         title: error.message || '发送失败',
-        icon: 'none'
+        icon: 'none',
       });
     }
   };
@@ -72,10 +69,10 @@ const Analysis = () => {
     } catch (error: any) {
       Taro.showToast({
         title: error.message || '加载失败',
-        icon: 'none'
+        icon: 'none',
       });
     }
-  }
+  };
 
   useEffect(() => {
     init();
@@ -87,61 +84,60 @@ const Analysis = () => {
   }, []);
 
   if (process.env.TARO_ENV !== 'h5') {
-    require('@tarojs/taro/html.css')
+    require('@tarojs/taro/html.css');
   }
 
   return (
     <>
       {currentChatId && chatState?.dreamData ? (
-        <View className={style["container"]}>
-          <View className={style["header"]}>
-            <Text className={style["title"]}>{chatState.dreamData.title}</Text>
-            <Text className={style["date"]}>
+        <View className={style['container']}>
+          <View className={style['header']}>
+            <Text className={style['title']}>{chatState.dreamData.title}</Text>
+            <Text className={style['date']}>
               {chatState.dreamData.date} {chatState.dreamData.week}
             </Text>
           </View>
 
-          <View className={style["dream-content-wrapper"]}>
-            <View className={style["dream-content"]}>{chatState.dreamData.desc}</View>
+          <View className={style['dream-content-wrapper']}>
+            <View className={style['dream-content']}>{chatState.dreamData.desc}</View>
           </View>
 
-          <View className={style["dream-image"]}>
-            <Image
-              src={chatState.dreamData.image || DefaultDream}
-              mode="aspectFill"
-            ></Image>
+          <View className={style['dream-image']}>
+            <Image src={chatState.dreamData.image || DefaultDream} mode="aspectFill"></Image>
           </View>
 
-          <View className={style["tags"]}>
+          <View className={style['tags']}>
             {chatState.dreamData.tags?.map((item, index) => (
-              <View className={style["tag"]} key={index}>
+              <View className={style['tag']} key={index}>
                 {item}
               </View>
             ))}
           </View>
 
-          <View id='chat-area' className={style["chat-area"]}>
+          <View id="chat-area" className={style['chat-area']}>
             {chatState.messages.map((item, i) => (
               <View
                 key={i}
-                className={`${style["message"]} ${style[`${item.sender}`]}`}
+                className={`${style['message']} ${style[`${item.sender}`]}`}
                 id={`msg-${i}`}
               >
-                <View className={style["message-content"]}>
-                  {
-                    item.chatting ? <View className={style["message-loading"]}></View>: <View 
-                      className="taro_html" 
+                <View className={style['message-content']}>
+                  {item.chatting ? (
+                    <View className={style['message-loading']}></View>
+                  ) : (
+                    <View
+                      className="taro_html"
                       dangerouslySetInnerHTML={{ __html: item.message }}
                     />
-                  }
+                  )}
                 </View>
               </View>
             ))}
           </View>
 
-          <View className={style["input-section"]}>
+          <View className={style['input-section']}>
             <Input
-              className={style["input-box"]}
+              className={style['input-box']}
               placeholder="说点什么..."
               value={inputMessage}
               adjust-position
@@ -149,7 +145,7 @@ const Analysis = () => {
               onInput={onMessageInput}
             />
             <Button
-              className={`${style["save-btn"]} ${isInputDisabled ? style["disabled"] : ""}`}
+              className={`${style['save-btn']} ${isInputDisabled ? style['disabled'] : ''}`}
               disabled={isInputDisabled}
               onClick={handleSendMessage}
             >
@@ -158,12 +154,12 @@ const Analysis = () => {
           </View>
         </View>
       ) : (
-        <View className={style["empty-state"]}>
+        <View className={style['empty-state']}>
           <Text>加载失败，请返回重试</Text>
         </View>
       )}
     </>
   );
-}
+};
 
-export default Analysis
+export default Analysis;

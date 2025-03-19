@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { chatApi } from "@/api/chat";
-import { ChatHistoryDTO, MessageDTO, NewMessageDTO } from "@/api/types/chat";
+import { create } from 'zustand';
+import { chatApi } from '@/api/chat';
+import { ChatHistoryDTO, MessageDTO, NewMessageDTO } from '@/api/types/chat';
 
 interface ChatState {
   chatId: string;
@@ -19,8 +19,8 @@ interface ChatStoreState {
   sendMessage: (chatId: string, message: string) => Promise<void>;
   initChat: (chatId: string) => Promise<string>;
   clearChat: (chatId: string) => void;
-  setDreamInput: (params: NewMessageDTO) => void
-  clearDreamInput: () => void
+  setDreamInput: (params: NewMessageDTO) => void;
+  clearDreamInput: () => void;
 }
 
 export const useChatStore = create<ChatStoreState>((set, get) => ({
@@ -53,7 +53,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       updatedMessages[updatedMessages.length - 1] = {
         ...updatedMessages[updatedMessages.length - 1],
         chatting: false,
-        message
+        message,
       };
     } else {
       updatedMessages.push({ sender, message, chatting });
@@ -64,7 +64,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
   sendMessage: async (chatId: string, message: string) => {
     const { activeRequests, maxActiveRequests, addMessage, setChatState, getChatState } = get();
-    
+
     if (activeRequests >= maxActiveRequests) {
       throw new Error('已达到最大并发请求数');
     }
@@ -79,7 +79,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     } catch (error) {
       const state = getChatState(chatId);
       if (state) {
-        const messages = state.messages.filter(msg => !msg.chatting);
+        const messages = state.messages.filter((msg) => !msg.chatting);
         setChatState(chatId, { messages });
       }
       throw error;
@@ -89,9 +89,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   initChat: async (chatId: string): Promise<string> => {
-    const { 
-      dreamInput, activeRequests, getChatState, setChatState, clearDreamInput 
-    } = get();
+    const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput } = get();
     // if (activeRequests >= maxActiveRequests) {
     //   throw new Error('已达到最大并发请求数');
     // }
@@ -101,10 +99,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       let finalChatId = chatId;
       if (!chatId && dreamInput) {
         const { chatId: newId } = await chatApi.createNewChat(dreamInput);
-        clearDreamInput()
+        clearDreamInput();
         finalChatId = newId;
       } else if (!chatId && !dreamInput) {
-        return ''
+        return '';
       }
       const state = getChatState(finalChatId);
       // 如果最后一条消息是正在聊天的消息，就不请求接口
@@ -112,8 +110,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         setChatState(finalChatId, {
           chatId: finalChatId,
           dreamData: state.dreamData,
-          messages: state?.messages
-        })
+          messages: state?.messages,
+        });
       } else {
         // 请求接口
         const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
@@ -125,7 +123,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         set({ activeRequests: get().activeRequests - 1 });
       }
       return finalChatId;
-    } finally {}
+    } finally {
+    }
   },
 
   clearChat: (chatId: string) => {

@@ -1,7 +1,7 @@
-import { userApi } from "@/api/user";
-import Taro from "@tarojs/taro";
-import { create } from "zustand";
-import { useUserStore } from "./userStore";
+import Taro from '@tarojs/taro';
+import { create } from 'zustand';
+import { userApi } from '@/api/user';
+import { useUserStore } from './userStore';
 
 interface LoginState {
   isLogin: boolean;
@@ -13,7 +13,7 @@ interface LoginState {
 
 export const useLoginStore = create<LoginState>((set, get) => ({
   isLogin: false,
-  token: "",
+  token: '',
 
   login: async () => {
     try {
@@ -22,14 +22,14 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       // 2. 调用后端登录接口
       const data = await userApi.login();
       // 3.保存token
-      Taro.setStorageSync("auth_token", data.token);
+      Taro.setStorageSync('auth_token', data.token);
       set({ isLogin: true, token: data.token });
       // 4. 保存用户信息
-      await userApi.saveUserInfo(useUserStore.getState().userInfo)
-      Taro.setStorageSync("session_key", data.sessionKey);
+      await userApi.saveUserInfo(useUserStore.getState().userInfo);
+      Taro.setStorageSync('session_key', data.sessionKey);
       return true;
     } catch (error) {
-      Taro.showToast({ title: "登录失败", icon: "none" });
+      Taro.showToast({ title: '登录失败', icon: 'none' });
       return false;
     }
   },
@@ -46,8 +46,7 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       const { token } = get();
       if (token) return true;
 
-      const storage = await Taro.getStorage({ key: "auth_token" })      
-      ;
+      const storage = await Taro.getStorage({ key: 'auth_token' });
       if (storage.data) {
         set({ isLogin: true, token: storage.data });
         return true;

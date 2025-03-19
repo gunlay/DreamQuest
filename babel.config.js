@@ -2,20 +2,23 @@
 // https://github.com/NervJS/taro/blob/next/packages/babel-preset-taro/README.md
 module.exports = {
   presets: [
-    ['taro', {
-      framework: 'react',
-      ts: true
-    }]
+    [
+      'taro',
+      {
+        framework: 'react',
+        ts: true,
+      },
+    ],
   ],
   plugins: [
     [
-      "import",
+      'import',
       {
-        "libraryName": "@antmjs/vantui",
-        "libraryDirectory": "es",
-        "style": true,
+        libraryName: '@antmjs/vantui',
+        libraryDirectory: 'es',
+        style: true,
       },
-      "@antmjs/vantui"
-    ]
-  ]
-}
+      '@antmjs/vantui',
+    ],
+  ],
+};

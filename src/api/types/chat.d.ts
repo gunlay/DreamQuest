@@ -1,26 +1,26 @@
 export interface MessageDTO {
-  chatId?: string
-  id?: string
-  chatting?: boolean
-  message: string
-  sender: string
+  chatId?: string;
+  id?: string;
+  chatting?: boolean;
+  message: string;
+  sender: string;
 }
 export interface ChatHistoryDTO {
   chatId: string;
   date: string;
-  desc: string
+  desc: string;
   image: string;
-  message: string
+  message: string;
   tags: string[];
   title: string;
   week: string;
-  messages: MessageDTO[]
+  messages: MessageDTO[];
 }
 
 export interface ChatMessageDTO {
   chatId?: string;
   message: string;
-  sender: "ai" | "user";
+  sender: 'ai' | 'user';
 }
 export interface NewMessageDTO {
   message: string;

@@ -10,17 +10,14 @@ export interface WeeklyReportParams {
 
 const defaultWeeklyReport: WeeklyReportParams = {
   keywords: "开始记录你的第一个梦境吧",
-  analysis:
-    "开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。",
+  analysis: "开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。",
   emotionTrend: "开始记录梦境，探索内心情感的变化。",
   aiSuggestion:
     "建议在睡醒后第一时间记录梦境，这样能记住更多细节。可以从印象最深刻的片段开始写起，慢慢培养记录习惯。",
 };
-  
+
 // 分析梦境情绪
-function analyzeDreamEmotion(
-  dream: DreamCardDTO
-): "positive" | "neutral" | "negative" {
+function analyzeDreamEmotion(dream: DreamCardDTO): "positive" | "neutral" | "negative" {
   const positiveWords = ["快乐", "开心", "幸福", "美好", "希望", "成功"];
   const negativeWords = ["害怕", "焦虑", "痛苦", "悲伤", "恐惧", "失败"];
 
@@ -39,11 +36,9 @@ function analyzeDreamEmotion(
   if (negativeCount > positiveCount) return "negative";
   return "neutral";
 }
-  
+
 // 分析梦境主题
-function analyzeDreamTheme(
-  dream: DreamCardDTO
-): keyof WeeklyReportDTO["themes"] {
+function analyzeDreamTheme(dream: DreamCardDTO): keyof WeeklyReportDTO["themes"] {
   const workWords = ["工作", "职场", "老板", "同事", "项目", "会议"];
   const lifeWords = ["生活", "家庭", "休闲", "娱乐", "旅行", "美食"];
   const relationshipWords = ["朋友", "恋人", "家人", "社交", "感情"];
@@ -74,9 +69,7 @@ function analyzeDreamTheme(
 }
 
 // 生成周报数据
-export function generateWeeklyReportData(
-  dreams: DreamCardDTO[]
-): WeeklyReportDTO {
+export function generateWeeklyReportData(dreams: DreamCardDTO[]): WeeklyReportDTO {
   if (!dreams.length) {
     return {
       dreamCount: 0,
@@ -124,20 +117,16 @@ export function generateWeeklyReportData(
     keywords: Array.from(allTags).slice(0, 10), // 最多取10个关键词
   };
 }
-  
+
 // 生成周报内容
-export function generateWeeklyReportContent(
-  dreams: DreamCardDTO[]
-): WeeklyReportParams {
+export function generateWeeklyReportContent(dreams: DreamCardDTO[]): WeeklyReportParams {
   if (!dreams?.length) return defaultWeeklyReport;
 
   try {
     const reportData = generateWeeklyReportData(dreams);
 
     // 生成关键词字符串
-    const keywordsStr = reportData.keywords
-      .map((keyword) => `【${keyword}】`)
-      .join(" ");
+    const keywordsStr = reportData.keywords.map((keyword) => `【${keyword}】`).join(" ");
 
     // 生成情绪趋势描述
     const emotionTrend = getEmotionTrendDescription(reportData.emotions);
@@ -152,9 +141,9 @@ export function generateWeeklyReportContent(
     // 生成最终报告
     const finalReport = {
       keywords: keywordsStr,
-      analysis: '',
+      analysis: "",
       emotionTrend,
-      aiSuggestion: '',
+      aiSuggestion: "",
     };
 
     return finalReport;
@@ -162,11 +151,9 @@ export function generateWeeklyReportContent(
     return defaultWeeklyReport;
   }
 }
-  
+
 // 获取情绪趋势描述
-function getEmotionTrendDescription(
-  emotions: WeeklyReportDTO["emotions"]
-): string {
+function getEmotionTrendDescription(emotions: WeeklyReportDTO["emotions"]): string {
   const total = emotions.positive + emotions.neutral + emotions.negative;
   const positiveRatio = emotions.positive / total;
   const negativeRatio = emotions.negative / total;
@@ -240,7 +227,7 @@ function getEmotionTrendDescription(
 //     };
 //   }
 // }
-  
+
 // // 生成分析提示词
 // function generateAnalysisPrompt(
 //   dreams: DreamRecord[],

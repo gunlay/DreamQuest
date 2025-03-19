@@ -2,7 +2,7 @@
 export const REQUEST_CONFIG = {
   // 临时url
   // baseURL: "http://139.224.52.179:8080",
-  baseURL: "https://dreamquest.top",
+  baseURL: 'https://dreamquest.top',
   // 超时时间
   timeout: 100000,
   // 最大重试次数
@@ -28,6 +28,6 @@ export const HTTP_STATUS = {
 // 应用配置
 export const appConfig = {
   cloudStoragePath: {
-    dreamImages: "dream-images/", // 梦境图片存储路径
+    dreamImages: 'dream-images/', // 梦境图片存储路径
   },
 };

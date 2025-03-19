@@ -1,6 +1,6 @@
 // stores/useSystemStore.ts
-import Taro from "@tarojs/taro";
-import { create } from "zustand";
+import Taro from '@tarojs/taro';
+import { create } from 'zustand';
 
 interface SystemState {
   statusBarHeight: number;
@@ -24,8 +24,8 @@ export const useSystemStore = create<SystemState>((set) => ({
       statusBarHeight: (systemInfo.statusBarHeight || 0) + 4,
       titleBarHeight: menuBtn.height,
       appBarHeight: (systemInfo.statusBarHeight || 0) + menuBtn.height,
-      isAndroid: systemInfo.platform === "android",
-      isIOS: systemInfo.platform === "ios",
+      isAndroid: systemInfo.platform === 'android',
+      isIOS: systemInfo.platform === 'ios',
     });
   },
 }));

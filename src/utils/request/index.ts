@@ -1,6 +1,6 @@
-import Taro from "@tarojs/taro";
-import { REQUEST_CONFIG, HTTP_STATUS } from "./config";
-import { navigateToLogin } from "../navigate";
+import Taro from '@tarojs/taro';
+import { navigateToLogin } from '../navigate';
+import { REQUEST_CONFIG, HTTP_STATUS } from './config';
 
 // 定义响应接口
 interface ResponseData<T = any> {
@@ -10,7 +10,7 @@ interface ResponseData<T = any> {
 }
 
 // 定义请求配置接口
-interface RequestOptions extends Omit<Taro.request.Option, "success" | "fail"> {
+interface RequestOptions extends Omit<Taro.request.Option, 'success' | 'fail'> {
   retries?: number;
   showLoading?: boolean;
 }
@@ -29,14 +29,14 @@ export class HttpRequest {
   // 请求拦截器
   private requestInterceptor(options: RequestOptions): RequestOptions {
     // 添加token
-    const token = Taro.getStorageSync("auth_token");
+    const token = Taro.getStorageSync('auth_token');
     const header = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...options.header,
     };
 
     if (token) {
-      header["Authorization"] = token;
+      header['Authorization'] = token;
     }
 
     return {
@@ -47,19 +47,11 @@ export class HttpRequest {
   }
 
   // 响应拦截器
-  private responseInterceptor(
-    response: Taro.request.SuccessCallbackResult<ResponseData>
-  ) {
+  private responseInterceptor(response: Taro.request.SuccessCallbackResult<ResponseData>) {
     const { statusCode, data } = response;
 
     // 请求成功
-    if (
-      [
-        HTTP_STATUS.SUCCESS,
-        HTTP_STATUS.ACCEPTED,
-        HTTP_STATUS.ACCEPTED,
-      ].includes(statusCode)
-    ) {
+    if ([HTTP_STATUS.SUCCESS, HTTP_STATUS.ACCEPTED, HTTP_STATUS.ACCEPTED].includes(statusCode)) {
       if (data.code === 0) {
         return data.data;
       }
@@ -83,8 +75,8 @@ export class HttpRequest {
         break;
       default:
         Taro.showToast({
-          title: data.message || "请求失败",
-          icon: "none",
+          title: data.message || '请求失败',
+          icon: 'none',
           duration: 2000,
         });
     }
@@ -92,32 +84,32 @@ export class HttpRequest {
 
   // HTTP错误处理
   private handleHttpError(statusCode: number) {
-    let message = "服务器错误";
+    let message = '服务器错误';
 
     switch (statusCode) {
       case HTTP_STATUS.NOT_FOUND:
-        message = "请求的资源不存在";
+        message = '请求的资源不存在';
         break;
       case HTTP_STATUS.FORBIDDEN:
-        message = "没有权限访问";
+        message = '没有权限访问';
         break;
       case HTTP_STATUS.SERVER_ERROR:
-        message = "服务器错误";
+        message = '服务器错误';
         break;
       case HTTP_STATUS.BAD_GATEWAY:
-        message = "网关错误";
+        message = '网关错误';
         break;
       case HTTP_STATUS.SERVICE_UNAVAILABLE:
-        message = "服务不可用";
+        message = '服务不可用';
         break;
       case HTTP_STATUS.GATEWAY_TIMEOUT:
-        message = "网关超时";
+        message = '网关超时';
         break;
     }
 
     Taro.showToast({
       title: message,
-      icon: "none",
+      icon: 'none',
       duration: 2000,
     });
   }
@@ -134,7 +126,7 @@ export class HttpRequest {
       // 应用请求拦截器
       const interceptedOptions = this.requestInterceptor({
         ...options,
-        data: options.data || {}
+        data: options.data || {},
       });
 
       const response = await Taro.request<ResponseData<T>>({
@@ -147,9 +139,7 @@ export class HttpRequest {
     } catch (error) {
       // 请求失败且还有重试次数时进行重试
       if (retries < REQUEST_CONFIG.maxRetries) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, REQUEST_CONFIG.retryDelay)
-        );
+        await new Promise((resolve) => setTimeout(resolve, REQUEST_CONFIG.retryDelay));
         return this.request({
           ...options,
           retries: retries + 1,
@@ -167,16 +157,16 @@ export class HttpRequest {
   // 封装常用请求方法
   get<T>(url: string, data?: any, options?: Partial<RequestOptions>) {
     return this.request<T>({
-      method: "GET",
+      method: 'GET',
       url,
       data,
       ...options,
     });
   }
 
-  post<T>(url: string, data?: any, options?: Partial<RequestOptions>) {    
+  post<T>(url: string, data?: any, options?: Partial<RequestOptions>) {
     return this.request<T>({
-      method: "POST",
+      method: 'POST',
       url,
       data,
       ...options,
@@ -185,7 +175,7 @@ export class HttpRequest {
 
   put<T>(url: string, data?: any, options?: Partial<RequestOptions>) {
     return this.request<T>({
-      method: "PUT",
+      method: 'PUT',
       url,
       data,
       ...options,
@@ -194,7 +184,7 @@ export class HttpRequest {
 
   delete<T>(url: string, data?: any, options?: Partial<RequestOptions>) {
     return this.request<T>({
-      method: "DELETE",
+      method: 'DELETE',
       url,
       data,
       ...options,

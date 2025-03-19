@@ -1,11 +1,11 @@
-import { View, Text, Textarea, Input, Button, ITouchEvent } from "@tarojs/components";
-import Taro from "@tarojs/taro";
-import { useMemo, useState } from "react";
-import { NewMessageDTO } from "@/api/types/chat";
-import { useChatStore } from "@/store/chatStore";
+import { View, Text, Textarea, Input, Button, ITouchEvent } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import { useMemo, useState } from 'react';
+import { NewMessageDTO } from '@/api/types/chat';
+import { useChatStore } from '@/store/chatStore';
 // import { DreamInputProps, DreamInputState } from "./types";
-import { debounce } from "@/utils/debounce";
-import style from "./index.module.scss";
+import { debounce } from '@/utils/debounce';
+import style from './index.module.scss';
 
 export interface DreamInputProps {
   date: string;
@@ -16,9 +16,9 @@ export interface DreamInputProps {
 const DreamInput: React.FC<DreamInputProps> = (props) => {
   const { setDreamInput: setGlobalDreamInput } = useChatStore();
   const [dreamInput, setDreamInput] = useState<NewMessageDTO & { currentDate: string }>({
-    title: "",
-    message: "",
-    currentDate: "",
+    title: '',
+    message: '',
+    currentDate: '',
   });
 
   const canSave = useMemo(() => {
@@ -57,13 +57,13 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
 
   return (
     <View
-      className={`${style["dream-input-modal"]} ${props.show ? style.show : ""}`}
+      className={`${style['dream-input-modal']} ${props.show ? style.show : ''}`}
       onClick={() => props.onClose()}
     >
-      <View className={style["modal-content"]} onClick={stopPropagation}>
-        <View className={style["title-bar"]}>
+      <View className={style['modal-content']} onClick={stopPropagation}>
+        <View className={style['title-bar']}>
           <Input
-            className={style["title-input"]}
+            className={style['title-input']}
             placeholder="输入标题..."
             maxlength={12}
             placeholder-style="color: rgba(60, 60, 67, 0.6)"
@@ -71,24 +71,24 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
             value={dreamInput.title}
             onInput={onTitleInput}
           />
-          <Text className={style["date"]}>{props.date}</Text>
+          <Text className={style['date']}>{props.date}</Text>
         </View>
-        <View className={style["content-wrapper"]}>
+        <View className={style['content-wrapper']}>
           <Textarea
-            className={style["content-input"]}
+            className={style['content-input']}
             placeholder="描述你的梦境..."
             placeholder-style="color: rgba(60, 60, 67, 0.6)"
             maxlength={500}
             value={dreamInput.message}
             onInput={onContentInput}
           />
-          <View className={style["word-count"]}>{dreamInput.message.length}/500</View>
+          <View className={style['word-count']}>{dreamInput.message.length}/500</View>
         </View>
-        <View className={style["footer"]}>
+        <View className={style['footer']}>
           <Button
             className={`
-              ${style["save-btn"]} 
-              ${canSave ? "" : style.disabled} `}
+              ${style['save-btn']} 
+              ${canSave ? '' : style.disabled} `}
             onClick={handleSave}
             disabled={!canSave}
           >

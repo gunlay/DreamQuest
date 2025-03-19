@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import Taro from "@tarojs/taro";
+import Taro from '@tarojs/taro';
+import { create } from 'zustand';
 
 interface UserInfo {
   nickName?: string;
@@ -22,7 +22,7 @@ interface UserState {
   fetchUserInfo: () => Promise<void>;
 }
 
-let temp = {
+const temp = {
   nickName: '',
   avatarUrl: '',
   phoneNumber: '',
@@ -32,30 +32,30 @@ let temp = {
   gender: 0,
   phone: '',
   province: '',
-}
+};
 
 export const useUserStore = create<UserState>((set, get) => ({
-  userInfo: {...temp},
+  userInfo: { ...temp },
 
   updateUserInfo: (info) => {
     const newInfo = { ...get().userInfo, ...info };
     set({ userInfo: newInfo });
-    Taro.setStorage({ key: "user_info", data: newInfo });
+    Taro.setStorage({ key: 'user_info', data: newInfo });
   },
 
   clearUserInfo: () => {
     set({ userInfo: temp });
-    Taro.removeStorage({ key: "user_info" });
+    Taro.removeStorage({ key: 'user_info' });
   },
 
   getWxUserProfile: async () => {
     try {
       const { userInfo } = await Taro.getUserProfile({
-        desc: "用于完善会员资料",
+        desc: '用于完善会员资料',
       });
       get().updateUserInfo(userInfo);
     } catch (error) {
-      Taro.showToast({ title: "获取用户信息失败", icon: "none" });
+      Taro.showToast({ title: '获取用户信息失败', icon: 'none' });
     }
   },
 
@@ -82,12 +82,12 @@ export const useUserStore = create<UserState>((set, get) => ({
   fetchUserInfo: async () => {
     try {
       const { data } = await Taro.request({
-        url: "/api/userInfo",
-        method: "GET",
+        url: '/api/userInfo',
+        method: 'GET',
       });
       get().updateUserInfo(data);
     } catch (error) {
-      console.error("获取用户信息失败:", error);
+      console.error('获取用户信息失败:', error);
     }
   },
 }));
