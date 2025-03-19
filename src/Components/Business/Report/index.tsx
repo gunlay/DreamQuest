@@ -21,8 +21,6 @@ const ReportContent: FC<{
   const { isLogin } = useLoginStore();
   const [generating, setGenerating] = useState<boolean>(false);
   const loadDreamsAndAnalyze = async () => {
-    setGenerating(true);
-
     let _data: DreamCardDTO[] = [];
     setGenerating(true);
     try {
@@ -32,6 +30,12 @@ const ReportContent: FC<{
         } else if (type === 'month') {
           _data = await profileApi.fetchMonthReport();
         }
+      } else {
+        setReport({
+          ...generateReportContent(_data),
+        });
+        setGenerating(false);
+        return;
       }
       const aiSuggestion = await generateAIAnalysis(retryFlag);
       setFlag(false);

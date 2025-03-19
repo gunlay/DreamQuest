@@ -1,5 +1,5 @@
 import { View, Text, Image, Input } from '@tarojs/components';
-import { useDidShow } from '@tarojs/taro';
+import { useDidShow, useShareAppMessage } from '@tarojs/taro';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { homeApi } from '@/api/home';
@@ -28,6 +28,14 @@ const Home: React.FC = () => {
   });
 
   const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
+
+  useShareAppMessage(() => {
+    return {
+      title: '梦寻',
+      path: '/pages/home/index',
+      imageUrl: '',
+    };
+  });
 
   useDidShow(() => {
     homeApi.fetchHomeInfo().then((res) => {

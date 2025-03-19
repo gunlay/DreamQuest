@@ -1,5 +1,6 @@
-import { Button, Image, Radio, Text, View } from '@tarojs/components';
+import { Button, Image, ITouchEvent, Radio, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import { toast } from '@antmjs/vantui';
 import { useRef, useState } from 'react';
 import { useLoginStore } from '@/store/loginStore';
 import { AgreementPageType } from '../agreement/data';
@@ -11,7 +12,7 @@ const Login = () => {
   const login = useLoginStore((state) => state.login);
   const [confirm, setConfirm] = useState(false);
   const logining = useRef(false);
-  const handleLogin = async () => {
+  const checkComfirm = async () => {
     if (logining.current) return;
     if (!confirm) {
       const result = await Taro.showModal({
@@ -25,12 +26,16 @@ const Login = () => {
         return;
       }
     }
+  };
+  const handleLogin = async (e: ITouchEvent) => {
+    if (!confirm) return;
+
     logining.current = true;
     Taro.showLoading({
       title: '登录中',
     });
     try {
-      const success = await login();
+      const success = await login(e.detail.code);
       if (success) {
         // 处理登录后跳转
         const redirectUrl = Taro.getCurrentInstance().router?.params.redirect;
@@ -58,12 +63,10 @@ const Login = () => {
         <View className={style.desc}>请授权登录以使用完整功能</View>
         <Button
           className={style['login-btn']}
-          onClick={handleLogin}
+          onClick={checkComfirm}
           type="primary"
-          // openType="getRealtimePhoneNumber"
-          onGetRealTimePhoneNumber={(x) => {
-            console.log('x', x);
-          }}
+          openType={confirm ? 'getPhoneNumber' : undefined}
+          onGetPhoneNumber={handleLogin}
           // hover-className="button-hover"
         >
           微信一键登录
