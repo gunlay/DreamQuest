@@ -1,4 +1,4 @@
-import { RichText, Text, View } from '@tarojs/components';
+import { Text, View } from '@tarojs/components';
 import { useDidShow } from '@tarojs/taro';
 import classNames from 'classnames';
 import { FC, useState } from 'react';
@@ -17,18 +17,19 @@ const ReportContent: FC<{
   type: 'month' | 'week';
 }> = ({ type }) => {
   const { retryFlag, setFlag } = useReportStore();
-  const [report, setReport] = useState<ReportParams | null>(null);
   const { isLogin } = useLoginStore();
+  const [report, setReport] = useState<ReportParams | null>(null);
   const [generating, setGenerating] = useState<boolean>(false);
   const loadDreamsAndAnalyze = async () => {
     let _data: DreamCardDTO[] = [];
+    if (generating) return;
     setGenerating(true);
     try {
       if (isLogin) {
         if (type === 'week') {
           _data = await homeApi.fetchWeekMessage();
         } else if (type === 'month') {
-          _data = await profileApi.fetchMonthReport();
+          _data = await homeApi.fetchWeekMessage();
         }
       } else {
         setReport({
@@ -37,8 +38,8 @@ const ReportContent: FC<{
         setGenerating(false);
         return;
       }
-      const aiSuggestion = await generateAIAnalysis(retryFlag);
-      setFlag(false);
+      const aiSuggestion = await generateAIAnalysis(type, retryFlag[type]);
+      setFlag(type, false);
 
       setReport({
         ...generateReportContent(_data),

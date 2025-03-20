@@ -1,14 +1,34 @@
 import { create } from 'zustand';
 
 interface ReportState {
-  retryFlag: boolean;
-  setFlag: (tag: boolean) => void;
+  retryFlag: {
+    week: boolean;
+    month: boolean;
+  };
+  setFlag: (type: 'week' | 'month', tag: boolean) => void;
+  createNew: () => void;
 }
 
-export const useReportStore = create<ReportState>((set) => ({
-  retryFlag: false,
+export const useReportStore = create<ReportState>((set, get) => ({
+  retryFlag: {
+    week: true,
+    month: true,
+  },
 
-  setFlag: (tag: boolean) => {
-    set({ retryFlag: tag });
+  setFlag: (type: 'week' | 'month', tag: boolean) => {
+    set({
+      retryFlag: {
+        ...get().retryFlag,
+        [type]: tag,
+      },
+    });
+  },
+  createNew: () => {
+    set({
+      retryFlag: {
+        week: true,
+        month: true,
+      },
+    });
   },
 }));

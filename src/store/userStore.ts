@@ -19,7 +19,7 @@ interface UserState {
   clearUserInfo: () => void;
   getWxUserProfile: () => Promise<void>;
   // getWxPhoneNumber: (encryptedData: string, iv: string) => Promise<void>;
-  fetchUserInfo: () => Promise<void>;
+  // fetchUserInfo: () => Promise<void>;
 }
 
 const temp = {
@@ -79,15 +79,15 @@ export const useUserStore = create<UserState>((set, get) => ({
   //   }
   // },
 
-  fetchUserInfo: async () => {
-    try {
-      const { data } = await Taro.request({
-        url: '/api/userInfo',
-        method: 'GET',
-      });
-      get().updateUserInfo(data);
-    } catch (error) {
-      console.error('获取用户信息失败:', error);
-    }
-  },
+  // fetchUserInfo: async () => {
+  //   try {
+  //     const { data } = await Taro.request({
+  //       url: '/api/userInfo',
+  //       method: 'GET',
+  //     });
+  //     get().updateUserInfo(data);
+  //   } catch (error) {
+  //     console.error('获取用户信息失败:', error);
+  //   }
+  // },
 }));

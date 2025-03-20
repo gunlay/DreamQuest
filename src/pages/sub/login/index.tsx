@@ -1,17 +1,25 @@
 import { Button, Image, ITouchEvent, Radio, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { toast } from '@antmjs/vantui';
 import { useRef, useState } from 'react';
 import { useLoginStore } from '@/store/loginStore';
+import { useUserStore } from '@/store/userStore';
 import { AgreementPageType } from '../agreement/data';
 import style from './index.module.scss';
 
 const Login = () => {
   const LoginBanner =
     'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/login_banner.png';
-  const login = useLoginStore((state) => state.login);
+  const { login } = useLoginStore();
+  const { getWxUserProfile } = useUserStore();
   const [confirm, setConfirm] = useState(false);
   const logining = useRef(false);
+
+  const setConfirmRadio = async () => {
+    if (!confirm) {
+      await getWxUserProfile();
+    }
+    setConfirm((prev) => !prev);
+  };
   const checkComfirm = async () => {
     if (logining.current) return;
     if (!confirm) {
@@ -22,6 +30,7 @@ const Login = () => {
       });
       if (result.confirm) {
         setConfirm(true);
+        await getWxUserProfile();
       } else {
         return;
       }
@@ -67,12 +76,11 @@ const Login = () => {
           type="primary"
           openType={confirm ? 'getPhoneNumber' : undefined}
           onGetPhoneNumber={handleLogin}
-          // hover-className="button-hover"
         >
           微信一键登录
         </Button>
         <View className={style['privacy-policy']}>
-          <View onClick={() => setConfirm((prev) => !prev)}>
+          <View onClick={() => setConfirmRadio()}>
             <Radio checked={confirm} color="#971fcf" className={style['user-confirm']}></Radio>
           </View>
           登录即代表您同意

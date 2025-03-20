@@ -17,8 +17,6 @@ export const useLoginStore = create<LoginState>((set, get) => ({
 
   login: async (phoneCode: string) => {
     try {
-      // 1. 获取用户信息
-      await useUserStore.getState().getWxUserProfile();
       // 2. 调用后端登录接口
       const data = await userApi.login({ phoneCode });
       // 3.保存token

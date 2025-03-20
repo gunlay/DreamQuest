@@ -2,11 +2,29 @@
   position: relative;
   background: rgba(255, 255, 255, 0.76);
   border-radius: 16px;
-  padding: 32px 32px 0;
+  padding: 32px;
   margin-bottom: 32px;
   width: 100%;
   box-sizing: border-box;
   z-index: 1;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(
+      to bottom,
+      transparent 10%,
+      rgba(255, 255, 255, 0.9)
+    );
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
 
   &::after {
     content: "";
@@ -20,10 +38,19 @@
     border-right: 12px solid transparent;
     border-top: 12px solid #971fcf;
     transition: transform 0.3s ease;
+    z-index: 11;
   }
 
-  &.expanded::after {
-    transform: translateX(-50%) rotate(180deg);
+  &.expanded {
+    max-height: none;
+
+    &::before {
+      opacity: 0;
+    }
+
+    &::after {
+      transform: translateX(-50%) rotate(180deg);
+    }
   }
 
   .card-title {
@@ -31,9 +58,9 @@
     align-items: center;
     gap: 16px;
     font-size: 32px;
-    font-family: PingFang SC;
+    font-family: "PingFang SC";
     font-weight: 600;
-    color: #000000;
+    color: #000;
     margin-bottom: 32px;
   }
 
@@ -42,30 +69,10 @@
     max-height: 240px; /* 大约5行文字的高度 */
     overflow: hidden;
     transition: max-height 0.3s ease;
-    margin-bottom: 32px;
-  
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0px;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(255, 255, 255, 0.9)
-      );
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
+
   
     &.expanded {
       max-height: none;
-  
-      &::after {
-        opacity: 0;
-      }
     }
   }
 

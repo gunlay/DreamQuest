@@ -1,4 +1,5 @@
 import { homeApi } from '@/api/home';
+import { profileApi } from '@/api/profile';
 import { DreamCardDTO } from '@/api/types/record';
 
 export interface ReportDTO {
@@ -179,17 +180,18 @@ function getEmotionTrendDescription(emotions: ReportDTO['emotions']): string {
 
 // // 生成AI分析和建议
 export async function generateAIAnalysis(
+  type: 'week' | 'month',
   retryFlag?: boolean
 ): Promise<{ analysis: string; aiSuggestion: string[] }> {
   try {
-    const data = await homeApi.fetchWeeklyReport({ retryFlag });
+    const fecthFn = {
+      week: homeApi.fetchWeeklyReport,
+      month: profileApi.fetchMonthReport,
+    }[type];
+    if (!fecthFn) throw new Error('Invalid type');
+    const data = await fecthFn({ retryFlag });
 
-    if (!data) {
-      return {
-        analysis: defaultReport.analysis,
-        aiSuggestion: defaultReport.aiSuggestion,
-      };
-    }
+    if (!data) throw new Error('Invalid Data');
     const content = JSON.parse(data.replace(/^```json\n|```$/g, ''));
 
     // 确保建议之间有换行
