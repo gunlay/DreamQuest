@@ -19,6 +19,7 @@ interface ListProps<T> {
   }>;
   /** 自定义渲染项 */
   renderItem: (item: T, index: number) => ReactNode | JSX.Element;
+  renderTop?: () => ReactNode | JSX.Element;
   /** 空状态展示文案 */
   emptyText?: string;
   /** 加载中文案 */
@@ -36,6 +37,7 @@ interface ListProps<T> {
 
 const List = <T,>({
   onLoadMore,
+  renderTop,
   renderItem,
   emptyText = '暂无数据',
   loadingText = '加载中...',
@@ -121,6 +123,7 @@ const List = <T,>({
       ref={scrollRef}
       style={{ height }}
     >
+      {renderTop ? renderTop() : null}
       <View className={style['list-content']}>
         {data.length > 0 ? (
           data.map((item, index) => <View key={index}>{renderItem(item, index)}</View>)

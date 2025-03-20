@@ -15,13 +15,14 @@ const Login = () => {
   const logining = useRef(false);
 
   const setConfirmRadio = async () => {
+    setConfirm((prev) => !prev);
     if (!confirm) {
       await getWxUserProfile();
     }
-    setConfirm((prev) => !prev);
   };
   const checkComfirm = async () => {
     if (logining.current) return;
+
     if (!confirm) {
       const result = await Taro.showModal({
         title: '提示',
@@ -43,6 +44,8 @@ const Login = () => {
     Taro.showLoading({
       title: '登录中',
     });
+    console.log('e.detail.code', e.detail.code);
+
     try {
       const success = await login(e.detail.code);
       if (success) {
