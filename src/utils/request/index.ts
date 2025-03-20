@@ -3,7 +3,7 @@ import { navigateToLogin } from '../navigate';
 import { REQUEST_CONFIG, HTTP_STATUS } from './config';
 
 // 定义响应接口
-interface ResponseData<T = any> {
+interface ResponseData<T = unknown> {
   code: number;
   data: T;
   message: string;

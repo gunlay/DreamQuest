@@ -33,7 +33,7 @@ const ReportContent: FC<{
         }
       } else {
         setReport({
-          ...generateReportContent(_data),
+          ...generateReportContent(_data, type),
         });
         setGenerating(false);
         return;
@@ -42,7 +42,7 @@ const ReportContent: FC<{
       setFlag(type, false);
 
       setReport({
-        ...generateReportContent(_data),
+        ...generateReportContent(_data, type),
         ...aiSuggestion,
       });
     } catch (error) {
