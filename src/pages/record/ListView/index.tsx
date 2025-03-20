@@ -1,5 +1,4 @@
 import { View, Input, Image, ITouchEvent } from '@tarojs/components';
-import dayjs from 'dayjs';
 import { FC, useState } from 'react';
 import { recordApi } from '@/api/record';
 import { DreamCardDTO, MonthDreams } from '@/api/types/record';
@@ -43,7 +42,7 @@ const ListView: FC = () => {
     return Object.entries(
       list.reduce(
         (grouped, dream) => {
-          const month = dayjs(dream.date).format('M');
+          const month = dream.date.split('.')[1];
           (grouped[month] = grouped[month] || []).push(dream);
           return grouped;
         },
