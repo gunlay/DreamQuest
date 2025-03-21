@@ -1,0 +1,41 @@
+.container {
+  padding: 40px;
+  background: #fff;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.content {
+  width: 100%;
+}
+
+.section {
+  margin-bottom: 48px;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24px;
+  padding-right: 32px;
+}
+
+.section-content {
+  font-size: 28px;
+  color: #666;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  padding-right: 32px;
+}

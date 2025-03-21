@@ -1,0 +1,25 @@
+.report-content {
+  padding-bottom: 32px;
+
+  .report-section {
+    margin-bottom: 32px;
+    .section-title {
+      font-size: 30px;
+      font-weight: 500;
+      color: #000;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .section-content {
+      font-size: 28px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

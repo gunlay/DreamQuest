@@ -1,0 +1,119 @@
+.fortune-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.76);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 1;
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    font-size: 32px;
+    font-family: "PingFang SC";
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .zodiac-selector {
+    width: 100%;
+
+    .picker-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .arrow {
+        font-size: 24px;
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
+
+  .fortune-content {
+    overflow: hidden;
+    max-height: 285px;
+    transition: all 0.3s ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(
+        to bottom,
+        transparent 10%,
+        rgba(255, 255, 255, 0.9) 100%
+      );
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 12px solid #971fcf;
+      transition: transform 0.3s ease;
+    }
+
+    &.expanded {
+      max-height: 2000px;
+
+      // -webkit-line-clamp: initial; /* 展开时不限制行数 */
+
+      &::before {
+        opacity: 0;
+      }
+
+      &::after {
+        transform: translateX(-50%) rotate(180deg);
+      }
+    }
+
+    .fortune-item {
+      margin-bottom: 30px;
+
+      .item-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 30px;
+        font-weight: 500;
+      }
+
+      .item-content {
+        display: block;
+        margin-top: 8px;
+        font-size: 28px;
+        line-height: 1.6;
+      }
+    }
+
+    .fortune-numbers {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 24px;
+      font-size: 28px;
+      font-weight: 400;
+      color: #000;
+    }
+  }
+}

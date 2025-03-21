@@ -1,43 +1,32 @@
 {
-  "description": "项目配置文件",
-  "miniprogramRoot": "miniprogram/",
-  "compileType": "miniprogram",
+  "miniprogramRoot": "dist/",
+  "projectname": "DreamQuest",
+  "description": "DreamQuest",
+  "appid": "wx00ff224109b228c1",
   "setting": {
-    "useCompilerPlugins": [
-      "typescript"
-    ],
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "compileHotReLoad": false,
+    "postcss": false,
+    "minified": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
     },
-    "coverView": false,
-    "postcss": false,
-    "minified": false,
-    "enhance": false,
-    "showShadowRootInWxmlPanel": false,
-    "packNpmRelationList": [],
-    "ignoreUploadUnusedFiles": true,
-    "compileHotReLoad": false,
-    "skylineRenderEnable": true,
-    "condition": true,
-    "urlCheck": false
+    "ignoreUploadUnusedFiles": true
   },
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {
-    "wxext14566970e7e9f62": "3.6.5-13"
-  },
-  "condition": {},
-  "srcMiniprogramRoot": "miniprogram/",
-  "editorSetting": {
-    "tabIndent": "insertSpaces",
-    "tabSize": 2
-  },
-  "libVersion": "trial",
+  "compileType": "miniprogram",
+  "libVersion": "3.7.10",
+  "srcMiniprogramRoot": "dist/",
   "packOptions": {
     "ignore": [],
     "include": []
   },
-  "appid": "wx354345a37d9cea19",
-  "projectArchitecture": "multiPlatform"
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
 }

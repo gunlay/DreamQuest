@@ -1,0 +1,163 @@
+.container {
+  position: relative;
+  // min-height: 100vh;
+  padding: 40px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.fixed-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 32px;
+  z-index: 1;
+  background: transparent;
+
+  /* 顶部分析区域 */
+  .analysis-section {
+    margin-bottom: 32px;
+
+    .title {
+      display: block;
+      font-size: 40px;
+      color: #ffffff;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      display: block;
+      font-size: 24px;
+      color: #e9e9e9;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    /* 数据看板 */
+    .stats-board {
+      display: flex;
+      justify-content: space-around;
+      padding: 16px 0;
+
+      .stat-item {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 48px;
+
+        .stat-num {
+          font-size: 28px;
+          color: #ffffff;
+          font-weight: 600;
+          margin-bottom: 16px;
+          line-height: 1.2;
+        }
+        .stat-label {
+          font-size: 24px;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.2;
+        }
+      }
+    }
+  }
+
+  /* VIP营销卡片 */
+  .vip-card {
+    display: flex;
+    // flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background: #250865;
+    border-radius: 32px 32px 0 0;
+    padding: 24px 32px;
+    margin: 0;
+
+    .vip-info {
+      flex: 1;
+      margin-right: 32px;
+
+      .vip-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+
+        .vip-icon {
+          width: 36px;
+          height: 36px;
+          margin-right: 12px;
+        }
+        .vip-txt {
+          font-size: 32px;
+          color: #ffffff;
+          font-weight: 600;
+        }
+      }
+      .vip-subtitle {
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.4;
+      }
+    }
+    .vip-button {
+      min-width: 168px;
+      height: 56px;
+      line-height: 56px;
+      background: #ffffff;
+      border-radius: 28px;
+      font-size: 28px;
+      color: #971fcf;
+      text-align: center;
+      padding: 0 32px;
+      margin: 0;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(151, 31, 207, 0.2);
+    }
+  }
+}
+
+/* 对话区域容器 */
+.chat-container {
+  position: fixed;
+  top: 590px;
+  padding-bottom: 144px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(250, 250, 250, 0.93);
+  z-index: 2;
+
+  /* 对话区域 */
+  .chat-area {
+    height: 100%;
+    overflow-y: auto;
+
+    .top-white {
+      height: 32px;
+      width: 100%;
+    }
+
+    .report-wrapper {
+      padding: 0 32px;
+    }
+  }
+}
+
+/* 页面内容样式 */
+text {
+  color: #ffffff;
+  font-size: 32px;
+  font-family: PingFang SC;
+  font-weight: 500;
+}

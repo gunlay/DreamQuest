@@ -1,0 +1,16 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "rules": {
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "keyframes-name-pattern": null,
+    "scss/dollar-variable-pattern": null,
+    "scss/at-mixin-pattern": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "no-descending-specificity": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "property-no-vendor-prefix": null,
+    "value-no-vendor-prefix": null
+  }
+}
