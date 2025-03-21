@@ -41,29 +41,27 @@ const Tabbar: FC<{ currentTab: number }> = ({ currentTab }) => {
   }, [_isLogin]);
 
   return (
-    <>
-      <View className={styles.tabbar}>
-        {tabs.map((item, index) => (
-          <View
-            key={item.pagePath}
-            className={`${styles.tabItem} ${currentTab === index ? styles.active : ''}`}
-            onClick={() => onClickItem(item, index)}
-            style={{
-              display: item.isLogin && !isLogin ? 'none' : 'flex',
-              width: `calc(100% / ${tabs.length})`,
-            }}
-          >
-            <Image
-              src={currentTab === index ? item.iconPath : item.selectedIconPath}
-              className={styles.icon}
-            />
-            <View className={styles.text}>{item.text}</View>
-          </View>
-        ))}
-        {!isLogin ? <LoginButton className={styles['login-btn-position']} /> : null}
-      </View>
-      <View className="safe-area-inset-bottom"></View>
-    </>
+    <View className={styles.tabbar}>
+      {tabs.map((item, index) => (
+        <View
+          key={item.pagePath}
+          className={`${styles.tabItem} ${currentTab === index ? styles.active : ''}`}
+          onClick={() => onClickItem(item, index)}
+          style={{
+            display: item.isLogin && !isLogin ? 'none' : 'flex',
+            width: `calc(100% / ${tabs.length})`,
+          }}
+        >
+          <Image
+            src={currentTab === index ? item.iconPath : item.selectedIconPath}
+            className={styles.icon}
+          />
+          <View className={styles.text}>{item.text}</View>
+        </View>
+      ))}
+      {!isLogin ? <LoginButton className={styles['login-btn-position']} /> : null}
+      {/* <View className="safe-area-inset-bottom"></View> */}
+    </View>
   );
 };
 export default Tabbar;

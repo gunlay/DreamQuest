@@ -115,6 +115,7 @@ const List = <T,>({
       refresherTriggered={refreshing}
       refresherDefaultStyle="none"
       refresherBackground="transparent"
+      show-scrollbar={false}
       refresherThreshold={45}
       onRefresherRefresh={onRefresh}
       onRefresherRestore={() => setRefreshing(false)}

@@ -99,6 +99,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     try {
       let finalChatId = chatId;
       if (!chatId && dreamInput) {
+        console.log('xxxxx create');
+
         const { chatId: newId } = await chatApi.createNewChat(dreamInput);
         useReportStore.getState().createNew();
         clearDreamInput();
