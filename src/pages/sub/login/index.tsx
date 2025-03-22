@@ -80,7 +80,7 @@ const Login = () => {
           openType={confirm ? 'getPhoneNumber' : undefined}
           onGetPhoneNumber={handleLogin}
         >
-          微信一键登录
+          一键登录
         </Button>
         <View className={style['privacy-policy']}>
           <View onClick={() => setConfirmRadio()}>
