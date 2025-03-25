@@ -20,14 +20,14 @@ export interface ReportDTO {
 
 export interface ReportParams {
   keywords: string;
-  analysis: string;
+  analysis: string[];
   emotionTrend: string;
   aiSuggestion: string[];
 }
 
 const defaultReport: ReportParams = {
   keywords: '开始记录你的第一个梦境吧',
-  analysis: '开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。',
+  analysis: ['开始记录梦境是了解自己内心世界的第一步。每个梦境都是独特的，都值得被记录和理解。'],
   emotionTrend: '开始记录梦境，探索内心情感的变化。',
   aiSuggestion: [
     '建议在睡醒后第一时间记录梦境，这样能记住更多细节。可以从印象最深刻的片段开始写起，慢慢培养记录习惯。',
@@ -152,7 +152,7 @@ export function generateReportContent(dreams: DreamCardDTO[]): ReportParams {
     // 生成最终报告
     const finalReport = {
       keywords: keywordsStr,
-      analysis: '',
+      analysis: [],
       emotionTrend,
       aiSuggestion: [],
     };
@@ -182,7 +182,7 @@ function getEmotionTrendDescription(emotions: ReportDTO['emotions']): string {
 export async function generateAIAnalysis(
   type: 'week' | 'month',
   retryFlag?: boolean
-): Promise<{ analysis: string; aiSuggestion: string[] }> {
+): Promise<{ analysis: string[]; aiSuggestion: string[] }> {
   try {
     const fecthFn = {
       week: homeApi.fetchWeeklyReport,
@@ -195,12 +195,15 @@ export async function generateAIAnalysis(
     const content = JSON.parse(data.replace(/^```json\n|```$/g, ''));
 
     // 确保建议之间有换行
+    const analysis: string[] = content.analysis
+      ? content.suggestion.split('\\n').filter(Boolean)
+      : defaultReport.analysis;
     const suggestion: string[] = content.suggestion
       ? content.suggestion.split('\\n').filter(Boolean)
       : defaultReport;
 
     return {
-      analysis: content.analysis || defaultReport.analysis,
+      analysis,
       aiSuggestion: suggestion,
     };
   } catch (error) {
