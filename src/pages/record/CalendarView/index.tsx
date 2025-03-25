@@ -19,12 +19,12 @@ const CalendarView = () => {
     prevMonth,
     nextMonth,
   } = useCalendarHooks();
-
+  const selectedDate = useRef<string>(dayjs().format('YYYY-MM-DD'));
   const onDatePickerChange = debounce(handleDatePickerChange, 300);
   const selectDate = debounce((e: ITouchEvent) => {
     const date = dayjs(e.detail.value).format('YYYY-MM-DD');
-    const originDate = dayjs(calendarRef.current?.getSelectedDate() as Date).format('YYYY-MM-DD');
-    if (originDate === date) return;
+    if (selectedDate.current === date) return;
+    selectedDate.current = date;
     fetchDreams(date);
   }, 300);
 

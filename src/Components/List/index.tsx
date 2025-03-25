@@ -1,15 +1,15 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
-import Taro, { createSelectorQuery } from '@tarojs/taro';
 import { ScrollView, View, Text } from '@tarojs/components';
+import Taro, { createSelectorQuery } from '@tarojs/taro';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import style from './index.module.scss';
 
 interface ListProps<T> {
   /** 加载更多的回调函数 */
   onLoadMore: (
     params: {
-      pageIndex: number, 
-      pageSize: number
-    }, 
+      pageIndex: number;
+      pageSize: number;
+    },
     oringinData?: T[]
   ) => Promise<{
     /** 当前分页数据 */
@@ -19,6 +19,7 @@ interface ListProps<T> {
   }>;
   /** 自定义渲染项 */
   renderItem: (item: T, index: number) => ReactNode | JSX.Element;
+  renderTop?: () => ReactNode | JSX.Element;
   /** 空状态展示文案 */
   emptyText?: string;
   /** 加载中文案 */
@@ -31,11 +32,12 @@ interface ListProps<T> {
   pageSize?: number;
   /**list窗口高度, 默认100vh */
   height?: string;
-  className?:string
+  className?: string;
 }
 
 const List = <T,>({
   onLoadMore,
+  renderTop,
   renderItem,
   emptyText = '暂无数据',
   loadingText = '加载中...',
@@ -43,7 +45,7 @@ const List = <T,>({
   pageSize = 10,
   height = '100vh',
   refreshingText = '下拉刷新...',
-  className
+  className,
 }: ListProps<T>) => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -56,21 +58,21 @@ const List = <T,>({
   useEffect(() => {
     Taro.nextTick(() => {
       createSelectorQuery()
-      .selectAll('#list-scroll')
-      .boundingClientRect()
-      .exec(res => {
-        clientHeight.current = res[0][0].height;
-      })
-    })
-  }, [])
+        .selectAll('#list-scroll')
+        .boundingClientRect()
+        .exec((res) => {
+          clientHeight.current = res[0][0].height;
+        });
+    });
+  }, []);
 
-  const loadData = async (pageIndex: number, isRefresh = false) => {    
+  const loadData = async (pageIndex: number, isRefresh = false) => {
     if ((loading.current && !isRefresh) || (!hasMore && !isRefresh)) return;
 
     loading.current = true;
-    
+
     try {
-      const result = await onLoadMore({pageIndex, pageSize}, data);
+      const result = await onLoadMore({ pageIndex, pageSize }, data);
       const newData = pageIndex === 1 ? result.list : [...data, ...result.list];
       setData(newData);
       setHasMore(newData.length < result.total);
@@ -93,7 +95,7 @@ const List = <T,>({
 
   const handleScroll = async (e: any) => {
     const { scrollTop, scrollHeight } = e.detail;
-    
+
     if (scrollHeight - scrollTop - clientHeight.current <= 30) {
       loadData(currentPage + 1);
     }
@@ -113,6 +115,7 @@ const List = <T,>({
       refresherTriggered={refreshing}
       refresherDefaultStyle="none"
       refresherBackground="transparent"
+      show-scrollbar={false}
       refresherThreshold={45}
       onRefresherRefresh={onRefresh}
       onRefresherRestore={() => setRefreshing(false)}
@@ -121,11 +124,10 @@ const List = <T,>({
       ref={scrollRef}
       style={{ height }}
     >
+      {renderTop ? renderTop() : null}
       <View className={style['list-content']}>
         {data.length > 0 ? (
-          data.map((item, index) => (
-            <View key={index}>{renderItem(item, index)}</View>
-          ))
+          data.map((item, index) => <View key={index}>{renderItem(item, index)}</View>)
         ) : (
           <View className={style.empty}>{emptyText}</View>
         )}

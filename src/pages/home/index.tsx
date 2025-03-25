@@ -83,7 +83,7 @@ const Home: React.FC = () => {
         <WeeklyReport />
 
         {/* Input Section */}
-        <View className={classNames(style['input-section'], 'safe-area-inset-bottom')}>
+        <View className={classNames(style['input-section'])}>
           <View className={style['chat-bubble']}>昨晚梦到什么了嘛?记录一下吧 🤗</View>
           <View className={style['input-area']}>
             <View className={style['dream-input']} onClick={() => setShowDreamInput(true)}>

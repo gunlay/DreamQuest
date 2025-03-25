@@ -1,15 +1,17 @@
 import { View, Input, Image, ITouchEvent } from '@tarojs/components';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { recordApi } from '@/api/record';
 import { DreamCardDTO, MonthDreams } from '@/api/types/record';
 import Search from '@/assets/icon/search.png';
 import List from '@/Components/List';
+import { useChatStore } from '@/store/chatStore';
 import { useSystemStore } from '@/store/systemStore';
 import DreamCard from '../DreamCard';
 import style from './index.module.scss';
 
 const ListView: FC = () => {
   const { appBarHeight } = useSystemStore();
+  const { dreamInput } = useChatStore();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [key, setKey] = useState<number>(0);
   const pageSize = 5;
@@ -77,6 +79,8 @@ const ListView: FC = () => {
     };
   };
 
+  useEffect(() => {}, [dreamInput]);
+
   return (
     <View className={style['list-view']}>
       <View className={style['search-area']}>
@@ -106,6 +110,9 @@ const ListView: FC = () => {
           height={`calc(100vh - 118px - ${appBarHeight}px)`}
           pageSize={pageSize}
           onLoadMore={load}
+          // renderTop={() => {
+          //   return <View className={style.creating}>梦境对话解析中</View>;
+          // }}
           renderItem={(item: MonthDreams) => {
             if (item.type === 'header') {
               return <View className={style['month-title']}>{item.month} 月</View>;

@@ -237,3 +237,9 @@
   font-size: 28px;
   color: #999;
 }
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}

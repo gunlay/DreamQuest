@@ -16,11 +16,10 @@ export const useReportStore = create<ReportState>((set, get) => ({
   },
 
   setFlag: (type: 'week' | 'month', tag: boolean) => {
+    const { retryFlag } = get();
+    retryFlag[type] = tag;
     set({
-      retryFlag: {
-        ...get().retryFlag,
-        [type]: tag,
-      },
+      retryFlag,
     });
   },
   createNew: () => {

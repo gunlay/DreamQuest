@@ -137,7 +137,10 @@ export function generateReportData(dreams: DreamCardDTO[]): ReportDTO {
 }
 
 // 生成周报内容
-export function generateReportContent(dreams: DreamCardDTO[]): ReportParams {
+export function generateReportContent(
+  dreams: DreamCardDTO[],
+  type: 'week' | 'month'
+): ReportParams {
   if (!dreams?.length) return defaultReport;
 
   try {
@@ -147,7 +150,7 @@ export function generateReportContent(dreams: DreamCardDTO[]): ReportParams {
     const keywordsStr = reportData.keywords.map((keyword) => `【${keyword}】`).join(' ');
 
     // 生成情绪趋势描述
-    const emotionTrend = getEmotionTrendDescription(reportData.emotions);
+    const emotionTrend = getEmotionTrendDescription(reportData.emotions, type);
 
     // 生成最终报告
     const finalReport = {
@@ -164,17 +167,20 @@ export function generateReportContent(dreams: DreamCardDTO[]): ReportParams {
 }
 
 // 获取情绪趋势描述
-function getEmotionTrendDescription(emotions: ReportDTO['emotions']): string {
+function getEmotionTrendDescription(
+  emotions: ReportDTO['emotions'],
+  type: 'week' | 'month'
+): string {
   const total = emotions.positive + emotions.neutral + emotions.negative;
   const positiveRatio = emotions.positive / total;
   const negativeRatio = emotions.negative / total;
 
   if (positiveRatio > 0.6) {
-    return '本周梦境情绪总体积极向上，显示你正处于一个不错的状态。';
+    return `本${type === 'week' ? '周' : '月'}梦境情绪总体积极向上，显示你正处于一个不错的状态。`;
   } else if (negativeRatio > 0.6) {
-    return '本周梦境情绪偏向消极，建议多关注自己的心理状态。';
+    return `本${type === 'week' ? '周' : '月'}梦境情绪偏向消极，建议多关注自己的心理状态。`;
   } else {
-    return '本周梦境情绪平稳，显示你能够较好地平衡各种情绪。';
+    return `本${type === 'week' ? '周' : '月'}梦境情绪平稳，显示你能够较好地平衡各种情绪。`;
   }
 }
 
@@ -189,7 +195,7 @@ export async function generateAIAnalysis(
       month: profileApi.fetchMonthReport,
     }[type];
     if (!fecthFn) throw new Error('Invalid type');
-    const data = await fecthFn({ retryFlag });
+    const data = await fecthFn({ retryFlag: retryFlag || false });
 
     if (!data) throw new Error('Invalid Data');
     const content = JSON.parse(data.replace(/^```json\n|```$/g, ''));

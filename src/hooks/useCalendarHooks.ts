@@ -1,13 +1,13 @@
-import { ITouchEvent } from "@tarojs/components";
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { recordApi } from "@/api/record";
-import { DreamCardDTO } from "@/api/types/record";
+import { ITouchEvent } from '@tarojs/components';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { recordApi } from '@/api/record';
+import { DreamCardDTO } from '@/api/types/record';
 
 const useCalendarHooks = () => {
   const [showRange, setShowRange] = useState<[Date, Date]>([
-    dayjs().startOf("month").toDate(),
-    dayjs().endOf("month").toDate(),
+    dayjs().startOf('month').toDate(),
+    dayjs().endOf('month').toDate(),
   ]);
   const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
@@ -29,7 +29,7 @@ const useCalendarHooks = () => {
       setShowRange([
         dayjs(`${currentYear}-${currentMonth - 1}-01`).toDate(),
         dayjs(`${currentYear}-${currentMonth - 1}-01`)
-          .endOf("month")
+          .endOf('month')
           .toDate(),
       ]);
     }
@@ -38,13 +38,13 @@ const useCalendarHooks = () => {
   const onDatePickerChange = (e: ITouchEvent) => {
     const dateStr = e.detail.value as string;
     if (dateStr === `${currentYear}-${currentMonth}`) return;
-    const [year, month] = dateStr.split("-").map(Number);
+    const [year, month] = dateStr.split('-').map(Number);
     setCurrentYear(year);
     setCurrentMonth(month);
     // 给setShowRange赋值,第一项应该是选中year选中month的1日,第二项应该是选中year,选中month的最后一天
     setShowRange([
       dayjs(`${year}-${month}-01`).toDate(),
-      dayjs(`${year}-${month}-01`).endOf("month").toDate(),
+      dayjs(`${year}-${month}-01`).endOf('month').toDate(),
     ]);
   };
 
@@ -63,7 +63,7 @@ const useCalendarHooks = () => {
       setShowRange([
         dayjs(`${currentYear}-${currentMonth + 1}-01`).toDate(),
         dayjs(`${currentYear}-${currentMonth + 1}-01`)
-          .endOf("month")
+          .endOf('month')
           .toDate(),
       ]);
     }
@@ -78,7 +78,7 @@ const useCalendarHooks = () => {
     const today = new Date();
     setCurrentYear(today.getFullYear());
     setCurrentMonth(today.getMonth() + 1);
-    fetchDreams(dayjs(today).format("YYYY-MM-DD"));
+    fetchDreams(dayjs(today).format('YYYY-MM-DD'));
   };
 
   useEffect(() => {

@@ -78,6 +78,35 @@
 
   .list {
     padding-top: 92px;
+
+    .creating {
+      display: inline-block;
+      position: relative;
+      color: #fff;
+      font-weight: 500;
+      font-size: 28px;
+
+      &::after {
+        position: absolute;
+        right: -45px;
+        top: 0;
+        content: '';
+        display: block;
+        color: #fff;
+        animation: loading 1s infinite linear;
+      }
+    }
+  }
+}
+@keyframes loading {
+  0% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  100% {
+    content: '...';
   }
 }
 

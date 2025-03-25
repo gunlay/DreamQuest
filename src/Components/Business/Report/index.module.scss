@@ -2,6 +2,7 @@
   padding-bottom: 32px;
 
   .report-section {
+    margin-bottom: 32px;
     .section-title {
       font-size: 30px;
       font-weight: 500;
@@ -15,6 +16,10 @@
       font-weight: 400;
       color: #000;
       line-height: 1.6;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
     }
   }
 }

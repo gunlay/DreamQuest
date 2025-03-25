@@ -42,3 +42,8 @@
     font-size: 28px;
   }
 }
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
