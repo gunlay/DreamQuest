@@ -31,9 +31,9 @@ const Home: React.FC = () => {
 
   useShareAppMessage(() => {
     return {
-      title: '梦寻',
+      title: '梦里有答案，醒来就知道～',
       path: '/pages/home/index',
-      imageUrl: '',
+      imageUrl: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/WechatIMG636.jpg',
     };
   });
 

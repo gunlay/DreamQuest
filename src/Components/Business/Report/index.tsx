@@ -78,7 +78,11 @@ const ReportContent: FC<{
           {report?.analysis ? (
             <View className={style['report-section']}>
               <Text className={style['section-title']}>💭 梦境解析</Text>
-              <Text className={style['section-content']}>{report?.analysis}</Text>
+              {report?.analysis.map((sg) => (
+                <View key={sg} className={style['section-content']}>
+                  {sg}
+                </View>
+              ))}
             </View>
           ) : null}
 
