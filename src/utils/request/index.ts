@@ -13,6 +13,7 @@ interface ResponseData<T = unknown> {
 interface RequestOptions extends Omit<Taro.request.Option, 'success' | 'fail'> {
   retries?: number;
   showLoading?: boolean;
+  sse?: boolean;
 }
 
 export class HttpRequest {
@@ -30,13 +31,23 @@ export class HttpRequest {
   private requestInterceptor(options: RequestOptions): RequestOptions {
     // 添加token
     const token = Taro.getStorageSync('auth_token');
+    console.log(options);
+
     const header = {
-      'Content-Type': 'application/json',
+      'content-type': 'application/json',
       ...options.header,
     };
 
     if (token) {
       header['Authorization'] = token;
+    }
+
+    if (options.sse) {
+      header['content-type'] = 'application/x-www-form-urlencoded';
+      header['Connection'] = 'keep-alive';
+      header['Cache-Control'] = 'no-cache';
+      header['Accept'] = 'text/event-stream';
+      options.enableChunked = true; // 启用流式接收（部分小程序支持）
     }
 
     return {
@@ -117,10 +128,6 @@ export class HttpRequest {
   // 发起请求
   async request<T>(options: RequestOptions): Promise<T> {
     const { showLoading = true, retries = 0 } = options;
-    // 显示加载提示
-    // if (showLoading) {
-    //   Taro.showLoading({ title: "加载中..." });
-    // }
 
     try {
       // 应用请求拦截器

@@ -1,10 +1,23 @@
 import { http } from '@/utils/request';
+import { createSSEConnection } from '@/utils/request/sse';
 import { ChatHistoryDTO, ChatMessageDTO, NewMessageDTO } from './types/chat';
 import { ChatStatiticDTO } from './types/profile';
 
 export const chatApi = {
   createNewChat: async (params: NewMessageDTO): Promise<{ chatId: string }> => {
     return http.post<{ chatId: string }>('/dream/chat/create', params).then((res) => res);
+  },
+
+  createChatNew: async (params: NewMessageDTO): Promise<{ chatId: string }> => {
+    return http.post<{ chatId: string }>('/dream/chat/create/new', params).then((res) => res);
+  },
+
+  getAIstream: (
+    params: { content: string },
+    onChunkReceived: (chunk: string) => void,
+    onError?: (error: any) => void
+  ) => {
+    return createSSEConnection('/dream/ai/stream', params, onChunkReceived, onError);
   },
 
   sendMessages: async (params: ChatMessageDTO) => {
