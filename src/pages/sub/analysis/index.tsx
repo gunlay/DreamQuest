@@ -1,7 +1,9 @@
 import { View, Text, Image, Button, Input, ITouchEvent } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useEffect, useState, useMemo } from 'react';
+import { chatApi } from '@/api/chat';
 import Loading from '@/Components/Loading';
+import { useStreamOutput } from '@/hooks/useStreamOutput';
 import { useChatStore } from '@/store/chatStore';
 import style from './index.module.scss';
 
@@ -11,6 +13,14 @@ const Analysis = () => {
   const [currentChatId, setCurrentChatId] = useState<string>('');
   const [inputMessage, setInputMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const {
+    output,
+    loading: streamLoading,
+    onChunkReceived,
+    onStreamError,
+    startStream,
+    endStream,
+  } = useStreamOutput();
 
   const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
   const chatState = getChatState(currentChatId || '');
@@ -18,9 +28,12 @@ const Analysis = () => {
   const isInputDisabled = useMemo(() => {
     if (!currentChatId) return true;
     return (
-      !inputMessage.trim() || activeRequests > 0 || chatState?.messages.some((msg) => msg.chatting)
+      !inputMessage.trim() ||
+      activeRequests > 0 ||
+      streamLoading ||
+      chatState?.messages.some((msg) => msg.chatting)
     );
-  }, [currentChatId, inputMessage, activeRequests, chatState]);
+  }, [currentChatId, inputMessage, activeRequests, chatState, streamLoading]);
 
   const onMessageInput = (e: ITouchEvent) => {
     setInputMessage(e.detail.value);
@@ -49,11 +62,18 @@ const Analysis = () => {
     }
   }, [chatState?.messages]);
 
+  useEffect(() => {
+    if (output) {
+      scrollToTop();
+    }
+  }, [output]);
+
   const handleSendMessage = async () => {
     if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
+    const message = inputMessage.trim();
     setInputMessage('');
     try {
-      await sendMessage(currentChatId, inputMessage.trim());
+      await sendMessage(currentChatId, message);
       scrollToTop();
     } catch (error) {
       Taro.showToast({
@@ -66,16 +86,23 @@ const Analysis = () => {
   const init = async () => {
     try {
       setLoading(true);
-      const finalChatId = await initChat(chatId);
+      const finalChatId = await initChat(chatId, {
+        onChunkReceived,
+        onError: onStreamError,
+      });
       setCurrentChatId(finalChatId);
-      scrollToTop();
+      setLoading(false);
+
+      startStream({});
+      await chatApi.getAIstream({ content: '团建了' }, onChunkReceived, onStreamError);
+      endStream();
     } catch (error) {
       Taro.showToast({
         title: error.message || '加载失败',
         icon: 'none',
       });
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -137,6 +164,13 @@ const Analysis = () => {
                 </View>
               </View>
             ))}
+            {output && (
+              <View className={`${style['message']} ${style['assistant']}`}>
+                <View className={style['message-content']}>
+                  <View className="taro_html" dangerouslySetInnerHTML={{ __html: output }} />
+                </View>
+              </View>
+            )}
           </View>
 
           <View className={style['input-section']}>

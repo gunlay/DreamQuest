@@ -5,8 +5,8 @@ import { REQUEST_CONFIG } from './config';
 export const createSSEConnection = (
   _url: string,
   params: Record<string, string>,
-  onChunkReceived: (chunk: string) => void,
-  onError?: (error: any) => void
+  onChunkReceived?: (chunk: string) => void,
+  onError?: (error: string) => void
 ) => {
   const url = new URL(_url, REQUEST_CONFIG.baseURL);
   Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
@@ -20,13 +20,12 @@ export const createSSEConnection = (
     },
     enableChunked: true, // 启用分块传输，关键属性，仅微信小程序支持
     success: () => {
-      console.log('Request completed');
       requestTask.abort(); // 请求完成后主动断开连接
     },
     fail: (error) => {
       console.error('Request failed', error);
       if (onError) {
-        onError(error);
+        onError(error.errMsg);
       }
     },
   });
@@ -40,7 +39,7 @@ export const createSSEConnection = (
     const text = new TextDecoder().decode(bytes); // 可能需要 polyfill
 
     const textArr = text.trim().split('\n');
-    textArr.forEach(onChunkReceived);
+    textArr.forEach(onChunkReceived || (() => {}));
   });
 
   return requestTask;

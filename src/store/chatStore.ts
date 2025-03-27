@@ -18,7 +18,13 @@ interface ChatStoreState {
   setChatState: (chatId: string, state: Partial<ChatState>) => void;
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting?: boolean) => void;
   sendMessage: (chatId: string, message: string) => Promise<void>;
-  initChat: (chatId: string) => Promise<string>;
+  initChat: (
+    chatId: string,
+    callbacks?: {
+      onChunkReceived?: (chunk: string) => void;
+      onError?: (error: string) => void;
+    }
+  ) => Promise<string>;
   clearChat: (chatId: string) => void;
   setDreamInput: (params: NewMessageDTO) => void;
   clearDreamInput: () => void;
@@ -89,19 +95,25 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
   },
 
-  initChat: async (chatId: string): Promise<string> => {
+  initChat: async (
+    chatId: string,
+    callbacks?: {
+      onChunkReceived?: (chunk: string) => void;
+      onError?: (error: string) => void;
+    }
+  ): Promise<string> => {
     const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput } = get();
-    // if (activeRequests >= maxActiveRequests) {
-    //   throw new Error('已达到最大并发请求数');
-    // }
-
     set({ activeRequests: activeRequests + 1 });
     try {
       let finalChatId = chatId;
       if (!chatId && dreamInput) {
-        console.log('xxxxx create');
-
+        // 创建新的
         const { chatId: newId } = await chatApi.createChatNew(dreamInput);
+        chatApi.getAIstream(
+          { content: dreamInput.message },
+          callbacks?.onChunkReceived,
+          callbacks?.onError
+        );
         useReportStore.getState().createNew();
         clearDreamInput();
         finalChatId = newId;
@@ -124,10 +136,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           dreamData: result,
           messages: result.messages || [],
         });
-        set({ activeRequests: get().activeRequests - 1 });
       }
       return finalChatId;
     } finally {
+      set({ activeRequests: get().activeRequests - 1 });
     }
   },
 

@@ -14,8 +14,8 @@ export const chatApi = {
 
   getAIstream: (
     params: { content: string },
-    onChunkReceived: (chunk: string) => void,
-    onError?: (error: any) => void
+    onChunkReceived?: (chunk: string) => void,
+    onError?: (error: string) => void
   ) => {
     return createSSEConnection('/dream/ai/stream', params, onChunkReceived, onError);
   },
