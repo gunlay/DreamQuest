@@ -44,7 +44,6 @@ const Login = () => {
     Taro.showLoading({
       title: '登录中',
     });
-    console.log('e.detail.code', e.detail.code);
 
     try {
       const success = await login(e.detail.code);

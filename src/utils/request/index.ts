@@ -31,7 +31,6 @@ export class HttpRequest {
   private requestInterceptor(options: RequestOptions): RequestOptions {
     // 添加token
     const token = Taro.getStorageSync('auth_token');
-    console.log(options);
 
     const header = {
       'content-type': 'application/json',

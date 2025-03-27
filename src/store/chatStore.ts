@@ -21,6 +21,7 @@ interface ChatStoreState {
   initChat: (
     chatId: string,
     callbacks?: {
+      startStream?: () => void;
       onChunkReceived?: (chunk: string) => void;
       onError?: (error: string) => void;
     }
@@ -98,6 +99,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   initChat: async (
     chatId: string,
     callbacks?: {
+      startStream?: () => void;
       onChunkReceived?: (chunk: string) => void;
       onError?: (error: string) => void;
     }
@@ -109,6 +111,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       if (!chatId && dreamInput) {
         // 创建新的
         const { chatId: newId } = await chatApi.createChatNew(dreamInput);
+        callbacks?.startStream?.();
         chatApi.getAIstream(
           { content: dreamInput.message },
           callbacks?.onChunkReceived,

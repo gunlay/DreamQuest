@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 
-interface UseStreamOutputOptions {
-  onComplete?: () => void;
-}
+// interface UseStreamOutputOptions {
+//   onComplete?: () => void;
+// }
 
 export const useStreamOutput = () => {
   const [loading, setLoading] = useState(false);
@@ -10,6 +10,7 @@ export const useStreamOutput = () => {
   const [error, setError] = useState<string | null>(null);
 
   const onChunkReceived = useCallback((chunk: string) => {
+    setLoading(false);
     try {
       // 检查是否是空字符串
       if (!chunk || chunk.trim() === '') return;
@@ -42,15 +43,11 @@ export const useStreamOutput = () => {
     setLoading(false);
   }, []);
 
-  const startStream = useCallback(async ({ onComplete }: UseStreamOutputOptions) => {
+  const startStream = useCallback(async () => {
     setLoading(true);
     setError(null);
     setOutput('');
-    onComplete?.();
-  }, []);
-
-  const endStream = useCallback(() => {
-    setLoading(false);
+    // onComplete?.();
   }, []);
 
   const reset = useCallback(() => {
@@ -64,7 +61,6 @@ export const useStreamOutput = () => {
     output,
     error,
     startStream,
-    endStream,
     onChunkReceived,
     onStreamError,
     reset,

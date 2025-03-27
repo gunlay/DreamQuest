@@ -1,7 +1,6 @@
 import { View, Text, Image, Button, Input, ITouchEvent } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useEffect, useState, useMemo } from 'react';
-import { chatApi } from '@/api/chat';
 import Loading from '@/Components/Loading';
 import { useStreamOutput } from '@/hooks/useStreamOutput';
 import { useChatStore } from '@/store/chatStore';
@@ -19,9 +18,7 @@ const Analysis = () => {
     onChunkReceived,
     onStreamError,
     startStream,
-    endStream,
   } = useStreamOutput();
-
   const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
   const chatState = getChatState(currentChatId || '');
 
@@ -87,15 +84,12 @@ const Analysis = () => {
     try {
       setLoading(true);
       const finalChatId = await initChat(chatId, {
+        startStream,
         onChunkReceived,
         onError: onStreamError,
       });
       setCurrentChatId(finalChatId);
       setLoading(false);
-
-      startStream({});
-      await chatApi.getAIstream({ content: '团建了' }, onChunkReceived, onStreamError);
-      endStream();
     } catch (error) {
       Taro.showToast({
         title: error.message || '加载失败',
@@ -155,6 +149,11 @@ const Analysis = () => {
                 <View className={style['message-content']}>
                   {item.chatting ? (
                     <View className={style['message-loading']}></View>
+                  ) : i === chatState.messages.length - 1 && output ? (
+                    <View
+                      className="taro_html"
+                      dangerouslySetInnerHTML={{ __html: item.message }}
+                    />
                   ) : (
                     <View
                       className="taro_html"
@@ -164,13 +163,17 @@ const Analysis = () => {
                 </View>
               </View>
             ))}
-            {output && (
-              <View className={`${style['message']} ${style['assistant']}`}>
+            {chatState.messages.length === 0 && (streamLoading || output) ? (
+              <View className={`${style['message']} ${style['ai']}`}>
                 <View className={style['message-content']}>
-                  <View className="taro_html" dangerouslySetInnerHTML={{ __html: output }} />
+                  {streamLoading ? (
+                    <View className={style['message-loading']}></View>
+                  ) : output ? (
+                    <View className="taro_html" dangerouslySetInnerHTML={{ __html: output }} />
+                  ) : null}
                 </View>
               </View>
-            )}
+            ) : null}
           </View>
 
           <View className={style['input-section']}>
