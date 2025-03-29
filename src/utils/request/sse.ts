@@ -2,6 +2,8 @@ import Taro from '@tarojs/taro';
 import { SSEOptions } from '@/api/types/sse';
 import { REQUEST_CONFIG } from './config';
 
+let requestTask: Taro.RequestTask<any> | null = null;
+
 // SSE 请求方法
 export const createSSEConnection = (
   method: 'GET' | 'POST',
@@ -16,9 +18,8 @@ export const createSSEConnection = (
 
   // 标记流是否已完成
   let isStreamDone = false;
-  let timer: NodeJS.Timeout | null = null;
 
-  const requestTask = Taro.request({
+  requestTask = Taro.request({
     url: url.toString(),
     method: method,
     header: {
@@ -32,23 +33,22 @@ export const createSSEConnection = (
     },
     fail: (error) => {
       isStreamDone = true;
-      requestTask.abort();
+      requestTask?.abort?.();
       if (sseOptions.onError) {
         sseOptions.onError(error.errMsg);
       }
+      requestTask = null;
     },
     complete() {
       if (sseOptions.onComplete) {
         sseOptions.onComplete(result);
       }
-      timer = setTimeout(() => {
-        requestTask.abort(); // 延迟关闭连接，确保所有处理完成
-        timer = null;
-      }, 300);
+      requestTask?.abort?.(); // 延迟关闭连接，确保所有处理完成
+      requestTask = null;
     },
   });
 
-  requestTask.onChunkReceived((response) => {
+  requestTask?.onChunkReceived?.((response) => {
     // 避免已完成的流继续处理
     if (isStreamDone) return;
 

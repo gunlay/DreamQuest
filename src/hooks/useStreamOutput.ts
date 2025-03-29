@@ -1,100 +1,125 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { ChatState } from '@/store/chatStore';
 
 export const useStreamOutput = (props: {
-  setMessage: (message: string, chatId: string) => void;
+  getChatState: (chatId: string) => ChatState | undefined;
+  setChatState: (chatId: string, state: Partial<ChatState>) => void;
+  setMessage?: () => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const contentRef = useRef<string>('');
   const chatIdRef = useRef<string>('');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isUnmountedRef = useRef(false);
 
-  // 清理定时器
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
+  const setMessage = () => {
+    console.log('updateMessage', isUnmountedRef.current, chatIdRef.current);
+    if (!chatIdRef.current) return;
+    const currentChatState = props.getChatState(chatIdRef.current);
+    if (!currentChatState) return;
+
+    const updateMessage = [...(currentChatState.messages || [])];
+
+    if (updateMessage.length > 0) {
+      const lastMessage = {
+        ...updateMessage[updateMessage.length - 1],
+        chatting: false,
+        message: contentRef.current,
+      };
+
+      updateMessage[updateMessage.length - 1] = lastMessage;
+
+      props.setChatState(chatIdRef.current, {
+        ...currentChatState,
+        messages: updateMessage,
+      });
+
+      if (props.setMessage) {
+        props.setMessage();
       }
-    };
-  }, []);
-
-  // 更新消息内容
-  const updateMessage = useCallback(() => {
-    if (contentRef.current && props.setMessage) {
-      props.setMessage(contentRef.current, chatIdRef.current);
     }
-  }, [props]);
+  };
 
-  const onChunkReceived = useCallback(
-    (chunk: string): string => {
-      setLoading(false);
-      try {
-        // 检查是否是空字符串
-        if (!chunk || chunk.trim() === '') return '';
-
-        // 处理数据
-        const lines = chunk
-          .split('\n')
-          .filter((line) => line.trim())
-          .map((line) => {
-            if (line.startsWith('id:')) return '';
-            // 移除特殊字符
-            return line.replace(/data:/g, '').trim();
-          })
-          .filter(Boolean);
-
-        // 将所有行连接起来
-        const content = lines.join('');
-        if (content) {
-          // 添加到内容中
-          contentRef.current += content;
-
-          // 立即更新UI
-          updateMessage();
-        }
-
-        return content;
-      } catch (e) {
-        console.error('Failed to process chunk:', e);
-        return '';
-      }
-    },
-    [updateMessage]
-  );
-
-  const onStreamError = useCallback(
-    (err: string) => {
-      setError(err);
-      setLoading(false);
-      // 确保在错误时更新最终内容
-      updateMessage();
-    },
-    [updateMessage]
-  );
-
-  const onStreamComplete = useCallback(() => {
-    // 流结束时进行最后一次更新
-    updateMessage();
-  }, [updateMessage]);
-
-  const startStream = useCallback((chatId: string) => {
-    setLoading(true);
-    setError(null);
-    // 清空内容
-    contentRef.current = '';
-    chatIdRef.current = chatId;
-  }, []);
-
-  const reset = useCallback(() => {
-    setError(null);
-    setLoading(false);
-    contentRef.current = '';
+  // 清理函数
+  const cleanup = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    contentRef.current = '';
+    chatIdRef.current = '';
   }, []);
+
+  // 组件卸载时的清理
+  useEffect(() => {
+    return () => {
+      isUnmountedRef.current = true;
+      cleanup();
+    };
+  }, [cleanup]);
+
+  // 更新消息内容
+  const updateMessage = useCallback(() => {
+    if (isUnmountedRef.current) return;
+    setMessage();
+  }, [setMessage]);
+
+  const onChunkReceived = (chunk: string): string => {
+    if (isUnmountedRef.current) return '';
+    setLoading(false);
+    try {
+      if (!chunk || chunk.trim() === '') return '';
+
+      const lines = chunk
+        .split('\n')
+        .filter((line) => line.trim())
+        .map((line) => {
+          if (line.startsWith('id:')) return '';
+          return line.replace(/data:/g, '').trim();
+        })
+        .filter(Boolean);
+
+      const content = lines.join('');
+      if (content) {
+        contentRef.current += content;
+        updateMessage();
+      }
+
+      return content;
+    } catch (e) {
+      console.error('Failed to process chunk:', e);
+      return '';
+    }
+  };
+
+  const onError = (err: string) => {
+    if (isUnmountedRef.current) return;
+    setError(err);
+    setLoading(false);
+    updateMessage();
+  };
+
+  const onComplete = () => {
+    if (isUnmountedRef.current) return;
+    // updateMessage();
+    cleanup();
+  };
+
+  const startStream = (chatId: string) => {
+    if (isUnmountedRef.current) return;
+    setLoading(true);
+    setError(null);
+    cleanup();
+    chatIdRef.current = chatId;
+  };
+
+  const reset = () => {
+    if (isUnmountedRef.current) return;
+    setError(null);
+    setLoading(false);
+    cleanup();
+  };
 
   return {
     loading,
@@ -102,8 +127,8 @@ export const useStreamOutput = (props: {
     error,
     startStream,
     onChunkReceived,
-    onStreamError,
-    onStreamComplete,
+    onError,
+    onComplete,
     reset,
   };
 };

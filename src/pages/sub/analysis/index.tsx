@@ -1,13 +1,18 @@
 import { View, Text, Image, Button, Input, ITouchEvent } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Loading from '@/Components/Loading';
 import { useStreamOutput } from '@/hooks/useStreamOutput';
 import { useChatStore } from '@/store/chatStore';
 import style from './index.module.scss';
 
+let timeoutId: NodeJS.Timeout | null = null;
+
+const Timeout = 500;
+
 const Analysis = () => {
   const DefaultDream = '';
+  const chatAreaRef = useRef<typeof View>(null);
   const { activeRequests, initChat, getChatState, sendMessage, clearChat, setChatState } =
     useChatStore();
   const [currentChatId, setCurrentChatId] = useState<string>('');
@@ -16,69 +21,47 @@ const Analysis = () => {
   const chatState = getChatState(currentChatId || '');
 
   // 滚动到底部功能
-  const scrollToTop = useCallback(() => {
-    Taro.nextTick(() => {
-      const query = Taro.createSelectorQuery();
-      query
-        .select('#chat-area')
-        .boundingClientRect()
-        .exec((res) => {
-          if (res && res[0]) {
-            Taro.pageScrollTo({
-              scrollTop: res[0].height,
-              duration: 300,
+  const scrollToTop = useCallback(
+    (() => {
+      let lastScrollHeight = 0;
+      return () => {
+        Taro.nextTick(() => {
+          const query = Taro.createSelectorQuery();
+          query
+            .select('#chat-area')
+            .boundingClientRect()
+            .exec((res) => {
+              console.log('res', res[0].height, lastScrollHeight);
+              // 如果res[0].height与当前height不一致，则滚动
+              if (res && res[0] && res[0].height !== lastScrollHeight) {
+                lastScrollHeight = res[0].height;
+                Taro.pageScrollTo({
+                  scrollTop: res[0].height,
+                  duration: 600,
+                });
+              }
             });
-          }
         });
-    });
-  }, []);
-
-  const setMessage = useCallback(
-    (message: string, _chatId: string) => {
-      if (!currentChatId && !_chatId) return;
-      console.log('chatId', _chatId, currentChatId);
-      const chatId = _chatId || currentChatId;
-
-      // 每次都重新获取最新状态
-      const currentChatState = getChatState(chatId);
-      // console.log('currentChatState', currentChatState);
-
-      if (!currentChatState) return;
-
-      const updateMessage = [...(currentChatState.messages || [])];
-
-      if (updateMessage.length > 0) {
-        // 更新最后一条消息
-        const lastMessage = {
-          ...updateMessage[updateMessage.length - 1],
-          chatting: false,
-          message, // 使用新接收到的完整消息替换
-        };
-
-        updateMessage[updateMessage.length - 1] = lastMessage;
-
-        // 直接触发状态更新
-        setChatState(chatId, {
-          ...currentChatState,
-          messages: updateMessage,
-        });
-
-        // 消息更新后滚动到底部
-        setTimeout(() => {
-          scrollToTop();
-        }, 100);
-      }
-    },
-    [currentChatId, getChatState, setChatState, scrollToTop]
+      };
+    })(),
+    []
   );
 
-  const {
-    loading: streamLoading,
-    onChunkReceived,
-    onStreamError,
-    onStreamComplete,
-    startStream,
-  } = useStreamOutput({ setMessage });
+  const stream = useStreamOutput({
+    getChatState,
+    setChatState,
+    setMessage: () => {
+      timeoutId = setTimeout(scrollToTop, Timeout);
+    },
+  });
+  const sse = {
+    ...stream,
+    onComplete: () => {
+      stream.onComplete?.();
+      clearTimeout(timeoutId as NodeJS.Timeout);
+      timeoutId = null;
+    },
+  };
   const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
 
   const isInputDisabled = useMemo(() => {
@@ -86,46 +69,44 @@ const Analysis = () => {
     return (
       !inputMessage.trim() ||
       activeRequests > 0 ||
-      streamLoading ||
+      stream.loading ||
       chatState?.messages.some((msg) => msg.chatting)
     );
-  }, [currentChatId, inputMessage, activeRequests, chatState, streamLoading]);
+  }, [currentChatId, inputMessage, activeRequests, chatState, stream.loading]);
 
   const onMessageInput = (e: ITouchEvent) => {
     setInputMessage(e.detail.value);
   };
 
-  // useEffect(() => {
-  //   if (chatState?.messages && chatState.messages.length > 0) {
-  //     scrollToTop();
-  //   }
-  // }, [chatState?.messages]);
-
-  // 确保内容更新后滚动
+  // 确保内容更新后滚动并清理
   useEffect(() => {
-    if (chatState?.messages && chatState.messages.length > 0) {
-      setTimeout(() => {
-        scrollToTop();
-      }, 200);
-    }
-  }, [chatState?.messages, scrollToTop]);
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
+
+  // 组件卸载时清理
+  // useEffect(() => {
+  //   return () => {
+  //     if (currentChatId) {
+  //       clearChat(currentChatId);
+  //     }
+  //   };
+  // }, [currentChatId, clearChat]);
 
   const handleSendMessage = async () => {
     if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
     const message = inputMessage.trim();
     setInputMessage('');
+    scrollToTop();
     try {
       await sendMessage({
         chatId: currentChatId,
         message,
-        sse: {
-          startStream,
-          onChunkReceived,
-          onError: onStreamError,
-          onComplete: onStreamComplete,
-        },
+        sse,
       });
-      scrollToTop();
     } catch (error) {
       Taro.showToast({
         title: error.message || '发送失败',
@@ -138,14 +119,12 @@ const Analysis = () => {
     try {
       setLoading(true);
       const finalChatId = await initChat(chatId, {
-        startStream,
+        ...sse,
         onChunkReceived: (chunk) => {
-          const r = onChunkReceived(chunk);
+          const r = stream.onChunkReceived(chunk);
           setLoading(false);
           return r;
         },
-        onError: onStreamError,
-        onComplete: onStreamComplete,
       });
       setCurrentChatId(finalChatId);
       setLoading(false);
@@ -156,15 +135,11 @@ const Analysis = () => {
       });
       setLoading(false);
     }
+    scrollToTop();
   };
 
   useEffect(() => {
     init();
-    return () => {
-      if (currentChatId) {
-        clearChat(currentChatId);
-      }
-    };
   }, []);
 
   if (process.env.TARO_ENV !== 'h5') {
@@ -186,19 +161,25 @@ const Analysis = () => {
             <View className={style['dream-content']}>{chatState.dreamData.desc}</View>
           </View>
 
-          <View className={style['dream-image']}>
-            <Image src={chatState.dreamData.image || DefaultDream} mode="aspectFill"></Image>
-          </View>
-
-          <View className={style['tags']}>
-            {chatState.dreamData.tags?.map((item, index) => (
-              <View className={style['tag']} key={index}>
-                {item}
+          {chatState.dreamData.imageAndTagsLoaded ? (
+            <>
+              <View className={style['dream-image']}>
+                <Image src={chatState.dreamData.image || DefaultDream} mode="aspectFill"></Image>
               </View>
-            ))}
-          </View>
 
-          <View id="chat-area" className={style['chat-area']}>
+              <View className={style['tags']}>
+                {chatState.dreamData.tags?.map((item, index) => (
+                  <View className={style['tag']} key={index}>
+                    {item}
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : (
+            <Loading loadingText="" />
+          )}
+
+          <View id="chat-area" ref={chatAreaRef} className={style['chat-area']}>
             {chatState.messages.map((item, i) => (
               <View
                 key={i}
@@ -217,17 +198,6 @@ const Analysis = () => {
                 </View>
               </View>
             ))}
-            {/* {chatState.messages.length === 0 && (streamLoading || output) ? (
-              <View className={`${style['message']} ${style['ai']}`}>
-                <View className={style['message-content']}>
-                  {streamLoading ? (
-                    <View className={style['message-loading']}></View>
-                  ) : output ? (
-                    <View className="taro_html" dangerouslySetInnerHTML={{ __html: output }} />
-                  ) : null}
-                </View>
-              </View>
-            ) : null} */}
           </View>
 
           <View className={style['input-section']}>

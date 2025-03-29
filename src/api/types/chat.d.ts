@@ -15,6 +15,7 @@ export interface ChatHistoryDTO {
   title: string;
   week: string;
   messages: MessageDTO[];
+  imageAndTagsLoaded?: boolean;
 }
 
 export interface ChatMessageDTO {
@@ -25,4 +26,5 @@ export interface ChatMessageDTO {
 export interface NewMessageDTO {
   message: string;
   title: string;
+  imageAndTagsLoaded?: boolean;
 }

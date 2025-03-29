@@ -4,11 +4,13 @@ import { ChatHistoryDTO, MessageDTO, NewMessageDTO } from '@/api/types/chat';
 import { SSEOptions } from '@/api/types/sse';
 import { useReportStore } from './report';
 
-interface ChatState {
+export interface ChatState {
   chatId: string;
   messages: MessageDTO[];
   dreamData: ChatHistoryDTO | null;
 }
+
+let timeoutId: NodeJS.Timeout | null = null;
 
 interface ChatStoreState {
   dreamInput: NewMessageDTO | null;
@@ -48,6 +50,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting = false) => {
     const state = get().getChatState(chatId);
+    console.log('addMessage', state);
 
     if (!state) {
       get().setChatState(chatId, {
@@ -84,7 +87,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     addMessage(chatId, 'ai', '', true);
 
     try {
-      sse.startStream?.();
+      sse.startStream?.(chatId);
       chatApi.sendMessageStream(
         { chatId, message: message.trim(), sender: 'user' },
         {
@@ -106,8 +109,15 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   initChat: async (chatId: string, sse: SSEOptions): Promise<string> => {
-    const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput, addMessage } =
-      get();
+    const {
+      dreamInput,
+      activeRequests,
+      getChatState,
+      setChatState,
+      clearDreamInput,
+      addMessage,
+      setDreamInput,
+    } = get();
     set({ activeRequests: activeRequests + 1 });
     try {
       let finalChatId = chatId;
@@ -130,29 +140,57 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         useReportStore.getState().createNew();
         clearDreamInput();
         finalChatId = newId;
-      } else if (!chatId && !dreamInput) {
-        return '';
-      }
-      const state = getChatState(finalChatId);
-      // 如果最后一条消息是正在聊天的消息，就不请求接口
-      if (state?.messages?.length && state.messages[state.messages.length - 1].chatting) {
-        setChatState(finalChatId, {
-          chatId: finalChatId,
-          dreamData: state.dreamData,
-          messages: state?.messages,
-        });
+        const date1 = +new Date();
+        timeoutId = setInterval(async () => {
+          const date2 = +new Date();
+          if (date2 - date1 > 15000) {
+            clearInterval(timeoutId as NodeJS.Timeout);
+            timeoutId = null;
+            setDreamInput({
+              ...dreamInput,
+              imageAndTagsLoaded: true,
+            });
+            return;
+          }
+          const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
+          if (result.image && result.tags?.length) {
+            setChatState(finalChatId, {
+              chatId: finalChatId,
+              dreamData: result,
+            });
+            setDreamInput({
+              ...dreamInput,
+              imageAndTagsLoaded: true,
+            });
+            clearInterval(timeoutId as NodeJS.Timeout);
+            timeoutId = null;
+          }
+        }, 3000);
       } else {
-        // 请求接口
-        const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
-        setChatState(finalChatId, {
-          chatId: finalChatId,
-          dreamData: result,
-          messages: result.messages.length ? result.messages : state?.messages || [],
-        });
+        const state = getChatState(finalChatId);
+        console.log('state', state);
+
+        // 如果最后一条消息是正在聊天的消息，就不请求接口
+        if (state?.messages?.length && state.messages[state.messages.length - 1].chatting) {
+          setChatState(finalChatId, {
+            chatId: finalChatId,
+            dreamData: { ...state.dreamData, imageAndTagsLoaded: true } as ChatHistoryDTO,
+            messages: state?.messages,
+          });
+        } else {
+          // 请求接口
+          const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
+          setChatState(finalChatId, {
+            chatId: finalChatId,
+            dreamData: { ...result, imageAndTagsLoaded: true },
+            messages: result.messages,
+          });
+          set({ activeRequests: get().activeRequests - 1 });
+        }
       }
+
       return finalChatId;
     } finally {
-      set({ activeRequests: get().activeRequests - 1 });
     }
   },
 
