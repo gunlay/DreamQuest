@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { chatApi } from '@/api/chat';
 import { ChatHistoryDTO, MessageDTO, NewMessageDTO } from '@/api/types/chat';
+import { SSEOptions } from '@/api/types/sse';
 import { useReportStore } from './report';
 
 interface ChatState {
@@ -17,15 +18,8 @@ interface ChatStoreState {
   getChatState: (chatId: string) => ChatState | undefined;
   setChatState: (chatId: string, state: Partial<ChatState>) => void;
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting?: boolean) => void;
-  sendMessage: (chatId: string, message: string) => Promise<void>;
-  initChat: (
-    chatId: string,
-    callbacks?: {
-      startStream?: () => void;
-      onChunkReceived?: (chunk: string) => void;
-      onError?: (error: string) => void;
-    }
-  ) => Promise<string>;
+  sendMessage: (props: { chatId: string; message: string; sse: SSEOptions }) => Promise<void>;
+  initChat: (chatId: string, callbacks?: SSEOptions) => Promise<string>;
   clearChat: (chatId: string) => void;
   setDreamInput: (params: NewMessageDTO) => void;
   clearDreamInput: () => void;
@@ -54,7 +48,15 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting = false) => {
     const state = get().getChatState(chatId);
-    if (!state) return;
+
+    if (!state) {
+      get().setChatState(chatId, {
+        chatId,
+        dreamData: get().dreamInput as ChatHistoryDTO,
+        messages: [{ sender, message, chatting }],
+      });
+      return;
+    }
 
     const updatedMessages = [...state.messages];
     if (updatedMessages.length > 0 && updatedMessages[updatedMessages.length - 1].chatting) {
@@ -70,7 +72,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     get().setChatState(chatId, { messages: updatedMessages });
   },
 
-  sendMessage: async (chatId: string, message: string) => {
+  sendMessage: async ({ chatId, message, sse }) => {
     const { activeRequests, maxActiveRequests, addMessage, setChatState, getChatState } = get();
 
     if (activeRequests >= maxActiveRequests) {
@@ -82,8 +84,17 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     addMessage(chatId, 'ai', '', true);
 
     try {
-      const data = await chatApi.sendMessages({ chatId, message: message.trim(), sender: 'user' });
-      addMessage(chatId, 'ai', data);
+      sse.startStream?.();
+      chatApi.sendMessageStream(
+        { chatId, message: message.trim(), sender: 'user' },
+        {
+          ...sse,
+          onComplete: (result: string[]) => {
+            sse.onComplete?.(result);
+            set({ activeRequests: get().activeRequests - 1 });
+          },
+        }
+      );
     } catch (error) {
       const state = getChatState(chatId);
       if (state) {
@@ -91,32 +102,31 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         setChatState(chatId, { messages });
       }
       throw error;
-    } finally {
-      set({ activeRequests: get().activeRequests - 1 });
     }
   },
 
-  initChat: async (
-    chatId: string,
-    callbacks?: {
-      startStream?: () => void;
-      onChunkReceived?: (chunk: string) => void;
-      onError?: (error: string) => void;
-    }
-  ): Promise<string> => {
-    const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput } = get();
+  initChat: async (chatId: string, sse: SSEOptions): Promise<string> => {
+    const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput, addMessage } =
+      get();
     set({ activeRequests: activeRequests + 1 });
     try {
       let finalChatId = chatId;
       if (!chatId && dreamInput) {
         // 创建新的
         const { chatId: newId } = await chatApi.createChatNew(dreamInput);
-        callbacks?.startStream?.();
+        addMessage(newId, 'ai', '', true);
+        sse?.startStream?.(newId);
         chatApi.getAIstream(
           { content: dreamInput.message },
-          callbacks?.onChunkReceived,
-          callbacks?.onError
+          {
+            ...sse,
+            onComplete: (result: string[]) => {
+              sse.onComplete?.(result);
+              set({ activeRequests: get().activeRequests - 1 });
+            },
+          }
         );
+
         useReportStore.getState().createNew();
         clearDreamInput();
         finalChatId = newId;
@@ -137,7 +147,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         setChatState(finalChatId, {
           chatId: finalChatId,
           dreamData: result,
-          messages: result.messages || [],
+          messages: result.messages.length ? result.messages : state?.messages || [],
         });
       }
       return finalChatId;
