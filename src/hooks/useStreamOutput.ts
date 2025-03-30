@@ -54,18 +54,6 @@ export const useStreamOutput = (props: {
     if (isCompleteRef.current) chatIdRef.current = '';
   }, []);
 
-  useDidShow(() => {
-    console.log('useDidShow', chatIdRef.current, props.getChatState(chatIdRef.current));
-  });
-
-  useEffect(() => {
-    return () => {
-      console.log('useStreamOutput out', chatIdRef.current, props.getChatState(chatIdRef.current));
-      const state = props.getChatState(chatIdRef.current);
-      props.setChatState(chatIdRef.current, { ...state });
-    };
-  }, []);
-
   // 组件卸载时的清理
   useEffect(() => {
     return () => {
@@ -76,15 +64,11 @@ export const useStreamOutput = (props: {
 
   // 更新消息内容
   const updateMessage = useCallback(() => {
-    // console.log('updateMessage', isUnmountedRef.current);
-
     if (isUnmountedRef.current) return;
     setMessage();
   }, [setMessage]);
 
   const onChunkReceived = (chunk: string): string => {
-    // console.log('onChunkReceived', isUnmountedRef.current);
-
     if (isUnmountedRef.current) return '';
     isCompleteRef.current = false;
     setLoading(false);

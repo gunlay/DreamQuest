@@ -7,6 +7,7 @@ import SendIcon from '@/assets/icon/send.png';
 import RecodSelected from '@/assets/image/tabbar/record_selected.png';
 import PageContainer from '@/Components/PageContainer';
 import { useSystemStore } from '@/store/systemStore';
+import { useUserStore } from '@/store/userStore';
 import DreamInput from './DreamInput/index';
 import style from './index.module.scss';
 import TodayFortune from './TodayFortune';
@@ -15,6 +16,7 @@ import WeeklyReport from './WeeklyReport';
 const Home: React.FC = () => {
   const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png';
   const { appBarHeight } = useSystemStore();
+  const { getWxUserProfile } = useUserStore();
   const [homeInfo, setHomeInfo] = useState<{
     content: string;
     date: string;
@@ -57,7 +59,12 @@ const Home: React.FC = () => {
 
         {/* Header */}
         <View className={style['header']}>
-          <View className={style['logo-wrapper']}>
+          <View
+            className={style['logo-wrapper']}
+            onClick={() => {
+              getWxUserProfile();
+            }}
+          >
             <Image className={style['logo']} src={RecodSelected} mode="aspectFit" />
             <Text className={style['app-name']}>梦寻</Text>
           </View>

@@ -121,9 +121,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     set({ activeRequests: activeRequests + 1 });
     try {
       const state = getChatState(chatId);
-      console.log('state', newCreate);
-
-      if (newCreate) {
+      if (newCreate && dreamInput) {
         // 创建新的
         addMessage(chatId, 'ai', '', true);
         sse?.startStream?.(chatId);
@@ -143,7 +141,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         const date1 = +new Date();
         timeoutId = setInterval(async () => {
           const date2 = +new Date();
-          if (date2 - date1 > 15000) {
+          if (date2 - date1 > 25000) {
             clearInterval(timeoutId as NodeJS.Timeout);
             timeoutId = null;
             setDreamInput({
@@ -165,7 +163,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             clearInterval(timeoutId as NodeJS.Timeout);
             timeoutId = null;
           }
-        }, 3000);
+        }, 5000);
       } else {
         // const state = getChatState(finalChatId);
         const lastMessage = state?.messages[state.messages.length - 1];
@@ -180,7 +178,6 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         } else {
           // 请求接口
           const result = await chatApi.fetchChatHistory({ chatId });
-          // console.log('adsfassadsa', result.messages);
 
           setChatState(chatId, {
             chatId,

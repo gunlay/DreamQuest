@@ -54,10 +54,17 @@ export const createSSEConnection = (
 
     const arrayBuffer = response.data;
     const uint8Array = new Uint8Array(arrayBuffer);
-    const base64Str = Taro.arrayBufferToBase64(uint8Array);
 
-    const bytes = Taro.base64ToArrayBuffer(base64Str);
-    const text = new TextDecoder().decode(bytes);
+    // 不使用 TextDecoder，改用小程序支持的方法处理字符串
+    // 将 Uint8Array 转为字符串
+    let text = '';
+    try {
+      // 尝试使用 Taro 提供的编码方法
+      text = uint8ArrayToString(uint8Array);
+    } catch (error) {
+      console.error('字符串转换失败:', error);
+      return;
+    }
 
     const textArr = text.trim().split('\n');
     textArr.forEach((chunk) => {
@@ -70,3 +77,12 @@ export const createSSEConnection = (
 
   return requestTask;
 };
+
+// Uint8Array 转字符串的辅助函数
+function uint8ArrayToString(uint8Array: Uint8Array): string {
+  let result = '';
+  for (let i = 0; i < uint8Array.length; i++) {
+    result += String.fromCharCode(uint8Array[i]);
+  }
+  return decodeURIComponent(escape(result));
+}

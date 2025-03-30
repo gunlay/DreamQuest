@@ -31,7 +31,6 @@ const Analysis = () => {
             .select('#chat-area')
             .boundingClientRect()
             .exec((res) => {
-              // console.log('res', res[0]?.height, lastScrollHeight);
               // 如果res[0].height与当前height不一致，则滚动
               if (res && res[0] && res[0].height !== lastScrollHeight) {
                 lastScrollHeight = res[0].height;
@@ -80,7 +79,6 @@ const Analysis = () => {
   // 确保内容更新后滚动并清理
   useEffect(() => {
     return () => {
-      console.log('useDidHide', getChatState(chatId));
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
