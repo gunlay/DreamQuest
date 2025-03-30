@@ -1,3 +1,4 @@
+import { useDidShow } from '@tarojs/taro';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { ChatState } from '@/store/chatStore';
 
@@ -12,9 +13,9 @@ export const useStreamOutput = (props: {
   const chatIdRef = useRef<string>('');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isUnmountedRef = useRef(false);
+  const isCompleteRef = useRef(false);
 
   const setMessage = () => {
-    console.log('updateMessage', isUnmountedRef.current, chatIdRef.current);
     if (!chatIdRef.current) return;
     const currentChatState = props.getChatState(chatIdRef.current);
     if (!currentChatState) return;
@@ -26,6 +27,8 @@ export const useStreamOutput = (props: {
         ...updateMessage[updateMessage.length - 1],
         chatting: false,
         message: contentRef.current,
+        sender: 'ai',
+        streaming: true,
       };
 
       updateMessage[updateMessage.length - 1] = lastMessage;
@@ -47,26 +50,43 @@ export const useStreamOutput = (props: {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
-    contentRef.current = '';
-    chatIdRef.current = '';
+    if (isCompleteRef.current) contentRef.current = '';
+    if (isCompleteRef.current) chatIdRef.current = '';
+  }, []);
+
+  useDidShow(() => {
+    console.log('useDidShow', chatIdRef.current, props.getChatState(chatIdRef.current));
+  });
+
+  useEffect(() => {
+    return () => {
+      console.log('useStreamOutput out', chatIdRef.current, props.getChatState(chatIdRef.current));
+      const state = props.getChatState(chatIdRef.current);
+      props.setChatState(chatIdRef.current, { ...state });
+    };
   }, []);
 
   // 组件卸载时的清理
   useEffect(() => {
     return () => {
-      isUnmountedRef.current = true;
+      if (isCompleteRef.current) isUnmountedRef.current = true;
       cleanup();
     };
   }, [cleanup]);
 
   // 更新消息内容
   const updateMessage = useCallback(() => {
+    // console.log('updateMessage', isUnmountedRef.current);
+
     if (isUnmountedRef.current) return;
     setMessage();
   }, [setMessage]);
 
   const onChunkReceived = (chunk: string): string => {
+    // console.log('onChunkReceived', isUnmountedRef.current);
+
     if (isUnmountedRef.current) return '';
+    isCompleteRef.current = false;
     setLoading(false);
     try {
       if (!chunk || chunk.trim() === '') return '';
@@ -103,6 +123,13 @@ export const useStreamOutput = (props: {
   const onComplete = () => {
     if (isUnmountedRef.current) return;
     // updateMessage();
+    props.setChatState(chatIdRef.current, {
+      messages: props.getChatState(chatIdRef.current)?.messages?.map((msg) => ({
+        ...msg,
+        streaming: false,
+      })),
+    });
+    isCompleteRef.current = true;
     cleanup();
   };
 

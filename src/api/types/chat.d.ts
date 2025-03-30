@@ -4,6 +4,7 @@ export interface MessageDTO {
   chatting?: boolean;
   message: string;
   sender: string;
+  streaming?: boolean;
 }
 export interface ChatHistoryDTO {
   chatId: string;

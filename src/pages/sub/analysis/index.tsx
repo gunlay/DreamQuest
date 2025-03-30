@@ -11,14 +11,14 @@ let timeoutId: NodeJS.Timeout | null = null;
 const Timeout = 500;
 
 const Analysis = () => {
+  const chatId = (Taro.getCurrentInstance()?.router?.params?.chatId as string) || '';
+  const newCreate = (Taro.getCurrentInstance()?.router?.params?.newCreate as string) || false;
   const DefaultDream = '';
   const chatAreaRef = useRef<typeof View>(null);
-  const { activeRequests, initChat, getChatState, sendMessage, clearChat, setChatState } =
-    useChatStore();
-  const [currentChatId, setCurrentChatId] = useState<string>('');
+  const { initChat, getChatState, sendMessage, setChatState } = useChatStore();
   const [inputMessage, setInputMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const chatState = getChatState(currentChatId || '');
+  const chatState = getChatState(chatId);
 
   // 滚动到底部功能
   const scrollToTop = useCallback(
@@ -31,7 +31,7 @@ const Analysis = () => {
             .select('#chat-area')
             .boundingClientRect()
             .exec((res) => {
-              console.log('res', res[0].height, lastScrollHeight);
+              // console.log('res', res[0]?.height, lastScrollHeight);
               // 如果res[0].height与当前height不一致，则滚动
               if (res && res[0] && res[0].height !== lastScrollHeight) {
                 lastScrollHeight = res[0].height;
@@ -62,17 +62,16 @@ const Analysis = () => {
       timeoutId = null;
     },
   };
-  const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
 
   const isInputDisabled = useMemo(() => {
-    if (!currentChatId) return true;
+    if (!chatId) return true;
     return (
       !inputMessage.trim() ||
-      activeRequests > 0 ||
+      // activeRequests > 0 ||
       stream.loading ||
       chatState?.messages.some((msg) => msg.chatting)
     );
-  }, [currentChatId, inputMessage, activeRequests, chatState, stream.loading]);
+  }, [chatId, inputMessage, chatState, stream.loading]);
 
   const onMessageInput = (e: ITouchEvent) => {
     setInputMessage(e.detail.value);
@@ -81,29 +80,21 @@ const Analysis = () => {
   // 确保内容更新后滚动并清理
   useEffect(() => {
     return () => {
+      console.log('useDidHide', getChatState(chatId));
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
     };
   }, []);
 
-  // 组件卸载时清理
-  // useEffect(() => {
-  //   return () => {
-  //     if (currentChatId) {
-  //       clearChat(currentChatId);
-  //     }
-  //   };
-  // }, [currentChatId, clearChat]);
-
   const handleSendMessage = async () => {
-    if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
+    if (!inputMessage || !inputMessage.trim() || !chatId) return;
     const message = inputMessage.trim();
     setInputMessage('');
     scrollToTop();
     try {
       await sendMessage({
-        chatId: currentChatId,
+        chatId,
         message,
         sse,
       });
@@ -118,7 +109,7 @@ const Analysis = () => {
   const init = async () => {
     try {
       setLoading(true);
-      const finalChatId = await initChat(chatId, {
+      await initChat(chatId, !!newCreate, {
         ...sse,
         onChunkReceived: (chunk) => {
           const r = stream.onChunkReceived(chunk);
@@ -126,7 +117,6 @@ const Analysis = () => {
           return r;
         },
       });
-      setCurrentChatId(finalChatId);
       setLoading(false);
     } catch (error) {
       Taro.showToast({
@@ -148,7 +138,7 @@ const Analysis = () => {
 
   return (
     <>
-      {currentChatId && chatState?.dreamData && !loading && (
+      {chatId && chatState?.dreamData && !loading && (
         <View className={style['container']}>
           <View className={style['header']}>
             <Text className={style['title']}>{chatState.dreamData.title}</Text>
@@ -220,7 +210,7 @@ const Analysis = () => {
         </View>
       )}
       {loading && <Loading loadingText="梦境大师正在为您分析中..." />}
-      {(!currentChatId || !chatState?.dreamData) && !loading && (
+      {(!chatId || !chatState?.dreamData) && !loading && (
         <View className={style['empty-state']}>
           <Text>加载失败，请返回重试</Text>
         </View>

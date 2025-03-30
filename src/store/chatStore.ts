@@ -21,7 +21,7 @@ interface ChatStoreState {
   setChatState: (chatId: string, state: Partial<ChatState>) => void;
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting?: boolean) => void;
   sendMessage: (props: { chatId: string; message: string; sse: SSEOptions }) => Promise<void>;
-  initChat: (chatId: string, callbacks?: SSEOptions) => Promise<string>;
+  initChat: (chatId: string, newCreate?: boolean, callbacks?: SSEOptions) => Promise<void>;
   clearChat: (chatId: string) => void;
   setDreamInput: (params: NewMessageDTO) => void;
   clearDreamInput: () => void;
@@ -50,7 +50,6 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
   addMessage: (chatId: string, sender: 'ai' | 'user', message: string, chatting = false) => {
     const state = get().getChatState(chatId);
-    console.log('addMessage', state);
 
     if (!state) {
       get().setChatState(chatId, {
@@ -67,6 +66,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         ...updatedMessages[updatedMessages.length - 1],
         chatting: false,
         message,
+        sender,
       };
     } else {
       updatedMessages.push({ sender, message, chatting });
@@ -108,7 +108,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
   },
 
-  initChat: async (chatId: string, sse: SSEOptions): Promise<string> => {
+  initChat: async (chatId: string, newCreate = false, sse: SSEOptions): Promise<void> => {
     const {
       dreamInput,
       activeRequests,
@@ -120,14 +120,15 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     } = get();
     set({ activeRequests: activeRequests + 1 });
     try {
-      let finalChatId = chatId;
-      if (!chatId && dreamInput) {
+      const state = getChatState(chatId);
+      console.log('state', newCreate);
+
+      if (newCreate) {
         // 创建新的
-        const { chatId: newId } = await chatApi.createChatNew(dreamInput);
-        addMessage(newId, 'ai', '', true);
-        sse?.startStream?.(newId);
+        addMessage(chatId, 'ai', '', true);
+        sse?.startStream?.(chatId);
         chatApi.getAIstream(
-          { content: dreamInput.message },
+          { content: dreamInput?.message || '' },
           {
             ...sse,
             onComplete: (result: string[]) => {
@@ -139,7 +140,6 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
         useReportStore.getState().createNew();
         clearDreamInput();
-        finalChatId = newId;
         const date1 = +new Date();
         timeoutId = setInterval(async () => {
           const date2 = +new Date();
@@ -152,10 +152,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             });
             return;
           }
-          const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
+          const result = await chatApi.fetchChatHistory({ chatId });
           if (result.image && result.tags?.length) {
-            setChatState(finalChatId, {
-              chatId: finalChatId,
+            setChatState(chatId, {
+              chatId,
               dreamData: result,
             });
             setDreamInput({
@@ -167,21 +167,23 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           }
         }, 3000);
       } else {
-        const state = getChatState(finalChatId);
-        console.log('state', state);
+        // const state = getChatState(finalChatId);
+        const lastMessage = state?.messages[state.messages.length - 1];
 
         // 如果最后一条消息是正在聊天的消息，就不请求接口
-        if (state?.messages?.length && state.messages[state.messages.length - 1].chatting) {
-          setChatState(finalChatId, {
-            chatId: finalChatId,
-            dreamData: { ...state.dreamData, imageAndTagsLoaded: true } as ChatHistoryDTO,
+        if (lastMessage?.chatting || lastMessage?.streaming) {
+          setChatState(chatId, {
+            chatId: chatId,
+            dreamData: { ...state?.dreamData, imageAndTagsLoaded: true } as ChatHistoryDTO,
             messages: state?.messages,
           });
         } else {
           // 请求接口
-          const result = await chatApi.fetchChatHistory({ chatId: finalChatId });
-          setChatState(finalChatId, {
-            chatId: finalChatId,
+          const result = await chatApi.fetchChatHistory({ chatId });
+          // console.log('adsfassadsa', result.messages);
+
+          setChatState(chatId, {
+            chatId,
             dreamData: { ...result, imageAndTagsLoaded: true },
             messages: result.messages,
           });
@@ -189,7 +191,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         }
       }
 
-      return finalChatId;
+      // return finalChatId;
     } finally {
     }
   },
