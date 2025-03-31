@@ -53,11 +53,6 @@ export const useUserStore = create<UserState>((set, get) => ({
       const { userInfo } = await Taro.getUserProfile({
         desc: '用于完善会员资料',
       });
-      Taro.showModal({
-        title: '提示',
-        content: JSON.stringify(userInfo),
-        showCancel: false,
-      });
       get().updateUserInfo(userInfo);
     } catch (error) {
       Taro.showToast({ title: '获取用户信息失败', icon: 'none' });
