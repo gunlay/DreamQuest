@@ -14,6 +14,8 @@ interface RequestOptions extends Omit<Taro.request.Option, 'success' | 'fail'> {
   retries?: number;
   showLoading?: boolean;
   sse?: boolean;
+  needLogin?: boolean;
+  redirectUrl?: string;
 }
 
 export class HttpRequest {
@@ -41,14 +43,6 @@ export class HttpRequest {
       header['Authorization'] = token;
     }
 
-    if (options.sse) {
-      header['content-type'] = 'application/x-www-form-urlencoded';
-      header['Connection'] = 'keep-alive';
-      header['Cache-Control'] = 'no-cache';
-      header['Accept'] = 'text/event-stream';
-      options.enableChunked = true; // 启用流式接收（部分小程序支持）
-    }
-
     return {
       ...options,
       header,
@@ -57,7 +51,10 @@ export class HttpRequest {
   }
 
   // 响应拦截器
-  private responseInterceptor(response: Taro.request.SuccessCallbackResult<ResponseData>) {
+  private responseInterceptor(
+    response: Taro.request.SuccessCallbackResult<ResponseData>,
+    options: RequestOptions
+  ) {
     const { statusCode, data } = response;
 
     // 请求成功
@@ -66,7 +63,7 @@ export class HttpRequest {
         return data.data;
       }
       // 业务错误处理
-      this.handleBusinessError(data);
+      this.handleBusinessError(data, options);
       return Promise.reject(data);
     }
 
@@ -76,12 +73,12 @@ export class HttpRequest {
   }
 
   // 业务错误处理
-  private handleBusinessError(data: ResponseData) {
+  private handleBusinessError(data: ResponseData, options: RequestOptions) {
     switch (data.code) {
       case 401:
         // token过期，清除登录信息
         // Taro.clearStorageSync();
-        navigateToLogin();
+        navigateToLogin(options.redirectUrl);
         break;
       default:
         Taro.showToast({
@@ -141,7 +138,7 @@ export class HttpRequest {
       });
 
       // 应用响应拦截器
-      return this.responseInterceptor(response);
+      return this.responseInterceptor(response, options);
     } catch (error) {
       // 请求失败且还有重试次数时进行重试
       if (retries < REQUEST_CONFIG.maxRetries) {

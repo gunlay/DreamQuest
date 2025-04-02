@@ -109,15 +109,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   initChat: async (chatId: string, newCreate = false, sse: SSEOptions): Promise<void> => {
-    const {
-      dreamInput,
-      activeRequests,
-      getChatState,
-      setChatState,
-      clearDreamInput,
-      addMessage,
-      setDreamInput,
-    } = get();
+    const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput, addMessage } =
+      get();
     set({ activeRequests: activeRequests + 1 });
     try {
       const state = getChatState(chatId);
@@ -131,6 +124,14 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             ...sse,
             onComplete: (result: string[]) => {
               sse.onComplete?.(result);
+              if (!getChatState(chatId)?.dreamData?.image) {
+                chatApi.fetchChatHistory({ chatId }).then((res) => {
+                  setChatState(chatId, {
+                    chatId,
+                    dreamData: { ...res, imageAndTagsLoaded: true },
+                  });
+                });
+              }
               set({ activeRequests: get().activeRequests - 1 });
             },
           }
@@ -141,12 +142,15 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         const date1 = +new Date();
         timeoutId = setInterval(async () => {
           const date2 = +new Date();
-          if (date2 - date1 > 25000) {
+          if (date2 - date1 > 35000) {
             clearInterval(timeoutId as NodeJS.Timeout);
             timeoutId = null;
-            setDreamInput({
-              ...dreamInput,
-              imageAndTagsLoaded: true,
+            setChatState(chatId, {
+              chatId,
+              dreamData: {
+                ...state?.dreamData,
+                imageAndTagsLoaded: true,
+              } as unknown as ChatHistoryDTO,
             });
             return;
           }
@@ -154,18 +158,14 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           if (result.image && result.tags?.length) {
             setChatState(chatId, {
               chatId,
-              dreamData: result,
+              dreamData: { ...result, imageAndTagsLoaded: true },
             });
-            setDreamInput({
-              ...dreamInput,
-              imageAndTagsLoaded: true,
-            });
+
             clearInterval(timeoutId as NodeJS.Timeout);
             timeoutId = null;
           }
-        }, 5000);
+        }, 7000);
       } else {
-        // const state = getChatState(finalChatId);
         const lastMessage = state?.messages[state.messages.length - 1];
 
         // 如果最后一条消息是正在聊天的消息，就不请求接口

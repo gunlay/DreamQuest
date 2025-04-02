@@ -13,7 +13,8 @@ const Timeout = 500;
 const Analysis = () => {
   const chatId = (Taro.getCurrentInstance()?.router?.params?.chatId as string) || '';
   const newCreate = (Taro.getCurrentInstance()?.router?.params?.newCreate as string) || false;
-  const DefaultDream = '';
+  const DefaultDream =
+    'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/67ecd464b44e660001340f30.jpg';
   const chatAreaRef = useRef<typeof View>(null);
   const { initChat, getChatState, sendMessage, setChatState } = useChatStore();
   const [inputMessage, setInputMessage] = useState<string>('');

@@ -42,10 +42,19 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
   const onSave = async () => {
     if (!canSave) return;
     // 显示加载状态
-    props.onClose();
-    const { chatId } = await chatApi.createChatNew(dreamInput);
     setGlobalDreamInput(dreamInput);
-    Taro.navigateTo({ url: `/pages/sub/analysis/index?chatId=${chatId}&newCreate=true` });
+    try {
+      const { chatId } = await chatApi.createChatNew(dreamInput);
+      props.onClose();
+      setDreamInput({
+        title: '',
+        message: '',
+        currentDate: '',
+      });
+      Taro.navigateTo({ url: `/pages/sub/analysis/index?chatId=${chatId}&newCreate=true` });
+    } catch {
+      //
+    }
   };
 
   const handleSave = debounce(onSave, 500);

@@ -1,5 +1,5 @@
 import { View, Text, Image, Input } from '@tarojs/components';
-import { useDidShow, useShareAppMessage } from '@tarojs/taro';
+import { useDidShow, useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { homeApi } from '@/api/home';
@@ -31,13 +31,14 @@ const Home: React.FC = () => {
 
   const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
 
-  useShareAppMessage(() => {
-    return {
-      title: '梦里有答案，醒来就知道～',
-      path: '/pages/home/index',
-      imageUrl: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/WechatIMG636.jpg',
-    };
-  });
+  const shareInfo = {
+    title: '梦里有答案，醒来就知道～',
+    path: '/pages/home/index',
+    imageUrl: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/WechatIMG636.jpg',
+  };
+
+  useShareAppMessage(() => shareInfo);
+  useShareTimeline(() => shareInfo);
 
   useDidShow(() => {
     homeApi.fetchHomeInfo().then((res) => {

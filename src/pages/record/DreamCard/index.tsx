@@ -4,6 +4,8 @@ import { FC } from 'react';
 import { DreamCardDTO } from '@/api/types/record';
 import style from './index.module.scss';
 
+const DefaultDream =
+  'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/67ecd464b44e660001340f30.jpg';
 const weekMap = {
   Monday: '周一',
   Tuesday: '周二',
@@ -37,7 +39,11 @@ const DreamCard: FC<{
         </Text>
       </View>
 
-      <Image className={style['dream-image']} src={dream.image} mode="aspectFill"></Image>
+      <Image
+        className={style['dream-image']}
+        src={dream.image || DefaultDream}
+        mode="aspectFill"
+      ></Image>
 
       <Text className={style['dream-content']}>{dream.desc}</Text>
 

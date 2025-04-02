@@ -53,7 +53,7 @@ const Login = () => {
         if (redirectUrl) {
           Taro.redirectTo({ url: decodeURIComponent(redirectUrl) });
         } else {
-          Taro.switchTab({ url: '/pages/home/index' });
+          Taro.navigateBack();
         }
       }
     } catch (err) {}
