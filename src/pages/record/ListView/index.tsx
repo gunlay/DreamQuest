@@ -52,12 +52,16 @@ const ListView: FC = () => {
       )
     )
       .sort(([a], [b]) => Number(b) - Number(a))
-      .flatMap(([month, dreams]) => [
-        !originMonths?.length || originMonths.findIndex((o) => o === month) === -1
-          ? { type: 'header', month, dream: {} as DreamCardDTO }
-          : null,
-        ...dreams.map((dream) => ({ type: 'dream', month: '', dream })),
-      ])
+      .flatMap(([month, dreams]) => {
+        return [
+          !originMonths?.length ||
+          originMonths.findIndex((o) => o === month) === -1 ||
+          month === originData?.[0].month
+            ? { type: 'header', month, dream: {} as DreamCardDTO }
+            : null,
+          ...dreams.map((dream) => ({ type: 'dream', month: '', dream })),
+        ];
+      })
       .filter(Boolean) as MonthDreams[];
   };
 

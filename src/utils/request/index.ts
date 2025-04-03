@@ -13,6 +13,9 @@ interface ResponseData<T = unknown> {
 interface RequestOptions extends Omit<Taro.request.Option, 'success' | 'fail'> {
   retries?: number;
   showLoading?: boolean;
+  sse?: boolean;
+  needLogin?: boolean;
+  redirectUrl?: string;
 }
 
 export class HttpRequest {
@@ -30,8 +33,9 @@ export class HttpRequest {
   private requestInterceptor(options: RequestOptions): RequestOptions {
     // 添加token
     const token = Taro.getStorageSync('auth_token');
+
     const header = {
-      'Content-Type': 'application/json',
+      'content-type': 'application/json',
       ...options.header,
     };
 
@@ -47,7 +51,10 @@ export class HttpRequest {
   }
 
   // 响应拦截器
-  private responseInterceptor(response: Taro.request.SuccessCallbackResult<ResponseData>) {
+  private responseInterceptor(
+    response: Taro.request.SuccessCallbackResult<ResponseData>,
+    options: RequestOptions
+  ) {
     const { statusCode, data } = response;
 
     // 请求成功
@@ -56,7 +63,7 @@ export class HttpRequest {
         return data.data;
       }
       // 业务错误处理
-      this.handleBusinessError(data);
+      this.handleBusinessError(data, options);
       return Promise.reject(data);
     }
 
@@ -66,12 +73,12 @@ export class HttpRequest {
   }
 
   // 业务错误处理
-  private handleBusinessError(data: ResponseData) {
+  private handleBusinessError(data: ResponseData, options: RequestOptions) {
     switch (data.code) {
       case 401:
         // token过期，清除登录信息
         // Taro.clearStorageSync();
-        navigateToLogin();
+        navigateToLogin(options.redirectUrl);
         break;
       default:
         Taro.showToast({
@@ -117,10 +124,6 @@ export class HttpRequest {
   // 发起请求
   async request<T>(options: RequestOptions): Promise<T> {
     const { showLoading = true, retries = 0 } = options;
-    // 显示加载提示
-    // if (showLoading) {
-    //   Taro.showLoading({ title: "加载中..." });
-    // }
 
     try {
       // 应用请求拦截器
@@ -135,7 +138,7 @@ export class HttpRequest {
       });
 
       // 应用响应拦截器
-      return this.responseInterceptor(response);
+      return this.responseInterceptor(response, options);
     } catch (error) {
       // 请求失败且还有重试次数时进行重试
       if (retries < REQUEST_CONFIG.maxRetries) {

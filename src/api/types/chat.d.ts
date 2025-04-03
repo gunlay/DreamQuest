@@ -4,6 +4,7 @@ export interface MessageDTO {
   chatting?: boolean;
   message: string;
   sender: string;
+  streaming?: boolean;
 }
 export interface ChatHistoryDTO {
   chatId: string;
@@ -15,6 +16,7 @@ export interface ChatHistoryDTO {
   title: string;
   week: string;
   messages: MessageDTO[];
+  imageAndTagsLoaded?: boolean;
 }
 
 export interface ChatMessageDTO {
@@ -25,4 +27,5 @@ export interface ChatMessageDTO {
 export interface NewMessageDTO {
   message: string;
   title: string;
+  imageAndTagsLoaded?: boolean;
 }

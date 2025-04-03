@@ -20,7 +20,7 @@ export const navigateToLogin = (redirect?: string) => {
     if (current?.startsWith('/pages/login')) return;
   }
 
-  Taro.redirectTo({
+  Taro.navigateTo({
     url: `/pages/sub/login/index${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`,
   });
 };

@@ -1,5 +1,5 @@
 import { View, Text, Image, Input } from '@tarojs/components';
-import { useDidShow, useShareAppMessage } from '@tarojs/taro';
+import { useDidShow, useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { homeApi } from '@/api/home';
@@ -7,6 +7,7 @@ import SendIcon from '@/assets/icon/send.png';
 import RecodSelected from '@/assets/image/tabbar/record_selected.png';
 import PageContainer from '@/Components/PageContainer';
 import { useSystemStore } from '@/store/systemStore';
+import { useUserStore } from '@/store/userStore';
 import DreamInput from './DreamInput/index';
 import style from './index.module.scss';
 import TodayFortune from './TodayFortune';
@@ -15,6 +16,7 @@ import WeeklyReport from './WeeklyReport';
 const Home: React.FC = () => {
   const MainBg = 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/Wallpaper.png';
   const { appBarHeight } = useSystemStore();
+  const { getWxUserProfile } = useUserStore();
   const [homeInfo, setHomeInfo] = useState<{
     content: string;
     date: string;
@@ -29,13 +31,14 @@ const Home: React.FC = () => {
 
   const [showDreamInput, setShowDreamInput] = useState<boolean>(false);
 
-  useShareAppMessage(() => {
-    return {
-      title: '梦里有答案，醒来就知道～',
-      path: '/pages/home/index',
-      imageUrl: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/WechatIMG636.jpg',
-    };
-  });
+  const shareInfo = {
+    title: '梦里有答案，醒来就知道～',
+    path: '/pages/home/index',
+    imageUrl: 'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/WechatIMG636.jpg',
+  };
+
+  useShareAppMessage(() => shareInfo);
+  useShareTimeline(() => shareInfo);
 
   useDidShow(() => {
     homeApi.fetchHomeInfo().then((res) => {
@@ -57,7 +60,12 @@ const Home: React.FC = () => {
 
         {/* Header */}
         <View className={style['header']}>
-          <View className={style['logo-wrapper']}>
+          <View
+            className={style['logo-wrapper']}
+            onClick={() => {
+              getWxUserProfile();
+            }}
+          >
             <Image className={style['logo']} src={RecodSelected} mode="aspectFit" />
             <Text className={style['app-name']}>梦寻</Text>
           </View>

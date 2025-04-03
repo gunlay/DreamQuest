@@ -91,7 +91,8 @@
       padding: 24px 32px;
       border-radius: 16px;
       // max-width: 80%;
-      word-wrap: break-word;
+      word-wrap: break-all;
+      overflow: hidden;
 
       .message-loading {
         width: 20px;

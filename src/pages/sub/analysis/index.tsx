@@ -1,60 +1,102 @@
 import { View, Text, Image, Button, Input, ITouchEvent } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Loading from '@/Components/Loading';
+import { useStreamOutput } from '@/hooks/useStreamOutput';
 import { useChatStore } from '@/store/chatStore';
 import style from './index.module.scss';
 
+let timeoutId: NodeJS.Timeout | null = null;
+
+const Timeout = 500;
+
 const Analysis = () => {
-  const DefaultDream = '';
-  const { activeRequests, initChat, getChatState, sendMessage, clearChat } = useChatStore();
-  const [currentChatId, setCurrentChatId] = useState<string>('');
+  const chatId = (Taro.getCurrentInstance()?.router?.params?.chatId as string) || '';
+  const newCreate = (Taro.getCurrentInstance()?.router?.params?.newCreate as string) || false;
+  const DefaultDream =
+    'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/67ecd464b44e660001340f30.jpg';
+  const chatAreaRef = useRef<typeof View>(null);
+  const { initChat, getChatState, sendMessage, setChatState } = useChatStore();
   const [inputMessage, setInputMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const chatState = getChatState(chatId);
 
-  const chatId = Taro.getCurrentInstance()?.router?.params?.chatId as string;
-  const chatState = getChatState(currentChatId || '');
+  // 滚动到底部功能
+  const scrollToTop = useCallback(
+    (() => {
+      let lastScrollHeight = 0;
+      return () => {
+        Taro.nextTick(() => {
+          const query = Taro.createSelectorQuery();
+          query
+            .select('#chat-area')
+            .boundingClientRect()
+            .exec((res) => {
+              // 如果res[0].height与当前height不一致，则滚动
+              if (res && res[0] && res[0].height !== lastScrollHeight) {
+                lastScrollHeight = res[0].height;
+                Taro.pageScrollTo({
+                  scrollTop: res[0].height,
+                  duration: 600,
+                });
+              }
+            });
+        });
+      };
+    })(),
+    []
+  );
+
+  const stream = useStreamOutput({
+    getChatState,
+    setChatState,
+    setMessage: () => {
+      timeoutId = setTimeout(scrollToTop, Timeout);
+    },
+  });
+  const sse = {
+    ...stream,
+    onComplete: () => {
+      stream.onComplete?.();
+      clearTimeout(timeoutId as NodeJS.Timeout);
+      timeoutId = null;
+    },
+  };
 
   const isInputDisabled = useMemo(() => {
-    if (!currentChatId) return true;
+    if (!chatId) return true;
     return (
-      !inputMessage.trim() || activeRequests > 0 || chatState?.messages.some((msg) => msg.chatting)
+      !inputMessage.trim() ||
+      // activeRequests > 0 ||
+      stream.loading ||
+      chatState?.messages.some((msg) => msg.chatting)
     );
-  }, [currentChatId, inputMessage, activeRequests, chatState]);
+  }, [chatId, inputMessage, chatState, stream.loading]);
 
   const onMessageInput = (e: ITouchEvent) => {
     setInputMessage(e.detail.value);
   };
 
-  const scrollToTop = () => {
-    Taro.nextTick(() => {
-      const query = Taro.createSelectorQuery();
-      query
-        .select('#chat-area')
-        .boundingClientRect()
-        .exec((res) => {
-          if (res && res[0]) {
-            Taro.pageScrollTo({
-              scrollTop: res[0].height,
-              duration: 300,
-            });
-          }
-        });
-    });
-  };
-
+  // 确保内容更新后滚动并清理
   useEffect(() => {
-    if (chatState?.messages && chatState.messages.length > 0) {
-      scrollToTop();
-    }
-  }, [chatState?.messages]);
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
 
   const handleSendMessage = async () => {
-    if (!inputMessage || !inputMessage.trim() || !currentChatId) return;
+    if (!inputMessage || !inputMessage.trim() || !chatId) return;
+    const message = inputMessage.trim();
     setInputMessage('');
+    scrollToTop();
     try {
-      await sendMessage(currentChatId, inputMessage.trim());
-      scrollToTop();
+      await sendMessage({
+        chatId,
+        message,
+        sse,
+      });
     } catch (error) {
       Taro.showToast({
         title: error.message || '发送失败',
@@ -66,25 +108,27 @@ const Analysis = () => {
   const init = async () => {
     try {
       setLoading(true);
-      const finalChatId = await initChat(chatId);
-      setCurrentChatId(finalChatId);
-      scrollToTop();
+      await initChat(chatId, !!newCreate, {
+        ...sse,
+        onChunkReceived: (chunk) => {
+          const r = stream.onChunkReceived(chunk);
+          setLoading(false);
+          return r;
+        },
+      });
+      setLoading(false);
     } catch (error) {
       Taro.showToast({
         title: error.message || '加载失败',
         icon: 'none',
       });
+      setLoading(false);
     }
-    setLoading(false);
+    scrollToTop();
   };
 
   useEffect(() => {
     init();
-    return () => {
-      if (currentChatId) {
-        clearChat(currentChatId);
-      }
-    };
   }, []);
 
   if (process.env.TARO_ENV !== 'h5') {
@@ -93,7 +137,7 @@ const Analysis = () => {
 
   return (
     <>
-      {currentChatId && chatState?.dreamData && !loading && (
+      {chatId && chatState?.dreamData && !loading && (
         <View className={style['container']}>
           <View className={style['header']}>
             <Text className={style['title']}>{chatState.dreamData.title}</Text>
@@ -106,19 +150,25 @@ const Analysis = () => {
             <View className={style['dream-content']}>{chatState.dreamData.desc}</View>
           </View>
 
-          <View className={style['dream-image']}>
-            <Image src={chatState.dreamData.image || DefaultDream} mode="aspectFill"></Image>
-          </View>
-
-          <View className={style['tags']}>
-            {chatState.dreamData.tags?.map((item, index) => (
-              <View className={style['tag']} key={index}>
-                {item}
+          {chatState.dreamData.imageAndTagsLoaded ? (
+            <>
+              <View className={style['dream-image']}>
+                <Image src={chatState.dreamData.image || DefaultDream} mode="aspectFill"></Image>
               </View>
-            ))}
-          </View>
 
-          <View id="chat-area" className={style['chat-area']}>
+              <View className={style['tags']}>
+                {chatState.dreamData.tags?.map((item, index) => (
+                  <View className={style['tag']} key={index}>
+                    {item}
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : (
+            <Loading loadingText="" />
+          )}
+
+          <View id="chat-area" ref={chatAreaRef} className={style['chat-area']}>
             {chatState.messages.map((item, i) => (
               <View
                 key={i}
@@ -159,7 +209,7 @@ const Analysis = () => {
         </View>
       )}
       {loading && <Loading loadingText="梦境大师正在为您分析中..." />}
-      {(!currentChatId || !chatState?.dreamData) && !loading && (
+      {(!chatId || !chatState?.dreamData) && !loading && (
         <View className={style['empty-state']}>
           <Text>加载失败，请返回重试</Text>
         </View>

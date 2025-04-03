@@ -11,7 +11,7 @@ interface ReportState {
 
 export const useReportStore = create<ReportState>((set, get) => ({
   retryFlag: {
-    week: true,
+    week: false,
     month: true,
   },
 

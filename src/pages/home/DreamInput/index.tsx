@@ -1,6 +1,7 @@
 import { View, Text, Textarea, Input, Button, ITouchEvent } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useMemo, useState } from 'react';
+import { chatApi } from '@/api/chat';
 import { NewMessageDTO } from '@/api/types/chat';
 import { useChatStore } from '@/store/chatStore';
 // import { DreamInputProps, DreamInputState } from "./types";
@@ -41,9 +42,19 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
   const onSave = async () => {
     if (!canSave) return;
     // 显示加载状态
-    props.onClose();
     setGlobalDreamInput(dreamInput);
-    Taro.navigateTo({ url: `/pages/sub/analysis/index` });
+    try {
+      const { chatId } = await chatApi.createChatNew(dreamInput);
+      props.onClose();
+      setDreamInput({
+        title: '',
+        message: '',
+        currentDate: '',
+      });
+      Taro.navigateTo({ url: `/pages/sub/analysis/index?chatId=${chatId}&newCreate=true` });
+    } catch {
+      //
+    }
   };
 
   const handleSave = debounce(onSave, 500);
