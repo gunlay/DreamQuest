@@ -1,7 +1,8 @@
-import { Image, Text, View } from '@tarojs/components';
+import { Button, Image, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { FC } from 'react';
 import { DreamCardDTO } from '@/api/types/record';
+import SwipeCell from '@/Components/SwipeCell';
 import style from './index.module.scss';
 
 const DefaultDream =
@@ -16,7 +17,7 @@ const weekMap = {
   Sunday: '周日',
 };
 
-const DreamCard: FC<{
+const DreamCardContent: FC<{
   dream: DreamCardDTO;
 }> = ({ dream }) => {
   const viewDreamDetail = () => {
@@ -57,6 +58,19 @@ const DreamCard: FC<{
         </View>
       ) : null}
     </View>
+  );
+};
+
+const DreamCard: FC<{
+  dream: DreamCardDTO;
+  swipe?: boolean;
+}> = ({ dream, swipe = true }) => {
+  return swipe ? (
+    <SwipeCell rightWidth={75} renderRight={<Button>删除</Button>}>
+      <DreamCardContent dream={dream} />
+    </SwipeCell>
+  ) : (
+    <DreamCardContent dream={dream} />
   );
 };
 

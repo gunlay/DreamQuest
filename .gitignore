@@ -5,5 +5,12 @@ deploy_versions/
 node_modules/
 .DS_Store
 .swc
+<<<<<<< HEAD
 
 dist
+=======
+.vscode/settings.json
+.vscode
+
+settings.json
+>>>>>>> 9d2f7e8 (wip)
