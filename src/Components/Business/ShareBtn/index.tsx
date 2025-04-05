@@ -4,11 +4,13 @@ import Share from '@/assets/icon/share.png';
 import style from './index.module.scss';
 
 const ShareBtn: FC<{
-  onShare: () => void;
-}> = ({ onShare }) => {
+  disabled?: boolean;
+  onShare?: () => void;
+}> = ({ disabled, onShare }) => {
   const handleShare = (e) => {
     e.stopPropagation();
-    onShare();
+    if (disabled) return;
+    onShare?.();
   };
   return (
     <View className={style['btn-wrapper']} onClick={handleShare}>

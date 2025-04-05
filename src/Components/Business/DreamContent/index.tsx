@@ -1,5 +1,5 @@
 import { View, Text, Image, Button, Input, ITouchEvent } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useShareAppMessage } from '@tarojs/taro';
 import { useEffect, useState, useMemo, useCallback, useRef, FC } from 'react';
 import { MessageDTO } from '@/api/types/chat';
 import ShareBtn from '@/Components/Business/ShareBtn';
@@ -89,10 +89,6 @@ const DreamContent: FC<DreamContentProps> = ({
     setInputMessage(e.detail.value);
   };
 
-  const handleShare = () => {
-    console.log('handleShare');
-  };
-
   // 确保内容更新后滚动并清理
   useEffect(() => {
     return () => {
@@ -101,6 +97,14 @@ const DreamContent: FC<DreamContentProps> = ({
       }
     };
   }, []);
+
+  useShareAppMessage(() => {
+    return {
+      title: chatState?.dreamData?.desc.slice(0, 15) || '你有做过这样的梦吗？',
+      imageUrl: chatState?.dreamData?.image || DefaultDream,
+      path: `/pages/sub/shareDream/index?chatId=${chatId}`,
+    };
+  });
 
   const handleSendMessage = async () => {
     if (!inputMessage || !inputMessage.trim() || !chatId) return;
@@ -211,8 +215,11 @@ const DreamContent: FC<DreamContentProps> = ({
           </View>
 
           {pageSet.share ? (
-            <Button className={style['operation-wrapper']} openType="share">
-              <ShareBtn onShare={handleShare} />
+            <Button
+              className={style['operation-wrapper']}
+              openType={chatState?.dreamData?.chatting ? undefined : 'share'}
+            >
+              <ShareBtn disabled={chatState?.dreamData?.chatting} />
             </Button>
           ) : null}
 
