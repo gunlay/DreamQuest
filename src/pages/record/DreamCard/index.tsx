@@ -4,6 +4,7 @@ import { FC } from 'react';
 import { DreamCardDTO } from '@/api/types/record';
 import SwipeCell from '@/Components/SwipeCell';
 import style from './index.module.scss';
+import Operation from './Operation';
 
 const DefaultDream =
   'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/67ecd464b44e660001340f30.jpg';
@@ -63,10 +64,17 @@ const DreamCardContent: FC<{
 
 const DreamCard: FC<{
   dream: DreamCardDTO;
-  swipe?: boolean;
-}> = ({ dream, swipe = true }) => {
-  return swipe ? (
-    <SwipeCell rightWidth={75} renderRight={<Button>删除</Button>}>
+  swipeInfo?: {
+    swipe: boolean;
+    onShare: () => void;
+    onDelete: () => void;
+  };
+}> = ({ dream, swipeInfo }) => {
+  return swipeInfo?.swipe ? (
+    <SwipeCell
+      rightWidth={86}
+      renderRight={<Operation onShare={swipeInfo.onShare} onDelete={swipeInfo.onDelete} />}
+    >
       <DreamCardContent dream={dream} />
     </SwipeCell>
   ) : (
