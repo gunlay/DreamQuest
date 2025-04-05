@@ -244,3 +244,18 @@
   height: 0;
   color: transparent;
 }
+
+.operation-wrapper {
+  position: fixed;
+  right: 10px;
+  bottom: 200px;
+  background: transparent;
+  overflow: initial;
+
+  &:after {
+   border: none;
+  //  background: transparent;
+  }
+}
+
+
