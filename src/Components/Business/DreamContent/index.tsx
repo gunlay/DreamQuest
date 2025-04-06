@@ -105,6 +105,15 @@ const DreamContent: FC<DreamContentProps> = ({
       path: `/pages/sub/shareDream/index?chatId=${chatId}`,
     };
   });
+  useEffect(() => {
+    if (chatState?.dreamData?.chatting) {
+      Taro.hideShareMenu();
+    } else {
+      Taro.showShareMenu({
+        showShareItems: ['shareAppMessage', 'shareTimeline'],
+      });
+    }
+  }, [chatState?.dreamData?.chatting]);
 
   const handleSendMessage = async () => {
     if (!inputMessage || !inputMessage.trim() || !chatId) return;
