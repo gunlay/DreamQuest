@@ -249,13 +249,9 @@
   position: fixed;
   right: 10px;
   bottom: 200px;
-  background: transparent;
-  overflow: initial;
+  // background: transparent;
+  // overflow: initial;
 
-  &:after {
-   border: none;
-  //  background: transparent;
-  }
 }
 
 

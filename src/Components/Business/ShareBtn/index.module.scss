@@ -6,6 +6,12 @@
   border-radius: 50%;
   // filter: blur(8px);
   // box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.25);
+  background-color: transparent;
+  overflow: initial;
+
+  &::after {
+    border: none;
+  }
 
   .btn-bg {
     position: absolute;
@@ -32,7 +38,7 @@
 
   .btn-txt {
     position: absolute;
-    bottom: 5px;
+    bottom: 0px;
     left: 0;
     width: 100% !important; 
     // transform: translateX(-50%);

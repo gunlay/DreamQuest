@@ -1,12 +1,13 @@
 /* 日历视图 */
 .calendar-view {
-  padding: 0 24px 144px;
+  padding: 0 0 144px;
   height: calc(100vh - 140px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
   /* 日历头部 */
   .calendar-header {
+    padding: 0 24px;
     margin-bottom: 40px;
 
     .month-selector {
@@ -54,6 +55,7 @@
 
   /* 日历主体 */
   .calendar-body {
+    padding: 0 24px;
     margin-bottom: 40px;
     min-height: 330px;
     display: flex;

@@ -215,12 +215,9 @@ const DreamContent: FC<DreamContentProps> = ({
           </View>
 
           {pageSet.share ? (
-            <Button
-              className={style['operation-wrapper']}
-              openType={chatState?.dreamData?.chatting ? undefined : 'share'}
-            >
+            <View className={style['operation-wrapper']}>
               <ShareBtn disabled={chatState?.dreamData?.chatting} />
-            </Button>
+            </View>
           ) : null}
 
           {pageSet.input ? (

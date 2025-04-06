@@ -23,15 +23,21 @@ const DeleteBtn: FC<{
 };
 
 const Operation: FC<{
-  onShare: () => void;
-  onDelete: () => void;
+  onShare?: () => void;
+  onDelete?: () => void;
 }> = ({ onShare, onDelete }) => {
   return (
-    <View className={style.operation}>
-      <ShareBtn onShare={onShare} />
-      <View className={style.divider} />
-      <DeleteBtn onDelete={onDelete} />
-    </View>
+    <>
+      <View className={style.operation}>
+        <ShareBtn onShare={onShare} />
+        {onDelete ? (
+          <>
+            <View className={style.divider} />
+            <DeleteBtn onDelete={onDelete} />
+          </>
+        ) : null}
+      </View>
+    </>
   );
 };
 
