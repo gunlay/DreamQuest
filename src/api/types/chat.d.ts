@@ -17,6 +17,7 @@ export interface ChatHistoryDTO {
   week: string;
   messages: MessageDTO[];
   imageAndTagsLoaded?: boolean;
+  chatting?: boolean;
 }
 
 export interface ChatMessageDTO {

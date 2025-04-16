@@ -54,7 +54,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     if (!state) {
       get().setChatState(chatId, {
         chatId,
-        dreamData: get().dreamInput as ChatHistoryDTO,
+        dreamData: { ...get().dreamInput, chatting } as ChatHistoryDTO,
         messages: [{ sender, message, chatting }],
       });
       return;
@@ -81,11 +81,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     if (activeRequests >= maxActiveRequests) {
       throw new Error('已达到最大并发请求数');
     }
-
+    const state = getChatState(chatId);
     set({ activeRequests: activeRequests + 1 });
     addMessage(chatId, 'user', message);
     addMessage(chatId, 'ai', '', true);
-
     try {
       sse.startStream?.(chatId);
       chatApi.sendMessageStream(
@@ -94,12 +93,14 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           ...sse,
           onComplete: (result: string[]) => {
             sse.onComplete?.(result);
+            if (state?.dreamData) state.dreamData.chatting = false;
+            setChatState(chatId, state as ChatState);
             set({ activeRequests: get().activeRequests - 1 });
           },
         }
       );
     } catch (error) {
-      const state = getChatState(chatId);
+      // const state = getChatState(chatId);
       if (state) {
         const messages = state.messages.filter((msg) => !msg.chatting);
         setChatState(chatId, { messages });
@@ -112,17 +113,20 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     const { dreamInput, activeRequests, getChatState, setChatState, clearDreamInput, addMessage } =
       get();
     set({ activeRequests: activeRequests + 1 });
+    const state = getChatState(chatId);
     try {
-      const state = getChatState(chatId);
       if (newCreate && dreamInput) {
         // 创建新的
         addMessage(chatId, 'ai', '', true);
         sse?.startStream?.(chatId);
+
         chatApi.getAIstream(
           { content: dreamInput?.message || '' },
           {
             ...sse,
             onComplete: (result: string[]) => {
+              if (state?.dreamData) state.dreamData.chatting = false;
+              setChatState(chatId, state as ChatState);
               sse.onComplete?.(result);
               if (!getChatState(chatId)?.dreamData?.image) {
                 chatApi.fetchChatHistory({ chatId }).then((res) => {
@@ -166,6 +170,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           }
         }, 7000);
       } else {
+        if (state?.dreamData) state.dreamData.chatting = true;
+        setChatState(chatId, state as ChatState);
         const lastMessage = state?.messages[state.messages.length - 1];
 
         // 如果最后一条消息是正在聊天的消息，就不请求接口
@@ -181,7 +187,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
           setChatState(chatId, {
             chatId,
-            dreamData: { ...result, imageAndTagsLoaded: true },
+            dreamData: { ...result, imageAndTagsLoaded: true, chatting: false },
             messages: result.messages,
           });
           set({ activeRequests: get().activeRequests - 1 });

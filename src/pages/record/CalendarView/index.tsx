@@ -1,13 +1,16 @@
 import { View, Picker, Text, ITouchEvent } from '@tarojs/components';
 import { Calendar, Day, ICalendarInstance } from '@antmjs/vantui';
 import dayjs from 'dayjs';
-import { useRef } from 'react';
+import { FC, MutableRefObject, useRef } from 'react';
+import { DreamCardDTO } from '@/api/types/record';
 import useCalendarHooks from '@/hooks/useCalendarHooks';
 import { debounce } from '@/utils/debounce';
 import DreamCard from '../DreamCard';
 import style from './index.module.scss';
 
-const CalendarView = () => {
+const CalendarView: FC<{
+  swipedCard: MutableRefObject<DreamCardDTO | undefined>;
+}> = ({ swipedCard }) => {
   const calendarRef = useRef<ICalendarInstance>(null);
   const {
     dreams,
@@ -84,7 +87,12 @@ const CalendarView = () => {
         {dreams.length > 0 ? (
           <>
             {dreams.map((item) => (
-              <DreamCard dream={item} key={item.chatId} />
+              <DreamCard
+                swipedCard={swipedCard}
+                swipeInfo={{ swipe: true }}
+                dream={item}
+                key={item.chatId}
+              />
             ))}
           </>
         ) : (

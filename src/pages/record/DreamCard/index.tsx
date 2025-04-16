@@ -1,12 +1,13 @@
-import { Button, Image, Text, View } from '@tarojs/components';
+import { Image, ITouchEvent, Text, View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { FC } from 'react';
+import { FC, MutableRefObject } from 'react';
 import { DreamCardDTO } from '@/api/types/record';
 import SwipeCell from '@/Components/SwipeCell';
-import style from './index.module.scss';
 
-const DefaultDream =
-  'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/67ecd464b44e660001340f30.jpg';
+import { DefaultDream } from '../ListView';
+import style from './index.module.scss';
+import Operation from './Operation';
+
 const weekMap = {
   Monday: '周一',
   Tuesday: '周二',
@@ -63,10 +64,21 @@ const DreamCardContent: FC<{
 
 const DreamCard: FC<{
   dream: DreamCardDTO;
-  swipe?: boolean;
-}> = ({ dream, swipe = true }) => {
-  return swipe ? (
-    <SwipeCell rightWidth={75} renderRight={<Button>删除</Button>}>
+  swipedCard: MutableRefObject<DreamCardDTO | undefined>;
+  swipeInfo?: {
+    swipe: boolean;
+    onShare?: (e: ITouchEvent) => void;
+    onDelete?: () => void;
+  };
+}> = ({ dream, swipedCard, swipeInfo }) => {
+  return swipeInfo?.swipe ? (
+    <SwipeCell
+      rightWidth={86}
+      renderRight={<Operation onShare={() => swipeInfo.onShare} onDelete={swipeInfo.onDelete} />}
+      onOpen={() => {
+        swipedCard.current = dream;
+      }}
+    >
       <DreamCardContent dream={dream} />
     </SwipeCell>
   ) : (

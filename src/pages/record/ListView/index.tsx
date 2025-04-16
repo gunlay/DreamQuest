@@ -1,17 +1,22 @@
 import { View, Input, Image, ITouchEvent } from '@tarojs/components';
-import { FC, useEffect, useState } from 'react';
+import Taro from '@tarojs/taro';
+import { FC, MutableRefObject, useEffect, useState } from 'react';
 import { recordApi } from '@/api/record';
 import { DreamCardDTO, MonthDreams } from '@/api/types/record';
 import Search from '@/assets/icon/search.png';
 import List from '@/Components/List';
-import { useChatStore } from '@/store/chatStore';
 import { useSystemStore } from '@/store/systemStore';
 import DreamCard from '../DreamCard';
 import style from './index.module.scss';
 
-const ListView: FC = () => {
+export const DefaultDream =
+  'https://aloss-qinghua-image.oss-cn-shanghai.aliyuncs.com/images/67ecd464b44e660001340f30.jpg';
+
+const ListView: FC<{
+  swipedCard: MutableRefObject<DreamCardDTO | undefined>;
+}> = ({ swipedCard }) => {
   const { appBarHeight } = useSystemStore();
-  const { dreamInput } = useChatStore();
+  // const { dreamInput } = useChatStore();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [key, setKey] = useState<number>(0);
   const pageSize = 5;
@@ -83,7 +88,11 @@ const ListView: FC = () => {
     };
   };
 
-  useEffect(() => {}, [dreamInput]);
+  useEffect(() => {
+    Taro.hideShareMenu();
+  }, []);
+
+  // useEffect(() => {}, [dreamInput]);
 
   return (
     <View className={style['list-view']}>
@@ -121,7 +130,14 @@ const ListView: FC = () => {
             if (item.type === 'header') {
               return <View className={style['month-title']}>{item.month} 月</View>;
             } else {
-              return <DreamCard dream={item.dream} key={item.dream.chatId} />;
+              return (
+                <DreamCard
+                  swipedCard={swipedCard}
+                  swipeInfo={{ swipe: true }}
+                  dream={item.dream}
+                  key={item.dream.chatId}
+                />
+              );
             }
           }}
           emptyText={searchKeyword ? '没有找到相关梦境' : '暂无梦境记录'}

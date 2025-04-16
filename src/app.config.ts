@@ -5,7 +5,7 @@ export default defineAppConfig({
   subpackages: [
     {
       root: 'pages/sub',
-      pages: ['agreement/index', 'login/index', 'analysis/index'],
+      pages: ['agreement/index', 'login/index', 'analysis/index', 'shareDream/index'],
     },
   ],
   window: {
