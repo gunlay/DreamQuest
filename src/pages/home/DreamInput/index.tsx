@@ -21,6 +21,7 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
     message: '',
     currentDate: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const canSave = useMemo(() => {
     return !!(dreamInput.title.trim() && dreamInput.message.trim());
@@ -40,8 +41,9 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
   };
 
   const onSave = async () => {
-    if (!canSave) return;
+    if (!canSave || loading) return;
     // 显示加载状态
+    setLoading(true);
     setGlobalDreamInput(dreamInput);
     try {
       const { chatId } = await chatApi.createChatNew(dreamInput);
@@ -54,6 +56,8 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
       Taro.navigateTo({ url: `/pages/sub/analysis/index?chatId=${chatId}&newCreate=true` });
     } catch {
       //
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,7 +107,7 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
             onClick={handleSave}
             disabled={!canSave}
           >
-            保存
+            {loading ? '保存中...' : '保存'}
           </Button>
         </View>
       </View>
