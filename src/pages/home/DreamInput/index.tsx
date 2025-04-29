@@ -5,7 +5,7 @@ import { chatApi } from '@/api/chat';
 import { NewMessageDTO } from '@/api/types/chat';
 import { useChatStore } from '@/store/chatStore';
 // import { DreamInputProps, DreamInputState } from "./types";
-import { debounce } from '@/utils/debounce';
+import { throttle } from '@/utils/throttle';
 import style from './index.module.scss';
 
 export interface DreamInputProps {
@@ -61,7 +61,7 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
     }
   };
 
-  const handleSave = debounce(onSave, 500);
+  // const handleSave = throttle(onSave, 500);
 
   const stopPropagation = (e: ITouchEvent) => {
     // 阻止事件冒泡
@@ -104,8 +104,8 @@ const DreamInput: React.FC<DreamInputProps> = (props) => {
             className={`
               ${style['save-btn']} 
               ${canSave ? '' : style.disabled} `}
-            onClick={handleSave}
-            disabled={!canSave}
+            onClick={onSave}
+            disabled={!canSave || loading}
           >
             {loading ? '保存中...' : '保存'}
           </Button>
